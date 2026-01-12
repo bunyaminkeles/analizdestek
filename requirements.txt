@@ -21,3 +21,4 @@ numpy
 pandas
 scipy
 seaborn
+markdown==3.7
