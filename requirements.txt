@@ -1,27 +1,15 @@
-# --- Core Framework & Database ---
+# --- Markdown Desteği ---
+markdown==3.7
+django-markdown-helper==0.3.1
+
+# --- Diğer Kritikler ---
 Django==5.1.4
 dj-database-url==3.1.0
-dj-static==0.0.6
 gunicorn==23.0.0
 whitenoise==6.11.0
-
-# --- UI & UX ---
+openai==2.15.0
+python-dotenv==1.2.1
 django-jazzmin==3.0.1
 django-crispy-forms==2.3
 crispy-bootstrap5==2024.10
-
-# --- AI & Network ---
-openai==2.15.0
-httpx==0.28.1
-python-dotenv==1.2.1
-
-# --- Security & Optimization ---
-django-ratelimit==4.1.0
 Pillow==11.0.0
-sqlparse==0.5.3
-
-# --- Utilities ---
-asgiref==3.8.1
-certifi==2026.1.4
-packaging==25.0
-typing_extensions==4.12.2
