@@ -1,0 +1,12 @@
+name: analizdestek
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - django
+  - pillow
+  - pip
+  - pip:
+    - django-crispy-forms
+    - crispy-bootstrap5

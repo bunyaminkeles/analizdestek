@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="col-md-5">
+        <div class="card shadow-lg border-0" style="background: rgba(15, 23, 42, 0.8);">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-fingerprint display-4" style="color: var(--neon-blue);"></i>
+                    <h3 class="fw-bold mt-3 text-white">Sisteme Erişim</h3>
+                    <p class="text-muted small">Kimlik doğrulama protokolü başlatılıyor...</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary w-100 py-2 mt-3 fw-bold rounded-pill">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Giriş Yap
+                    </button>
+                </form>
+
+                <div class="text-center mt-4 border-top border-secondary pt-3">
+                    <small class="text-muted">Hesabın yok mu?</small>
+                    <a href="{% url 'register' %}" class="text-decoration-none fw-bold ms-1" style="color: var(--neon-purple);">
+                        Erişim İzni Al (Kayıt Ol)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

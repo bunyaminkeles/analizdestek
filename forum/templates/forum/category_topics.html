@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4 p-4 rounded-4 shadow-sm" 
+     style="background: linear-gradient(90deg, rgba(15, 23, 42, 0.9), rgba(56, 189, 248, 0.1)); border: 1px solid var(--glass-border);">
+    <div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none text-muted">Ana Komuta</a></li>
+                <li class="breadcrumb-item active text-light" aria-current="page">{{ category.title }}</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold mb-0 text-white">
+            <i class="{{ category.icon_class|default:'bi bi-folder' }} me-2" style="color: var(--neon-blue);"></i>
+            {{ category.title }}
+        </h2>
+        <p class="text-white-50 small mb-0 mt-1">{{ category.description }}</p>
+    </div>
+    
+    <div>
+        <a href="{% url 'new_topic' category.slug %}" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-lg">
+            <i class="bi bi-plus-lg me-1"></i> Yeni Veri Girişi
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-lg" style="background: var(--glass-bg); backdrop-filter: blur(10px);">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-dark table-borderless align-middle mb-0" style="background: transparent;">
+                <thead class="border-bottom border-secondary text-muted small text-uppercase">
+                    <tr>
+                        <th scope="col" class="ps-4 py-3">Konu Durumu</th>
+                        <th scope="col" class="py-3">Başlık / Başlatan</th>
+                        <th scope="col" class="py-3 text-center">İstatistik</th>
+                        <th scope="col" class="pe-4 py-3 text-end">Son Aktivite</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for topic in topics %}
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td class="ps-4" style="width: 60px;">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 40px; height: 40px; background: rgba(56, 189, 248, 0.1); color: var(--neon-blue);">
+                                <i class="bi bi-chat-dots-fill"></i>
+                            </div>
+                        </td>
+
+                        <td>
+                            <h6 class="mb-0 fw-bold">
+                                <a href="{% url 'topic_detail' topic.pk %}" class="text-decoration-none text-white stretched-link">
+                                    {{ topic.subject }}
+                                </a>
+                            </h6>
+                            <small class="text-muted">
+                                <i class="bi bi-person-circle me-1"></i>{{ topic.starter.username }}
+                                <span class="mx-1">&bull;</span>
+                                {{ topic.created_at|date:"d M Y" }}
+                            </small>
+                        </td>
+
+                        <td class="text-center">
+                            <span class="badge bg-dark border border-secondary text-white-50 rounded-pill px-3">
+                                <i class="bi bi-eye me-1"></i> {{ topic.views }}
+                            </span>
+                            <span class="badge bg-dark border border-secondary text-white-50 rounded-pill px-3 ms-1">
+                                <i class="bi bi-chat-square-text me-1"></i> {{ topic.replies_count }}
+                            </span>
+                        </td>
+
+                        <td class="pe-4 text-end text-muted small">
+                            {{ topic.created_at|timesince }} önce
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+                            Bu frekansta henüz veri akışı yok. İlk kaydı sen oluştur.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
