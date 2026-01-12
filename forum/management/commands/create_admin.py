@@ -3,10 +3,11 @@ from django.contrib.auth.models import User
 import os
 
 class Command(BaseCommand):
+    help = 'Otomatik admin oluşturur'
     def handle(self, *args, **options):
         username = "bunyamin"  # İstediğin kullanıcı adını yazabilirsin
         email = "admin@example.com"
-        password = os.getenv("ADMIN_PASSWORD", "Admin123!") # Şifreyi Render'dan alacak
+        password = os.getenv("ADMIN_PASSWORD", "Yakup1992-") # Şifreyi Render'dan alacak
 
         if not User.objects.filter(username=username).exists():
             User.objects.create_superuser(username, email, password)
