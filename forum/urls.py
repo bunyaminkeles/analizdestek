@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.urls import path, include
 
 urlpatterns = [
     # Ana Sayfa
@@ -23,4 +24,5 @@ urlpatterns = [
     path('search/', views.search_result, name='search_result'),
     path('hakkimizda/', views.about, name='about'), # EKLENEN
     path('iletisim/', views.contact, name='contact'), # EKLENEN
+    path('i18n/', include('django.conf.urls.i18n')), # Dil değiştirme rotası
 ]

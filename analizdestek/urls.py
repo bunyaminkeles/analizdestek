@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     
@@ -15,4 +16,5 @@ urlpatterns = [
 
     # 3. Forum Uygulaması (En sona koymak çakışmaları önler)
     path('', include('forum.urls')),
+    path('i18n/', include('django.conf.urls.i18n')), # DİL MOTORU BURADA
 ]
