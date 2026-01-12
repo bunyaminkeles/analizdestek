@@ -21,4 +21,6 @@ urlpatterns = [
     # Profil ve Arama
     path('profile/<str:username>/', views.profile_detail, name='profile_detail'),
     path('search/', views.search_result, name='search_result'),
+    path('hakkimizda/', views.about, name='about'), # EKLENEN
+    path('iletisim/', views.contact, name='contact'), # EKLENEN
 ]

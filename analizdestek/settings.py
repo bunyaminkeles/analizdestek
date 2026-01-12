@@ -1,4 +1,5 @@
 import os
+import dj_database_url # <-- BU SATIR EKLENDİ
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -10,15 +11,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- GÜVENLİK AYARLARI ---
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-varsayilan-anahtar')
 
-# Yerelde True, Bulutta False olması için .env'den okuyoruz
+# Yerelde True, Bulutta False
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-# Bulut ortamında tüm domainlere izin ver (Gelişmiş güvenlik için ileride spesifikleştirilebilir)
-ALLOWED_HOSTS = ['*']
+# Alan Adı ve Güvenlik
+ALLOWED_HOSTS = ['analizdestek-ai.onrender.com', '127.0.0.1', 'localhost']
+CSRF_TRUSTED_ORIGINS = ['https://analizdestek-ai.onrender.com']
 
 # --- UYGULAMA TANIMLARI ---
 INSTALLED_APPS = [
-    'jazzmin',  # Admin paneli teması
+    'jazzmin',  # Admin paneli teması (En üstte kalmalı)
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -33,7 +35,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # EN ÜSTTE OLMALI
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Statik dosyalar için
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -44,7 +46,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'analizdestek.urls'
 
-# TEMPLATES (Tek bir blok olarak birleştirildi)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -63,27 +64,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'analizdestek.wsgi.application'
 
-# --- VERİTABANI ---
+# --- VERİTABANI (Render PostgreSQL / Local SQLite) ---
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600
+    )
 }
 
-# --- STATİK DOSYALAR (Cloud Uyumluluğu) ---
-# STATIC ayarlarını dosyanın en sonunda kontrol et:
+# --- STATİK DOSYALAR ---
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Yerel geliştirme yaparken bunu geçici olarak yorum satırı yapabilirsin
-# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+if not DEBUG:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    # Canlı ortamda HTTPS zorunluluğu
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 # --- DİĞER AYARLAR ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LANGUAGE_CODE = 'tr' # Türkçe dil desteği
-TIME_ZONE = 'Europe/Istanbul' # Türkiye saat dilimi
+LANGUAGE_CODE = 'tr'
+TIME_ZONE = 'Europe/Istanbul'
 USE_I18N = True
 USE_TZ = True
 
@@ -96,12 +100,22 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 
-# OpenAI API Key
+# API Anahtarları
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
-# Jazzmin Admin Ayarları (Kısaltıldı)
+# --- JAZZMIN AYARLARI (GÜNCELLENDİ) ---
 JAZZMIN_SETTINGS = {
     "site_title": "AnalizDestek Admin",
+    "site_header": "AnalizDestek",
     "site_brand": "AnalizDestek AI",
-    "theme": "flatly",
+    "welcome_sign": "Akademik Veri Üssü Yönetim Paneli",
+    "copyright": "AnalizDestek v2.0",
+    "search_model": ["auth.User", "forum.Topic"],
+    "theme": "darkly", # 2050 vizyonu için koyu tema
+    "dark_mode_theme": "darkly",
 }
+
+# Güvenlik Headerları
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
