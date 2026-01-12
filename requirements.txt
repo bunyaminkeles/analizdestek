@@ -1,24 +1,17 @@
-# Temel Django ve Sunucu Paketleri
-Django==5.2.9
+django==5.2.9
 gunicorn==23.0.0
 whitenoise==6.11.0
-
-# Güvenlik ve Formlar
 django-ratelimit==4.1.0
 django-crispy-forms
 crispy-bootstrap5
-
-# AI ve API Bağlantıları
+dj-database-url
+psycopg2-binary
+markdown==3.7
 openai
 python-dotenv
-
-# Admin Paneli Teması
 django-jazzmin
-
-# Görselleştirme ve Analiz (Opsiyonel ama projenizde yüklü görünenler)
-matplotlib==3.10.8
+matplotlib
 numpy
 pandas
 scipy
 seaborn
-markdown==3.7
