@@ -2,21 +2,31 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Topic, Post
+from django.utils.safestring import mark_safe # <--- BU SATIRI EKLEYİN
 
-# 1. Kayıt Formu (Hukuki Onay Mekanizmalı)
+from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
 class RegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True, label="E-posta Adresi")
-    
-    # Bu alan işaretlenmezse form kayıt yapmaz
-    terms_confirmed = forms.BooleanField(
-        required=True,
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        label="Kullanım Şartlarını ve Etik Beyanı kabul ediyorum."
+    # E-posta alanını zorunlu hale getiriyoruz
+    email = forms.EmailField(
+        required=True, 
+        label="E-Posta Adresi",
+        widget=forms.EmailInput(attrs={'placeholder': 'örnek@üniversite.edu.tr'})
     )
 
-    class Meta(UserCreationForm.Meta):
+    class Meta:
         model = User
-        fields = ("username", "email")
+        fields = ('username', 'email') # Şifre alanları UserCreationForm'dan otomatik gelir
+
+    # İŞTE UÇAN KONTROL BURADA:
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        # Veritabanında bu mail var mı diye bakıyoruz
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Bu e-posta adresi başka bir kullanıcı tarafından alınmış.")
+        return email
 
 # 2. Yeni Konu Açma Formu
 class NewTopicForm(forms.ModelForm):

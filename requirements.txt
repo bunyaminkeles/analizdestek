@@ -1,23 +1,32 @@
-# --- Core Framework & Infrastructure ---
-Django==5.1.4
-dj-database-url==3.1.0
-gunicorn==23.0.0
-whitenoise==6.11.0
+# --- DJANGO ÇEKİRDEK & SUNUCU ---
+Django>=4.2,<6.0
+gunicorn
+dj-database-url
+psycopg2-binary
+whitenoise
 
-# --- Content Processing (Markdown Fix) ---
-markdown==3.7
+# --- TASARIM & ARAYÜZ ---
+django-crispy-forms
+crispy-bootstrap5
+django-jazzmin
+Markdown
 
-# --- UI & Design ---
-django-jazzmin==3.0.1
-django-crispy-forms==2.3
-crispy-bootstrap5==2024.10
+# --- MEDYA & DOSYA ---
+Pillow
 
-# --- AI & Environment ---
-openai==2.15.0
-python-dotenv==1.2.1
+# --- AI & ANALİZ ---
+openai
+numpy
+pandas
+# sqlparse Django ile gelir ama biz yine de ekleyelim
+sqlparse
 
-# --- Utilities & Security ---
-django-ratelimit==4.1.0
-Pillow==11.0.0
-asgiref==3.8.1
-sqlparse==0.5.3
+# --- ARAÇLAR & GÜVENLİK ---
+python-dotenv
+django-ratelimit
+requests
+httpx
+urllib3
+asgiref
+typing_extensions
+packaging

@@ -6,6 +6,26 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.contrib import messages
+from django.http import JsonResponse
+
+@login_required
+def profile_edit(request):
+    user = request.user
+    
+    if request.method == 'POST':
+        new_email = request.POST.get('email').strip()
+        
+        # 1. Kontrol: Bu mail adresi başka bir kullanıcıya ait mi?
+        if User.objects.exclude(pk=user.pk).filter(email=new_email).exists():
+            messages.error(request, "Bu e-posta adresi başka bir hesap tarafından kullanılmaktadır.")
+        else:
+            # Kontrollerden geçtiyse kaydet
+            user.email = new_email
+            user.save()
+            messages.success(request, "Profil bilgileriniz başarıyla güncellendi.")
+            return redirect('profile_detail', username=user.username)
+    
+    return render(request, 'forum/profile_edit.html')
 
 from .models import Section, Category, Topic, Post, Profile
 from .forms import NewTopicForm, PostForm, RegisterForm # <--- RegisterForm eklendi
@@ -131,26 +151,52 @@ def search_result(request):
     
     return render(request, 'forum/search_results.html', {'query': query, 'results': results})
 
-def summarize_topic(request, pk):
-    """Konu tartışmasını özetleyen AI fonksiyonu."""
-    topic = get_object_or_404(Topic, pk=pk)
-    posts = topic.posts.all()
-    
-    if AIAnalyst:
-        try:
-            ai_engine = AIAnalyst()
-            summary = ai_engine.summarize_discussion(topic.subject, posts)
-        except Exception as e:
-            summary = f"Özetleme sırasında bir hata oluştu: {e}"
-    else:
-        summary = "AI Servisi şu an ulaşılamaz durumda."
-    
-    return JsonResponse({'summary': summary})
 
+# Kendi AI Analyst sınıfını import ettiğinden emin ol
+# from .utils import AIAnalyst 
+
+def summarize_topic(request, pk):
+    topic = get_object_or_404(Topic, pk=pk) # Düzeltildi
+    
+    # Tartışma metnini topla
+    discussion_text = "\n".join([f"{post.created_by.username}: {post.message}" for post in topic.posts.all()])
+    
+    try:
+        analyst = AIAnalyst()
+        # Sınıfındaki fonksiyon ismine göre burayı kontrol et (genelde 'summarize' olur)
+        if hasattr(analyst, 'summarize_discussion'):
+            summary = analyst.summarize_discussion(discussion_text)
+        else:
+            summary = analyst.summarize(discussion_text)
+            
+        return JsonResponse({'summary': summary})
+    except Exception as e:
+        return JsonResponse({'summary': f"AI Hatası: {str(e)}"}, status=500)
+    
 def about(request):
     """Vizyon 2050 - Hakkımızda sayfası."""
     return render(request, 'forum/about.html')
 
+# Sadece contact fonksiyonunu bu şekilde değiştir
 def contact(request):
-    """İletişim sayfası."""
+    """İletişim sayfası: Formdan gelen mesajları kaydeder."""
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message_content = request.POST.get('message')
+
+        if name and email and message_content:
+            from .models import ContactMessage
+            ContactMessage.objects.create(
+                name=name,
+                email=email,
+                subject=subject,
+                message=message_content
+            )
+            messages.success(request, "Mesajınız başarıyla iletildi. Akademik ekibimiz sizinle iletişime geçecek.")
+            return redirect('contact')
+        else:
+            messages.error(request, "Lütfen tüm zorunlu alanları doldurun.")
+            
     return render(request, 'forum/contact.html')

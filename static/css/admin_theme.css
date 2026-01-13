@@ -1,0 +1,139 @@
+/* Vizyon 2050 - Ultimate Admin Theme */
+
+/* 1. ANA ARKA PLAN (Sitenin Birebir Aynısı) */
+body, html {
+    background-color: #0f172a !important; /* Derin Lacivert */
+    color: #e2e8f0 !important;
+}
+
+/* 2. O ÇİRKİN BEYAZ SEÇİM KUTULARINI DÜZELTME (Action & Filters) */
+select, .form-control, .select2-selection, .select2-container--default .select2-selection--single {
+    background-color: #1e293b !important; /* Koyu Mavi Kutu */
+    border: 1px solid rgba(56, 189, 248, 0.3) !important; /* Neon Çerçeve */
+    color: #ffffff !important; /* Beyaz Yazı */
+    border-radius: 8px !important;
+}
+
+/* Seçim kutusuna tıklandığında */
+select:focus, .form-control:focus {
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.3) !important;
+    border-color: #00d2ff !important;
+}
+
+/* Select2 (Gelişmiş Seçim Kutuları) İçin Ekstra Ayar */
+.select2-dropdown {
+    background-color: #1e293b !important;
+    border: 1px solid #00d2ff !important;
+}
+.select2-results__option--highlighted {
+    background-color: #00d2ff !important;
+    color: #000 !important;
+}
+
+/* 3. LİSTE TABLOSU (List View) */
+.card {
+    background: rgba(30, 41, 59, 0.6) !important; /* Cam Efekti */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+}
+
+/* Tablo Başlıkları */
+table thead th {
+    background-color: rgba(15, 23, 42, 0.9) !important;
+    color: #00d2ff !important;
+    border-bottom: 2px solid #00d2ff !important;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+/* Tablo Satırları */
+table tbody tr {
+    background-color: transparent !important;
+    transition: all 0.2s;
+}
+table tbody tr:hover {
+    background-color: rgba(0, 210, 255, 0.1) !important; /* Üzerine gelince parlasın */
+}
+table td {
+    color: #cbd5e1 !important;
+    border-top: 1px solid rgba(255,255,255,0.05) !important;
+}
+
+/* 4. YAN MENÜ (Sidebar) */
+.main-sidebar {
+    background: #0f172a !important;
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+.brand-link {
+    background: #0f172a !important;
+    border-bottom: 1px solid rgba(0, 210, 255, 0.3) !important;
+}
+
+/* Aktif Menü Öğesi */
+.nav-pills .nav-link.active {
+    background: linear-gradient(90deg, rgba(0, 210, 255, 0.2), transparent) !important;
+    border-left: 3px solid #00d2ff !important;
+    color: #00d2ff !important;
+    box-shadow: none !important;
+}
+
+/* 5. BUTONLAR (Yeşilleri Maviye Çevir) */
+.btn-primary, .btn-success, .btn-info {
+    background: linear-gradient(45deg, #00d2ff, #3a7bd5) !important;
+    border: none !important;
+    color: white !important;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
+}
+.btn-primary:hover {
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+/* 6. FİLTRE KUTULARI (Sağ veya Üstteki Filtreler) */
+#changelist-filter {
+    background-color: #1e293b !important;
+    border-left: 1px solid rgba(255,255,255,0.1);
+}
+#changelist-filter h3 {
+    background-color: #00d2ff !important;
+    color: #000 !important;
+}
+
+/* 7. CHECKBOX'lar */
+input[type="checkbox"] {
+    accent-color: #00d2ff;
+    cursor: pointer;
+}
+
+/* --- LOGO VE MARKA ALANI DÜZELTMESİ (Taşma Fix) --- */
+
+/* Logo alanının yüksekliğini esnek yap */
+.main-sidebar .brand-link {
+    height: auto !important; 
+    min-height: 60px; /* Standart yükseklik */
+    display: flex !important;
+    align-items: center; /* Dikey ortala */
+    padding: 10px 15px !important;
+    white-space: normal !important; /* Yazının alt satıra geçmesine izin ver */
+}
+
+/* Yazı fontunu ayarla */
+.main-sidebar .brand-link .brand-text {
+    font-size: 0.9rem !important; /* Yazıyı biraz küçült (Örn: 14px) */
+    font-weight: 700 !important;   /* Kalınlaştır */
+    line-height: 1.2 !important;   /* Satır aralığını sıkılaştır */
+    margin-left: 8px !important;   /* İkon ile yazı arasına boşluk */
+    color: #00d2ff !important;     /* Neon Mavi Renk */
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.3); /* Hafif parlama */
+}
+
+/* Logonun (ikonun) boyutu ve hizası */
+.main-sidebar .brand-link .brand-image {
+    float: none !important; /* Jazzmin'in standart float'ını iptal et */
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    max-height: 35px !important; /* İkon yüksekliği */
+    width: auto;
+}

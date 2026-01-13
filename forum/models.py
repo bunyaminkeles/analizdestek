@@ -39,6 +39,8 @@ class Topic(models.Model):
     subject = models.CharField(max_length=255, verbose_name="Konu Başlığı")
     created_at = models.DateTimeField(auto_now_add=True)
     views = models.PositiveIntegerField(default=0)
+    is_pinned = models.BooleanField(default=False, verbose_name="Sabitli mi?")
+    is_closed = models.BooleanField(default=False, verbose_name="Kilitli mi?")
     
     def __str__(self):
         return self.subject
@@ -53,12 +55,14 @@ class Post(models.Model):
 class Profile(models.Model):
     """Kullanıcı Profili"""
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(max_length=500, blank=True)
     account_type = models.CharField(max_length=20, default='Standard') # Standard, Premium, Expert
     title = models.CharField(max_length=100, blank=True, null=True) # Örn: Veri Bilimci
-
+    location = models.CharField(max_length=50, blank=True, null=True, verbose_name="Konum")
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True, verbose_name="Profil Resmi")
+    
     def __str__(self):
         return self.user.username
-    
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
@@ -69,3 +73,4 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
+    

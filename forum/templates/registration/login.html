@@ -2,32 +2,90 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
-    <div class="col-md-5">
-        <div class="card shadow-lg border-0" style="background: rgba(15, 23, 42, 0.8);">
-            <div class="card-body p-5">
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-5 col-lg-4">
+        
+        <div class="card shadow-lg border-0" style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 20px;">
+            <div class="card-body p-4 p-md-5">
+                
                 <div class="text-center mb-4">
-                    <i class="bi bi-fingerprint display-4" style="color: var(--neon-blue);"></i>
-                    <h3 class="fw-bold mt-3 text-white">Sisteme Erişim</h3>
-                    <p class="text-muted small">Kimlik doğrulama protokolü başlatılıyor...</p>
+                    <div class="fingerprint-wrapper mb-3">
+                        <i class="bi bi-fingerprint display-4 text-info animate-pulse"></i>
+                    </div>
+                    <h3 class="fw-bold text-white">Giriş Yap</h3>
                 </div>
 
-                <form method="post">
+                <form method="post" novalidate>
                     {% csrf_token %}
-                    {{ form|crispy }}
-                    <button type="submit" class="btn btn-primary w-100 py-2 mt-3 fw-bold rounded-pill">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Giriş Yap
-                    </button>
+                    
+                    <div class="mb-4 login-field-group">
+                        <label class="text-info fw-bold small mb-2 d-block text-start">Kullanıcı Adı</label>
+                        <div class="input-container">
+                            {{ form.username }}
+                        </div>
+                    </div>
+
+                    <div class="mb-4 login-field-group">
+                        <label class="text-info fw-bold small mb-2 d-block text-start">Şifre</label>
+                        <div class="input-container">
+                            {{ form.password }}
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg fw-bold rounded-pill shadow-lg border-0 py-2"
+                                style="background: linear-gradient(45deg, #00d2ff, #3a7bd5); transition: 0.3s;">
+                            Sisteme Gir
+                        </button>
+                    </div>
                 </form>
 
-                <div class="text-center mt-4 border-top border-secondary pt-3">
-                    <small class="text-muted">Hesabın yok mu?</small>
-                    <a href="{% url 'register' %}" class="text-decoration-none fw-bold ms-1" style="color: var(--neon-purple);">
-                        Erişim İzni Al (Kayıt Ol)
+                <div class="text-center mt-4 pt-3 border-top border-secondary border-opacity-25">
+                    <small class="text-muted opacity-75">Hesabın yok mu?</small>
+                    <a href="{% url 'register' %}" class="fw-bold text-warning text-decoration-none ms-1 hover-glow">
+                        Hemen Kayıt Ol
                     </a>
                 </div>
+                
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* 1. Hizalama ve Form Kontrol Fix */
+    .login-field-group input {
+        width: 100% !important; /* Genişliği zorla eşitle */
+        display: block !important;
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(56, 189, 248, 0.4) !important;
+        border-radius: 10px !important;
+        padding: 12px 15px !important;
+        height: auto !important;
+        transition: all 0.3s ease;
+    }
+
+    .login-field-group input:focus {
+        border-color: #00d2ff !important;
+        box-shadow: 0 0 15px rgba(0, 210, 255, 0.3) !important;
+        outline: none;
+    }
+
+    /* 2. Parmak İzi Nabız Efekti */
+    .animate-pulse {
+        animation: pulse-blue 2s infinite;
+        filter: drop-shadow(0 0 5px rgba(0, 210, 255, 0.5));
+    }
+
+    @keyframes pulse-blue {
+        0% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 15px rgba(0, 210, 255, 0.8)); }
+        100% { transform: scale(1); opacity: 0.8; }
+    }
+
+    .hover-glow:hover {
+        text-shadow: 0 0 10px rgba(255, 193, 7, 0.6);
+    }
+</style>
 {% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-lg border-0" style="background: rgba(15, 23, 42, 0.95); border-radius: 20px; border: 1px solid rgba(56, 189, 248, 0.3);">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-gear text-info display-4"></i>
+                    <h3 class="text-white fw-bold mt-2">Profil Güncelleme</h3>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label text-info small fw-bold">Kullanıcı Adı (Sabit)</label>
+                        <input type="text" class="form-control bg-dark text-muted border-secondary" value="{{ user.username }}" disabled>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label text-info small fw-bold">E-posta Adresi</label>
+                        <input type="email" name="email" class="form-control" value="{{ user.email }}" required style="background-color: #1e293b; color: white; border: 1px solid #38bdf8;">
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary fw-bold py-2 shadow-sm" style="background: linear-gradient(45deg, #00d2ff, #3a7bd5); border: none;">
+                            Değişiklikleri Uygula
+                        </button>
+                        <a href="{% url 'profile_detail' user.username %}" class="btn btn-link text-muted text-decoration-none">
+                            <i class="bi bi-arrow-left me-1"></i> Geri Dön
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
