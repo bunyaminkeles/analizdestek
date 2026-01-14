@@ -67,6 +67,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
                 'forum.context_processors.unread_messages_count',
+                
             ],
         },
     },
