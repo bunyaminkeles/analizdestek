@@ -1,15 +1,15 @@
 from django.core.management.base import BaseCommand
-from forum.models import Category  
+from forum.models import Section, Category  # İki modeli de çağırıyoruz
 from django.utils.text import slugify
 
 class Command(BaseCommand):
-    help = 'Forum kategorilerini otomatik oluşturur'
+    help = 'Forum Section ve Category yapısını kurar'
 
     def handle(self, *args, **kwargs):
+        # MİMARİ PLAN
         structure = [
             {
                 "title": "YAZILIMLAR VE ARAÇLAR",
-                "description": "Analiz için kullanılan programlar ve diller.",
                 "subs": [
                     {"title": "SPSS & AMOS", "description": "Sosyal bilimler analizleri ve YEM."},
                     {"title": "Python & Veri Bilimi", "description": "Pandas, NumPy, Scikit-Learn ve kodlama."},
@@ -21,7 +21,6 @@ class Command(BaseCommand):
             },
             {
                 "title": "ANALİZ YÖNTEMLERİ",
-                "description": "Metodoloji, test seçimi ve yorumlama.",
                 "subs": [
                     {"title": "Temel İstatistik", "description": "Veri temizleme, normallik, betimsel istatistik."},
                     {"title": "Hipotez Testleri", "description": "T-Testi, ANOVA, Mann Whitney U vb."},
@@ -32,7 +31,6 @@ class Command(BaseCommand):
             },
             {
                 "title": "AKADEMİK DANIŞMA",
-                "description": "Tez yazımı, kariyer ve yayın süreci.",
                 "subs": [
                     {"title": "Araştırma Tasarımı", "description": "Örneklem hesabı, metodoloji belirleme."},
                     {"title": "Raporlama & Yazım", "description": "APA formatı, tez yazım kuralları."},
@@ -42,27 +40,31 @@ class Command(BaseCommand):
             }
         ]
 
-        self.stdout.write("🚀 Kategoriler sizin mimarinize göre kuruluyor...")
+        self.stdout.write("🚀 Veritabanı mimarisi kuruluyor...")
 
-        for main in structure:
-            # Ana Kategori (Section'ı olmayan üst başlıklar)
-            parent, created = Category.objects.get_or_create(
+        # Döngüye bir sayaç (index) ekledik ki 'Section' sırasını (order) belirleyelim
+        for index, main in enumerate(structure):
+            
+            # 1. ADIM: Önce SECTION (Ana Başlık) oluştur veya getir
+            # order=index+1 diyerek sıralamayı veriyoruz (1, 2, 3...)
+            section_obj, created = Section.objects.get_or_create(
                 title=main["title"],
-                defaults={
-                    'description': main["description"],
-                    'slug': slugify(main["title"])
-                }
+                defaults={'order': index + 1}
             )
             
-            # Alt Kategoriler (Section alanı parent'a bağlı)
+            action = "Oluşturuldu" if created else "Zaten Vardı"
+            self.stdout.write(f"📂 SECTION: {main['title']} ({action})")
+
+            # 2. ADIM: Şimdi CATEGORY (Alt Başlık) oluştur ve Section'a bağla
             for sub in main["subs"]:
                 Category.objects.get_or_create(
                     title=sub["title"],
-                    section=parent, # Sizin modelde 'section' olarak geçiyor
+                    section=section_obj,  # <--- İşte sihirli bağlantı burada!
                     defaults={
                         'description': sub["description"],
-                        'slug': slugify(sub["title"])
+                        'slug': slugify(sub["title"].replace('ı', 'i').replace('İ', 'i')) # Türkçe karakter düzeltmesi
                     }
                 )
+                self.stdout.write(f"   - 📦 {sub['title']} eklendi.")
 
-        self.stdout.write(self.style.SUCCESS('✨ ANALİZUS Kategorileri Mimarisi Tamamlandı!'))
+        self.stdout.write(self.style.SUCCESS('✨ TÜM BÖLÜMLER VE KATEGORİLER HAZIR KOMUTANIM!'))
