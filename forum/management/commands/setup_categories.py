@@ -1,12 +1,11 @@
 from django.core.management.base import BaseCommand
-from forum.models import Category  # Senin model ismin Category ise
-from django.utils.text import slugify
+from forum.models import Category  # DİKKAT: Senin Model ismin farklıysa burayı düzelt
 
 class Command(BaseCommand):
     help = 'Forum kategorilerini otomatik oluşturur'
 
     def handle(self, *args, **kwargs):
-        # KATEGORİ AĞACI
+        # KATEGORİ AĞACI (Senin onayladığın yapı)
         structure = [
             {
                 "name": "YAZILIMLAR VE ARAÇLAR",
@@ -43,24 +42,21 @@ class Command(BaseCommand):
             }
         ]
 
-        self.stdout.write("🚀 Kategoriler oluşturuluyor...")
+        self.stdout.write("🚀 Kategoriler kontrol ediliyor...")
 
         for main in structure:
-            # Ana Kategori Oluştur
+            # Ana Kategori
             parent, created = Category.objects.get_or_create(
                 name=main["name"],
                 defaults={'description': main["description"]}
             )
-            if created:
-                self.stdout.write(f"✅ Ana Kategori: {main['name']}")
             
-            # Alt Kategorileri Oluştur
+            # Alt Kategoriler
             for child in main["children"]:
                 Category.objects.get_or_create(
                     name=child["name"],
                     parent=parent,
                     defaults={'description': child["description"]}
                 )
-                self.stdout.write(f"   - 📦 {child['name']} eklendi.")
 
-        self.stdout.write(self.style.SUCCESS('✨ TÜM KATEGORİLER BAŞARIYLA KURULDU KOMUTANIM!'))
+        self.stdout.write(self.style.SUCCESS('✨ TÜM KATEGORİLER HAZIR!'))
