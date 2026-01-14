@@ -1,10 +1,8 @@
 import os
-import dj_database_url # <-- BU SATIR EKLENDİ
+import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
 from django.utils.translation import gettext_lazy as _
-
-
 
 # .env dosyasını yükle
 load_dotenv()
@@ -14,20 +12,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- GÜVENLİK AYARLARI ---
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-varsayilan-anahtar')
 
-# Canlıda Debug KAPALI olmalı, yoksa hacklenirsin.
-# Ancak şimdilik os.environ.get ile kontrol ediyoruz.
+# Canlıda Debug KAPALI olmalı.
 DEBUG = 'RENDER' not in os.environ
 
 # Sunucu adresini kabul et
-ALLOWED_HOSTS = ['*'] # Yıldız (*) koyarsan her yerden açılır (Render URL'i dahil)
+ALLOWED_HOSTS = ['*']
 
-# Alan Adı ve Güvenlik
-# ALLOWED_HOSTS = ['analizdestek-ai.onrender.com', '127.0.0.1', 'localhost']
+# CSRF Güvenliği
 CSRF_TRUSTED_ORIGINS = ['https://analizdestek-ai.onrender.com']
 
 # --- UYGULAMA TANIMLARI ---
 INSTALLED_APPS = [
-    'jazzmin',  # Admin paneli teması (En üstte kalmalı)
+    'jazzmin',  # Admin paneli teması
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,11 +39,11 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware', # 1. Önce Oturum
-    'django.middleware.common.CommonMiddleware',             # 2. Sonra Common
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.locale.LocaleMiddleware',            # 3. DİL BURADA OLMALI!
+    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -66,8 +62,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
-                # 'forum.context_processors.unread_messages_count',
-                
+                # 'forum.context_processors.unread_messages_count', # BU GEÇİCİ OLARAK KAPALI
             ],
         },
     },
@@ -75,8 +70,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'analizdestek.wsgi.application'
 
-# --- VERİTABANI (Render PostgreSQL / Local SQLite) ---
-# settings.py
+# --- VERİTABANI ---
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3'),
@@ -86,20 +80,15 @@ DATABASES = {
 
 # --- STATİK DOSYALAR ---
 STATIC_URL = '/static/'
-# Bu klasör canlıda dosyaların toplanacağı yer
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Whitenoise sıkıştırma ayarı (Hız için)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Senin oluşturduğun static klasörleri
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+# Canlı Ortam Güvenlik Ayarları
 if not DEBUG:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    # Canlı ortamda HTTPS zorunluluğu
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -137,76 +126,44 @@ LOCALE_PATHS = [
     BASE_DIR / 'locale/',
 ]
 
-AZZMIN_SETTINGS = {
-    # Başlıklar ve Logolar
+# --- ADMIN PANELİ AYARLARI (JAZZMIN) ---
+JAZZMIN_SETTINGS = {  # DÜZELTME: AZZMIN -> JAZZMIN
     "site_title": "AnalizDestek Komuta Merkezi",
     "site_header": "Vizyon 2050",
     "site_brand": "AnalizDestek Yöneticisi",
     "welcome_sign": "Komuta Merkezine Hoş Geldiniz, Sayın CEO",
     "copyright": "AnalizDestek Ltd.",
-    "search_model": ["auth.User", "forum.Topic"], # CTRL+K ile her şeyi buradan arayacaksın!
+    "search_model": ["auth.User", "forum.Topic"],
 
-    # Menü Ayarları
     "topmenu_links": [
         {"name": "Ana Siteye Dön", "url": "home", "permissions": ["auth.view_user"]},
-        {"name": "Destek Hattı", "url": "https://wa.me/905xxxxxx", "new_window": True},
-        {"model": "auth.User"}, # Kullanıcılara hızlı erişim
+        {"model": "auth.User"},
     ],
 
-    # Kullanıcı Menüsü
     "usermenu_links": [
         {"name": "Profilim", "url": "profile_detail", "new_window": False},
         {"model": "auth.user"}
     ],
 
-    # Yan Menü (Sidebar) Düzeni
     "show_sidebar": True,
     "navigation_expanded": True,
-    "hide_apps": [],
-    "hide_models": [],
-
-    # İkonlar (Bootstrap Icons kullanır)
     "icons": {
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
-        "forum.Topic": "fas fa-comments",       # Konular için ikon
-        "forum.Category": "fas fa-layer-group", # Kategoriler için ikon
-        "forum.Post": "fas fa-comment-dots",    # Mesajlar için ikon
+        "forum.Topic": "fas fa-comments",
+        "forum.Category": "fas fa-layer-group",
+        "forum.Post": "fas fa-comment-dots",
     },
-    
-    # Özel CSS/JS eklemek istersen
-    "custom_css": None,
-    "custom_js": None,
-    
-    # TASARIM AYARLARI (KRİTİK)
-    "show_ui_builder": True, # Canlı tema düzenleyiciyi açar (İşin bitince False yap)
+    "show_ui_builder": True,
 }
 
-# CEO'YA YAKIŞIR KARANLIK TEMA AYARLARI
 JAZZMIN_UI_TWEAKS = {
     "custom_css": "css/admin_theme.css",
-    "navbar_small_text": False,
-    "footer_small_text": False,
-    "body_small_text": False,
-    "brand_small_text": False,
-    "brand_colour": "navbar-dark",
-    "accent": "accent-info",
-    "navbar": "navbar-dark",
-    "no_navbar_border": False,
-    "navbar_fixed": True,
-    "layout_boxed": False,
-    "footer_fixed": False,
-    "sidebar_fixed": True,
-    "sidebar": "sidebar-dark-info", # Yan menü karanlık ve neon mavi detaylı
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": True,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": False,
-    "theme": "cyborg", # İŞTE BU! "Cyborg" teması tam senin sitene göre (Simsiyah ve Neon)
+    "theme": "cyborg",
     "dark_mode_theme": "cyborg",
+    "navbar": "navbar-dark",
+    "sidebar": "sidebar-dark-info",
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",
@@ -217,29 +174,11 @@ JAZZMIN_UI_TWEAKS = {
     }
 }
 
-
-# --- ADMIN KURTARMA OPERASYONU ---
-from django.db.models.signals import post_migrate
-from django.dispatch import receiver
-from django.contrib.auth import get_user_model
-
-@receiver(post_migrate)
-def create_superuser_after_migrate(sender, **kwargs):
-    User = get_user_model()
-    if not User.objects.filter(username='teğmen').exists():
-        User.objects.create_superuser('teğmen', 'admin@example.com', 'Vizyon2050!')
-        print("🚀 CEO Hesabı (teğmen) Sızma Başarılı!")
-
+# --- E-POSTA AYARLARI ---
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
-# Kullanıcı Adı (Sabit)
 EMAIL_HOST_USER = 'opendata.ai@gmail.com'
-
-# Şifre (Render'ın gizli kasasından gelecek)
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-
-# Giden Maillerde Görünecek İsim
 DEFAULT_FROM_EMAIL = 'Analizus Bildirim <opendata.ai@gmail.com>'
