@@ -156,8 +156,12 @@ def register(request):
         form = RegisterForm()
     return render(request, "forum/register.html", {"form": form})
 
+# views.py (Satır 175 civarı)
 def profile_detail(request, username):
     profile_user = get_object_or_404(User, username=username)
+    # EĞER KULLANICININ PROFİLİ YOKSA ÇÖKMEMESİ İÇİN OLUŞTURUYORUZ:
+    if not hasattr(profile_user, 'profile'):
+        Profile.objects.create(user=profile_user)
     return render(request, 'forum/profile_detail.html', {'profile_user': profile_user})
 
 def search_result(request):

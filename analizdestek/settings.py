@@ -62,7 +62,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
-                # 'forum.context_processors.unread_messages_count', # BU GEÇİCİ OLARAK KAPALI
+                'forum.context_processors.unread_messages_count', # BU GEÇİCİ OLARAK KAPALI
             ],
         },
     },
@@ -141,7 +141,7 @@ JAZZMIN_SETTINGS = {  # DÜZELTME: AZZMIN -> JAZZMIN
     ],
 
     "usermenu_links": [
-        {"name": "Profilim", "url": "profile_detail", "new_window": False},
+        {"name": "Profilim", "url": "home", "new_window": False}, 
         {"model": "auth.user"}
     ],
 
