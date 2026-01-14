@@ -3,3 +3,7 @@ __pycache__/
 staticfiles/
 .env
 *.pyc
+
+.gitignore
+avatars/keles.png
+.gitignore

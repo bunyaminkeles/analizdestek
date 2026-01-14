@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load static %}
 <!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -141,23 +141,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item px-2"><a class="nav-link" href="{% url 'about' %}">{% trans "Vizyon 2050" %}</a></li>
-                    <li class="nav-item px-2"><a class="nav-link" href="{% url 'contact' %}">{% trans "İletişim" %}</a></li>
+                    <li class="nav-item px-2"><a class="nav-link" href="{% url 'about' %}">Vizyon 2050</a></li>
+                    <li class="nav-item px-2"><a class="nav-link" href="{% url 'contact' %}">İletişim</a></li>
                 </ul>
                 <div class="d-flex align-items-center">
-                    <form action="{% url 'set_language' %}" method="post" class="me-3">
-                        {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                        <select name="language" onchange="this.form.submit()" class="form-select form-select-sm bg-transparent text-light border-0 shadow-none px-1" style="font-size: 0.75rem; width: auto; cursor: pointer;">
-                            {% get_current_language as CURRENT_LANG %}
-                            {% get_available_languages as LANGUAGES %}
-                            {% for lang in LANGUAGES %}
-                                <option value="{{ lang.0 }}" {% if lang.0 == CURRENT_LANG %}selected{% endif %} class="bg-dark">
-                                    {{ lang.0|upper }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </form>
                     
                     <a href="#" class="nav-link me-3 text-info" data-bs-toggle="modal" data-bs-target="#searchModal">
                         <i class="bi bi-search fs-5"></i>
@@ -169,19 +156,19 @@
                                 <i class="bi bi-person-circle text-primary me-1"></i> {{ user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg mt-2">
-                                <li><a class="dropdown-item" href="{% url 'profile_detail' user.username %}">{% trans "Profilim" %}</a></li>
+                                <li><a class="dropdown-item" href="{% url 'profile_detail' user.username %}">Profilim</a></li>
                                 <li><hr class="dropdown-divider border-secondary"></li>
                                 <li>
                                     <form action="{% url 'logout' %}" method="post" class="d-inline">
                                         {% csrf_token %}
-                                        <button type="submit" class="dropdown-item text-danger">{% trans "Çıkış" %}</button>
+                                        <button type="submit" class="dropdown-item text-danger">Çıkış</button>
                                     </form>
                                 </li>
                             </ul>
                         </div>
                     {% else %}
-                        <a class="nav-link me-3" href="{% url 'login' %}">{% trans "Giriş" %}</a>
-                        <a class="btn btn-primary btn-sm px-4 rounded-pill shadow-sm" href="{% url 'register' %}">{% trans "Kayıt Ol" %}</a>
+                        <a class="nav-link me-3" href="{% url 'login' %}">Giriş</a>
+                        <a class="btn btn-primary btn-sm px-4 rounded-pill shadow-sm" href="{% url 'register' %}">Kayıt Ol</a>
                     {% endif %}
                 </div>
             </div>
@@ -217,7 +204,7 @@
 
     <footer class="py-5 mt-5 border-top border-secondary opacity-75 text-center">
         <div class="container">
-            <p>&copy; 2026 AnalizDestek - {% trans "Akademik Veri Üssü" %}</p>
+            <p>&copy; 2026 AnalizDestek - Akademik Veri Üssü</p>
         </div>
     </footer>
 

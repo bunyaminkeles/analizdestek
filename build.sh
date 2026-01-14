@@ -15,3 +15,4 @@ python manage.py migrate --noinput
 python manage.py setup_categories
 
 python manage.py populate_content
+python manage.py populate_scenarios
