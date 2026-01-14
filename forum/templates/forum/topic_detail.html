@@ -1,183 +1,147 @@
 {% extends 'base.html' %}
-{% block title %}{{ topic.subject }} | AnalizDestek{% endblock %}
 {% load static %}
-{% load markdown_extras %} 
-{% load i18n %}
 
 {% block content %}
-<div class="container py-4">
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb bg-transparent p-0 small">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-info text-decoration-none opacity-75">{% trans "Ana Sayfa" %}</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'category_topics' topic.category.slug %}" class="text-info text-decoration-none opacity-75">{{ topic.category.name }}</a></li>
-            <li class="breadcrumb-item active text-white opacity-50" aria-current="page">Konu #{{ topic.id }}</li>
-        </ol>
-    </nav>
 
-    <div class="row g-4">
-        <div class="col-lg-9">
-            <div class="card border-0 mb-4 shadow-lg cyber-card main-topic-card">
-                <div class="card-body p-4">
-                    <h1 class="fw-bold text-white mb-3 h2">
-                        {% if topic.is_pinned %}<i class="bi bi-pin-angle-fill text-warning me-2"></i>{% endif %}
-                        {{ topic.subject }}
-                    </h1>
-                    <div class="d-flex align-items-center gap-3 text-muted small">
-                        <span class="badge rounded-pill bg-dark border border-info text-info px-3">
-                            <i class="bi bi-folder2-open me-1"></i> {{ topic.category.name }}
-                        </span>
-                        <span><i class="bi bi-clock me-1"></i> {{ topic.created_at|date:"d M Y, H:i" }}</span>
-                        <span><i class="bi bi-eye me-1"></i> {{ topic.views }}</span>
-                    </div>
-                </div>
-            </div>
-
-            {% for post in posts %}
-            <div class="card border-0 mb-3 shadow-sm cyber-card post-card" id="post-{{ post.id }}">
-                <div class="card-body p-0">
-                    <div class="row g-0">
-                        <div class="col-md-2 p-4 border-end border-secondary border-opacity-10 text-center bg-black bg-opacity-20">
-                            <div class="avatar-glow mb-3">
-                                <i class="bi bi-person-circle display-5 text-info"></i>
-                            </div>
-                                <h6 class="text-white mb-1 small fw-bold">
-                                    {% if post.created_by %}
-                                        <a href="{% url 'profile_detail' post.created_by.username %}" class="text-decoration-none text-white">
-                                            {{ post.created_by.username }}
-                                        </a>
-                                    {% else %}
-                                        <span class="text-muted">Silinmiş Kullanıcı</span>
-                                    {% endif %}
-                                </h6>
-                            {% if post.created_by == topic.starter %}
-                                <span class="badge bg-info bg-opacity-10 text-info extra-small border border-info border-opacity-25 mb-2">BAŞLATAN</span>
-                            {% endif %}
-                            <div class="mt-2 opacity-50 extra-small text-muted">Katılım: {{ post.created_by.date_joined|date:"Y" }}</div>
-                        </div>
-
-                        <div class="col-md-10 p-4 d-flex flex-column">
-                            <div class="content-body text-light-gray flex-grow-1">
-                                {{ post.message|markdown|safe }}
-                            </div>
-                            
-                            <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top border-secondary border-opacity-10">
-                                <div class="action-buttons">
-                                    <button class="btn btn-sm btn-link text-muted text-decoration-none dummy-btn"><i class="bi bi-heart me-1"></i>Beğen</button>
-                                    <button class="btn btn-sm btn-link text-muted text-decoration-none dummy-btn"><i class="bi bi-share me-1"></i>Paylaş</button>
-                                </div>
-                                <small class="text-muted opacity-50">#{{ forloop.counter }}</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-
-            <div class="card border-0 shadow-lg mt-5 cyber-card" id="reply-form">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold text-white mb-4"><i class="bi bi-chat-left-dots text-info me-2"></i>Cevap Yaz</h5>
-                    {% if user.is_authenticated %}
-                        <form method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <textarea name="message" class="form-control bg-dark text-white border-secondary p-3" rows="6" 
-                                          placeholder="Analizinizi buraya yazın..." required></textarea>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted"><i class="bi bi-markdown me-1"></i>Markdown desteklenir</small>
-                                <button type="submit" class="btn btn-info px-5 rounded-pill fw-bold text-white shadow-lg">
-                                    {% trans "Gönder" %} <i class="bi bi-send-fill ms-2"></i>
-                                </button>
-                            </div>
-                        </form>
-                    {% else %}
-                        <div class="alert alert-dark border-info border-opacity-25 text-center py-4">
-                            <p class="mb-3">Tartışmaya katılmak için giriş yapmalısınız.</p>
-                            <a href="{% url 'login' %}" class="btn btn-outline-info rounded-pill px-4">Giriş Yap</a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
+<div class="mb-4">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <span class="badge bg-info text-dark mb-2">{{ topic.category.title }}</span>
+            <h1 class="fw-bold text-white display-6">{{ topic.subject }}</h1>
         </div>
+        {% if user.is_authenticated %}
+            {% endif %}
+    </div>
+    <div class="text-muted small">
+        <i class="bi bi-clock"></i> {{ topic.created_at|date:"d M Y, H:i" }} | 
+        <i class="bi bi-eye"></i> {{ topic.views }} Görüntülenme
+    </div>
+</div>
 
-        <div class="col-lg-3">
-            <div class="card border-0 mb-4 ai-module-card shadow-lg overflow-hidden">
-                <div class="card-body p-4 position-relative">
-                    <i class="bi bi-cpu position-absolute opacity-10" style="right: -10px; top: -10px; font-size: 5rem; color: #a78bfa;"></i>
-                    <h6 class="fw-bold mb-3" style="color: #a78bfa;"><i class="bi bi-stars me-2"></i>AI Analiz Modülü</h6>
+<div class="discussion-timeline">
+    {% for post in posts %}
+    <div class="card mb-4 border-0 shadow-lg post-card" id="post-{{ post.id }}">
+        <div class="card-body p-0">
+            <div class="row g-0">
+                
+                <div class="col-md-3 col-lg-2 bg-dark-glass text-center p-4 d-flex flex-column align-items-center justify-content-center border-end border-secondary border-opacity-25">
                     
-                    <div id="ai-summary-content" class="extra-small text-light mb-4" style="font-family: 'Inter', sans-serif; line-height: 1.5; min-height: 60px;">
-                        <p class="opacity-75 fst-italic">Tartışmayı yapay zekaya özetletmek için butona basın.</p>
+                    <div class="avatar-circle mb-3 position-relative">
+                        {% if post.author.profile.avatar %}
+                            <img src="{{ post.author.profile.avatar.url }}" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold" style="width: 80px; height: 80px; font-size: 2rem;">
+                                {{ post.author.username|slice:":1"|upper }}
+                            </div>
+                        {% endif %}
+
+                        <span class="position-absolute bottom-0 start-100 translate-middle p-2 bg-success border border-dark rounded-circle"></span>
                     </div>
 
-                    <button id="btn-summarize" class="btn btn-outline-purple btn-sm w-100 fw-bold rounded-pill">
-                        <i class="bi bi-magic me-2"></i> Tartışmayı Özetle
-                    </button>
-                </div>
-            </div>
-
-            <div class="card border-0 cyber-card shadow-sm">
-                <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3 text-info fw-bold">
-                    {{ topic.category.name }} Kategorisi
-                </div>
-                <div class="list-group list-group-flush bg-transparent">
-                    {% for other_topic in topic.category.topics.all|slice:":5" %}
-                        {% if other_topic != topic %}
-                        <a href="{% url 'topic_detail' other_topic.pk %}" class="list-group-item list-group-item-action bg-transparent text-muted small border-0 py-2">
-                            <i class="bi bi-arrow-right-short text-info me-1"></i> {{ other_topic.subject }}
-                        </a>
+                    <h6 class="text-white fw-bold mb-1">
+                        {{ post.author.username }}
+                        {% if post.author.profile.account_type == 'Expert' %}
+                            <i class="bi bi-patch-check-fill text-info" title="Doğrulanmış Uzman"></i>
                         {% endif %}
-                    {% endfor %}
+                    </h6>
+
+                    <small class="text-info d-block mb-2">
+                        {{ post.author.profile.title|default:"Üye" }}
+                    </small>
+
+                    <div class="user-stats mt-2 text-muted small">
+                        <div class="d-flex justify-content-between px-3">
+                            <span><i class="bi bi-chat-square-text-fill"></i> {{ post.author.posts.count }}</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-9 col-lg-10 p-4 d-flex flex-column">
+                    
+                    <div class="d-flex justify-content-between mb-3 border-bottom border-secondary border-opacity-25 pb-2">
+                        <small class="text-muted">#{{ forloop.counter }}</small>
+                        <small class="text-muted">{{ post.created_at|date:"d M Y - H:i" }}</small>
+                    </div>
+
+                    <div class="message-content text-white flex-grow-1" style="font-size: 1.05rem; line-height: 1.7;">
+                        {{ post.message|linebreaks }}
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-end gap-2">
+                        <button class="btn btn-sm btn-outline-secondary border-0 text-white-50">
+                            <i class="bi bi-hand-thumbs-up"></i> Beğen
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary border-0 text-white-50" onclick="quoteUser('{{ post.author.username }}')">
+                            <i class="bi bi-reply-fill"></i> Alıntıla
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
+    {% endfor %}
+</div>
+
+<div class="card border-0 shadow-lg mt-5 bg-dark-glass reply-section">
+    <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3">
+        <h5 class="mb-0 text-white"><i class="bi bi-pen-fill text-info me-2"></i>Cevap Yaz</h5>
+    </div>
+    <div class="card-body p-4">
+        {% if user.is_authenticated %}
+            <form method="post" id="replyForm">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <textarea name="message" id="id_message" rows="6" class="form-control bg-dark text-white border-secondary" placeholder="Bilgi paylaştıkça çoğalır hocam..." required></textarea>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">Lütfen akademik nezaket kurallarına uyunuz.</small>
+                    <button type="submit" class="btn btn-info px-5 fw-bold rounded-pill">
+                        Gönder <i class="bi bi-send-fill ms-2"></i>
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <div class="text-center py-4">
+                <p class="text-white mb-3">Tartışmaya katılmak için giriş yapmalısınız.</p>
+                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-info rounded-pill px-4 me-2">Giriş Yap</a>
+                <a href="{% url 'register' %}" class="btn btn-primary rounded-pill px-4">Kayıt Ol</a>
+            </div>
+        {% endif %}
+    </div>
 </div>
 
 <style>
-    .cyber-card { background: rgba(15, 23, 42, 0.8) !important; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05) !important; backdrop-filter: blur(10px); }
-    .main-topic-card { border-left: 4px solid #00d2ff !important; }
-    .text-light-gray { color: #cbd5e1; line-height: 1.8; }
-    .extra-small { font-size: 0.75rem; }
-    .btn-outline-purple { border: 1px solid #a78bfa; color: #a78bfa; }
-    .btn-outline-purple:hover { background: #7c3aed; color: white; border-color: #7c3aed; }
-    .ai-module-card { background: linear-gradient(145deg, #1e1b4b, #312e81) !important; border: 1px solid rgba(167, 139, 250, 0.2) !important; }
-    
-    /* Markdown İçerik Stilleri */
-    .content-body h1, .content-body h2 { font-size: 1.25rem; color: #00d2ff; margin-top: 1rem; }
-    .content-body code { background: #000; color: #ff79c6; padding: 2px 5px; border-radius: 4px; }
-    .content-body pre { background: #000; padding: 15px; border-radius: 8px; overflow-x: auto; }
+    .bg-dark-glass {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(10px);
+    }
+    .post-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: transform 0.2s;
+    }
+    .post-card:hover {
+        border-color: rgba(0, 210, 255, 0.3);
+    }
+    .avatar-circle {
+        box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
+        border-radius: 50%;
+    }
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const summarizeBtn = document.getElementById('btn-summarize');
-        if (summarizeBtn) {
-            summarizeBtn.addEventListener('click', function(e) {
-                e.preventDefault(); // Sayfa yenilenmesini durdur
-                
-                const btn = this;
-                const contentDiv = document.getElementById('ai-summary-content');
-                
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> İşleniyor...';
-                
-                fetch("{% url 'summarize_topic' topic.pk %}")
-                    .then(response => {
-                        if (!response.ok) throw new Error('Sunucu hatası');
-                        return response.json();
-                    })
-                    .then(data => {
-                        contentDiv.innerHTML = '<div class="text-info mb-2">AI Analizi:</div>' + data.summary;
-                        btn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Özetlendi';
-                    })
-                    .catch(error => {
-                        contentDiv.innerHTML = '<p class="text-danger small">Hata: Özet alınamadı.</p>';
-                        btn.disabled = false;
-                        btn.innerHTML = 'Tekrar Dene';
-                    });
-            });
+    // Alıntı Yapma Fonksiyonu
+    function quoteUser(username) {
+        const textarea = document.getElementById('id_message');
+        if (textarea) {
+            textarea.value += `@${username} hocam demiş ki:\n> \n\n`;
+            textarea.focus();
+            // Sayfayı aşağı kaydır
+            document.querySelector('.reply-section').scrollIntoView({behavior: 'smooth'});
         }
-    });
+    }
 </script>
+
 {% endblock %}
