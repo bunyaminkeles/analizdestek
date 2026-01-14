@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="text-white fw-bold display-6">
+            <span class="text-info">#</span> {{ section.title }}
+        </h2>
+        <p class="text-muted">Bu bölümdeki forumlar ve tartışma alanları.</p>
+    </div>
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary rounded-pill">
+        <i class="bi bi-arrow-left"></i> Ana Sayfaya Dön
+    </a>
+</div>
+
+<div class="row">
+    {% for category in categories %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 bg-dark text-white border-secondary shadow-sm hover-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="fs-2 text-info me-3">
+                        <i class="bi {{ category.icon_class }}"></i>
+                    </div>
+                    <h5 class="card-title mb-0 fw-bold">
+                        <a href="{% url 'category_topics' category.slug %}" class="text-decoration-none text-white stretched-link">
+                            {{ category.title }}
+                        </a>
+                    </h5>
+                </div>
+                <p class="card-text text-muted small">
+                    {{ category.description|truncatechars:80 }}
+                </p>
+            </div>
+            <div class="card-footer bg-transparent border-secondary d-flex justify-content-between align-items-center small">
+                <span class="text-secondary">
+                    <i class="bi bi-chat-dots"></i> {{ category.topics.count }} Konu
+                </span>
+                <span class="text-info">Giriş Yap <i class="bi bi-chevron-right"></i></span>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-dark text-center">
+            Henüz bu bölümde kategori bulunmuyor.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    .hover-card { transition: transform 0.2s; }
+    .hover-card:hover { transform: translateY(-5px); border-color: #0dcaf0 !important; }
+</style>
+
+{% endblock %}

@@ -37,9 +37,27 @@ except ImportError:
     AIAnalyst = None
 
 def home(request):
-    """Ana sayfa: Tüm bölümleri ve kategorileri listeler."""
-    sections = Section.objects.all().prefetch_related('categories__topics')
+    """
+    YENİ ANA SAYFA (LOBBY):
+    Sadece 3 Ana Bölümü (Section) kart olarak göstermek için çeker.
+    Detayları çekmez, sadece başlıkları alır.
+    """
+    sections = Section.objects.all().order_by('order')
     return render(request, 'forum/home.html', {'sections': sections})
+
+def section_detail(request, pk):
+    """
+    YENİ DETAY SAYFASI:
+    Kullanıcı bir karta tıkladığında, o bölüme ait kategorileri (eski anasayfa gibi) listeler.
+    """
+    section = get_object_or_404(Section, pk=pk)
+    # Sadece bu bölüme ait kategorileri ve içindeki konuları çekiyoruz
+    categories = section.categories.all().prefetch_related('topics')
+    
+    return render(request, 'forum/section_detail.html', {
+        'section': section, 
+        'categories': categories
+    })
 
 def category_topics(request, slug):
     """Belirli bir kategoriye ait konuları listeler."""

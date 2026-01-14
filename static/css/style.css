@@ -195,3 +195,79 @@ label, .form-label, .asteriskField {
     margin-bottom: 0.5rem;
     font-weight: 600;
 }
+
+/* VİZYON 2050 - LANDING PAGE STİLİ */
+
+/* Hero Alanı (Slogan) */
+.hero-section {
+    text-align: center;
+    padding: 80px 20px;
+    background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+    color: #fff;
+    margin-bottom: 40px;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+    margin-bottom: 15px;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: #a0a0a0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* 3 Büyük Kart (Sections) */
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 0 20px 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-card {
+    background: rgba(255, 255, 255, 0.05); /* Cam Efekti */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.section-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 30px rgba(0, 123, 255, 0.3); /* Neon Parlama */
+    border-color: #00d2ff;
+}
+
+.card-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #00d2ff;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.card-desc {
+    font-size: 0.9rem;
+    color: #ccc;
+}

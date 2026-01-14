@@ -4,6 +4,9 @@ from . import views
 urlpatterns = [
     # Ana Sayfa
     path('', views.home, name='home'),
+
+    # Kartlara tıklayınca açılacak detay sayfası (Örn: Yazılımlar Bölümü)
+    path('section/<int:pk>/', views.section_detail, name='section_detail'),
     
     # Üyelik İşlemleri
     path('register/', views.register, name='register'),
