@@ -19,65 +19,69 @@
     </div>
     
     <div>
-        <a href="{% url 'new_topic' category.slug %}" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-lg">
+        <a href="{% url 'new_topic' category.slug %}" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-lg border-0" style="background: linear-gradient(45deg, #00d2ff, #3a7bd5);">
             <i class="bi bi-plus-lg me-1"></i> Yeni Veri Girişi
         </a>
     </div>
 </div>
 
-<div class="card border-0 shadow-lg" style="background: var(--glass-bg); backdrop-filter: blur(10px);">
+<div class="card border-0 shadow-lg" style="background: var(--glass-bg); backdrop-filter: blur(10px); border-radius: 20px; overflow: hidden;">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover table-dark table-borderless align-middle mb-0" style="background: transparent;">
-                <thead class="border-bottom border-secondary text-muted small text-uppercase">
+                <thead class="border-bottom border-secondary text-muted small text-uppercase" style="background: rgba(255,255,255,0.02);">
                     <tr>
-                        <th scope="col" class="ps-4 py-3">Konu Durumu</th>
-                        <th scope="col" class="py-3">Başlık / Başlatan</th>
+                        <th scope="col" class="ps-4 py-3">Durum</th>
+                        <th scope="col" class="py-3">Başlık / Veri Kaynağı</th>
                         <th scope="col" class="py-3 text-center">İstatistik</th>
-                        <th scope="col" class="pe-4 py-3 text-end">Son Aktivite</th>
+                        <th scope="col" class="pe-4 py-3 text-end">Son Sinyal</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for topic in topics %}
-                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td class="ps-4" style="width: 60px;">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center" 
-                                 style="width: 40px; height: 40px; background: rgba(56, 189, 248, 0.1); color: var(--neon-blue);">
-                                <i class="bi bi-chat-dots-fill"></i>
+                    <tr class="position-relative" style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s;">
+                        <td class="ps-4" style="width: 70px;">
+                            <div class="rounded-3 d-flex align-items-center justify-content-center shadow-sm" 
+                                 style="width: 45px; height: 45px; background: rgba(0, 210, 255, 0.1); color: var(--neon-blue); border: 1px solid rgba(0, 210, 255, 0.2);">
+                                <i class="bi {% if topic.is_pinned %}bi-pin-angle-fill text-warning{% else %}bi-chat-left-dots{% endif %} fs-5"></i>
                             </div>
                         </td>
 
                         <td>
-                            <h6 class="mb-0 fw-bold">
-                                <a href="{% url 'topic_detail' topic.pk %}" class="text-decoration-none text-white stretched-link">
+                            <h6 class="mb-1">
+                                <a href="{% url 'topic_detail' pk=topic.pk %}" class="text-decoration-none text-white fw-bold d-block stretched-link hover-neon">
                                     {{ topic.subject }}
                                 </a>
                             </h6>
-                            <small class="text-muted">
-                                <i class="bi bi-person-circle me-1"></i>{{ topic.starter.username }}
-                                <span class="mx-1">&bull;</span>
-                                {{ topic.created_at|date:"d M Y" }}
+                            <small class="text-muted d-flex align-items-center">
+                                <span class="badge bg-secondary bg-opacity-25 text-info me-2">{{ topic.starter.username }}</span>
+                                <i class="bi bi-calendar3 me-1"></i> {{ topic.created_at|date:"d M Y" }}
                             </small>
                         </td>
 
                         <td class="text-center">
-                            <span class="badge bg-dark border border-secondary text-white-50 rounded-pill px-3">
-                                <i class="bi bi-eye me-1"></i> {{ topic.views }}
-                            </span>
-                            <span class="badge bg-dark border border-secondary text-white-50 rounded-pill px-3 ms-1">
-                                <i class="bi bi-chat-square-text me-1"></i> {{ topic.replies_count }}
-                            </span>
+                            <div class="d-flex justify-content-center gap-2">
+                                <div class="stats-box">
+                                    <i class="bi bi-eye text-info"></i> {{ topic.views }}
+                                </div>
+                                <div class="stats-box">
+                                    <i class="bi bi-chat-text text-purple"></i> {{ topic.replies_count }}
+                                </div>
+                            </div>
                         </td>
 
                         <td class="pe-4 text-end text-muted small">
-                            {{ topic.created_at|timesince }} önce
+                            <div class="fw-bold text-white-50">{{ topic.created_at|timesince }} önce</div>
+                            <div class="opacity-50">Sinyal Alındı</div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
                         <td colspan="4" class="text-center py-5 text-muted">
-                            <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
-                            Bu frekansta henüz veri akışı yok. İlk kaydı sen oluştur.
+                            <div class="py-4">
+                                <i class="bi bi-broadcast fs-1 d-block mb-3 opacity-25 text-info"></i>
+                                Bu frekansta henüz aktif veri akışı saptanmadı.
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
@@ -86,4 +90,23 @@
         </div>
     </div>
 </div>
+
+<style>
+    .hover-neon:hover {
+        color: var(--neon-blue) !important;
+        text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+    }
+    .stats-box {
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+    }
+    .text-purple { color: #a78bfa; }
+    tr:hover {
+        background: rgba(56, 189, 248, 0.03) !important;
+    }
+</style>
+
 {% endblock %}

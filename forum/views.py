@@ -6,33 +6,12 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.contrib import messages
-from django.http import JsonResponse
-
 from django.core.mail import send_mail
 from django.conf import settings
 import threading
 
-@login_required
-def profile_edit(request):
-    user = request.user
-    
-    if request.method == 'POST':
-        new_email = request.POST.get('email').strip()
-        
-        # 1. Kontrol: Bu mail adresi başka bir kullanıcıya ait mi?
-        if User.objects.exclude(pk=user.pk).filter(email=new_email).exists():
-            messages.error(request, "Bu e-posta adresi başka bir hesap tarafından kullanılmaktadır.")
-        else:
-            # Kontrollerden geçtiyse kaydet
-            user.email = new_email
-            user.save()
-            messages.success(request, "Profil bilgileriniz başarıyla güncellendi.")
-            return redirect('profile_detail', username=user.username)
-    
-    return render(request, 'forum/profile_edit.html')
-
 from .models import Section, Category, Topic, Post, Profile
-from .forms import NewTopicForm, PostForm, RegisterForm # <--- RegisterForm eklendi
+from .forms import NewTopicForm, PostForm, RegisterForm
 
 # AI Servisi importu
 try:
@@ -40,37 +19,9 @@ try:
 except ImportError:
     AIAnalyst = None
 
-def home(request):
-    """
-    YENİ ANA SAYFA (LOBBY):
-    Sadece 3 Ana Bölümü (Section) kart olarak göstermek için çeker.
-    Detayları çekmez, sadece başlıkları alır.
-    """
-    sections = Section.objects.all().order_by('order')
-    return render(request, 'forum/home.html', {'sections': sections})
-
-def section_detail(request, pk):
-    """
-    YENİ DETAY SAYFASI:
-    Kullanıcı bir karta tıkladığında, o bölüme ait kategorileri (eski anasayfa gibi) listeler.
-    """
-    section = get_object_or_404(Section, pk=pk)
-    # Sadece bu bölüme ait kategorileri ve içindeki konuları çekiyoruz
-    categories = section.categories.all().prefetch_related('topics')
-    
-    return render(request, 'forum/section_detail.html', {
-        'section': section, 
-        'categories': categories
-    })
-
-def category_topics(request, slug):
-    """Belirli bir kategoriye ait konuları listeler."""
-    category = get_object_or_404(Category, slug=slug)
-    topics = category.topics.annotate(replies_count=Count('posts')).order_by('-created_at')
-    return render(request, 'forum/category_topics.html', {'category': category, 'topics': topics})
-
-# --- YARDIMCI FONKSİYON (Maili Arka Planda Atar) ---
+# --- YARDIMCI FONKSİYONLAR ---
 def send_notification_email(subject, message, recipient_list):
+    """Mail gönderme işlemini arka planda yapar."""
     try:
         send_mail(
             subject=subject,
@@ -79,11 +30,32 @@ def send_notification_email(subject, message, recipient_list):
             recipient_list=recipient_list,
             fail_silently=True, 
         )
-        print(f"✅ Mail gönderildi: {recipient_list}")
     except Exception as e:
-        print(f"❌ Mail hatası: {e}")
+        print(f"❌ Mail Hatası: {e}")
 
-# --- GÜNCELLENMİŞ TOPIC_DETAIL FONKSİYONU ---
+# --- VIEW FONKSİYONLARI ---
+
+def home(request):
+    """Lobby: 3 Ana Bölümü listeler."""
+    sections = Section.objects.all().order_by('order')
+    return render(request, 'forum/home.html', {'sections': sections})
+
+def section_detail(request, pk):
+    """Bölüm içi kategorileri listeler."""
+    section = get_object_or_404(Section, pk=pk)
+    categories = section.categories.all().prefetch_related('topics')
+    return render(request, 'forum/section_detail.html', {
+        'section': section, 
+        'categories': categories
+    })
+
+def category_topics(request, slug):
+    """Kategori içindeki konuları listeler."""
+    category = get_object_or_404(Category, slug=slug)
+    # replies_count için Post modeline bakıyoruz
+    topics = category.topics.annotate(replies_count=Count('posts')).order_by('-created_at')
+    return render(request, 'forum/category_topics.html', {'category': category, 'topics': topics})
+
 def topic_detail(request, pk):
     """Konu detaylarını ve mesajları gösterir + BİLDİRİM ATAR"""
     topic = get_object_or_404(Topic, pk=pk)
@@ -91,8 +63,6 @@ def topic_detail(request, pk):
     # Görüntülenme sayısını artır
     topic.views += 1
     topic.save()
-    
-    posts = topic.posts.all().order_by('created_at')
     
     if request.method == 'POST':
         if not request.user.is_authenticated:
@@ -104,41 +74,28 @@ def topic_detail(request, pk):
             post.author = request.user
             post.save()
             
-            # --- BİLDİRİM SİSTEMİ (AKILLI MAİL) ---
-            # 1. Konu sahibinin maili var mı?
-            # 2. Cevap yazan kişi, konu sahibiyle aynı kişi değilse (Kendi kendine yazmadıysa)
+            # BİLDİRİM SİSTEMİ
             if topic.starter.email and topic.starter != request.user:
                 subject = f"🔔 Analizus: '{topic.subject}' konunuza cevap var!"
+                message = f"Merhaba {topic.starter.username},\n\n'{topic.subject}' konunuza {request.user.username} tarafından cevap yazıldı.\n\nDetaylar: https://analizdestek-ai.onrender.com/topic/{topic.pk}/"
                 
-                message = f"""
-Merhaba {topic.starter.username},
-
-Analizus platformunda açtığınız '{topic.subject}' başlıklı konuya, {request.user.username} tarafından yeni bir cevap yazıldı.
-
-Cevabı görmek ve tartışmaya katılmak için tıklayın:
-https://analizdestek-ai.onrender.com/topic/{topic.pk}/
-
-Bilimin ışığında başarılar dileriz,
-Analizus Ekibi
-"""
-                # Maili Thread (Arka plan işlemi) olarak başlat
-                # Bu sayede kullanıcı "Gönder"e basınca beklemez, site anında açılır.
-                email_thread = threading.Thread(
+                threading.Thread(
                     target=send_notification_email, 
                     args=(subject, message, [topic.starter.email])
-                )
-                email_thread.start()
-            # --------------------------------------
+                ).start()
 
+            # KRİTİK: Mesaj kaydedildikten sonra sayfayı tazele!
             return redirect('topic_detail', pk=pk)
     else:
         form = PostForm()
 
+    # Mesajları taze çek
+    posts = topic.posts.all().order_by('created_at')
     return render(request, 'forum/topic_detail.html', {'topic': topic, 'posts': posts, 'form': form})
 
 @login_required
 def new_topic(request, slug):
-    """Yeni bir konu başlığı ve ilk mesajı oluşturur."""
+    """Yeni konu ve İLK MESAJI oluşturur."""
     category = get_object_or_404(Category, slug=slug)
     
     if request.method == 'POST':
@@ -149,6 +106,7 @@ def new_topic(request, slug):
             topic.starter = request.user
             topic.save()
             
+            # İLK MESAJ KAYDI (Sizin görünmeniz için şart)
             first_post = Post.objects.create(
                 topic=topic,
                 author=request.user,
@@ -160,107 +118,74 @@ def new_topic(request, slug):
                 try:
                     ai_engine = AIAnalyst()
                     ai_response = ai_engine.generate_response(topic.subject, first_post.message)
-                    
-                    bot_user, created = User.objects.get_or_create(username="AnalizBot")
-                    if created:
-                        bot_user.set_unusable_password()
-                        if not hasattr(bot_user, 'profile'):
-                             Profile.objects.create(user=bot_user, title="Yapay Zeka Asistanı", account_type="Expert")
-                        bot_user.save()
-
+                    bot_user, _ = User.objects.get_or_create(username="AnalizBot")
                     Post.objects.create(topic=topic, author=bot_user, message=ai_response)
-                except Exception as e:
-                    print(f"AI Bot Hatası: {e}")
+                except: pass
 
             return redirect('topic_detail', pk=topic.pk)
     else:
         form = NewTopicForm()
-    
     return render(request, 'forum/new_topic.html', {'category': category, 'form': form})
 
+# --- DİĞER FONKSİYONLAR (DÜZELTİLMİŞ) ---
+
+@login_required
+def profile_edit(request):
+    user = request.user
+    if request.method == 'POST':
+        new_email = request.POST.get('email').strip()
+        if User.objects.exclude(pk=user.pk).filter(email=new_email).exists():
+            messages.error(request, "Bu e-posta adresi kullanımda.")
+        else:
+            user.email = new_email
+            user.save()
+            messages.success(request, "Profil güncellendi.")
+            return redirect('profile_detail', username=user.username)
+    return render(request, 'forum/profile_edit.html')
+
 def register(request):
-    """Kayıt fonksiyonu: Hukuki onay ve profil oluşturma dahil."""
     if request.method == "POST":
-        form = RegisterForm(request.POST) # <--- Özel formumuz
+        form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # Profil kontrolü ve oluşturma
             if not hasattr(user, 'profile'):
                 Profile.objects.create(user=user)
-            
             login(request, user)
-            messages.success(request, "Akademik veri üssüne hoş geldiniz! Kayıt başarıyla tamamlandı.")
             return redirect("home")
-        else:
-            messages.error(request, "Lütfen formu eksiksiz doldurun ve kullanım şartlarını kabul edin.")
     else:
         form = RegisterForm()
     return render(request, "forum/register.html", {"form": form})
 
 def profile_detail(request, username):
-    """Kullanıcı profili görüntüleme."""
     profile_user = get_object_or_404(User, username=username)
     return render(request, 'forum/profile_detail.html', {'profile_user': profile_user})
 
-@ratelimit(key='ip', rate='5/m', block=True)
 def search_result(request):
-    """Gelişmiş arama fonksiyonu."""
     query = request.GET.get('q')
-    results = []
-    if query:
-        results = Topic.objects.filter(
-            Q(subject__icontains=query) | 
-            Q(posts__message__icontains=query)
-        ).distinct()
-    
+    results = Topic.objects.filter(Q(subject__icontains=query) | Q(posts__message__icontains=query)).distinct() if query else []
     return render(request, 'forum/search_results.html', {'query': query, 'results': results})
 
-
-# Kendi AI Analyst sınıfını import ettiğinden emin ol
-# from .utils import AIAnalyst 
-
 def summarize_topic(request, pk):
-    topic = get_object_or_404(Topic, pk=pk) # Düzeltildi
-    
-    # Tartışma metnini topla
-    discussion_text = "\n".join([f"{post.created_by.username}: {post.message}" for post in topic.posts.all()])
-    
+    topic = get_object_or_404(Topic, pk=pk)
+    # DÜZELTME: post.author.username (created_by değil)
+    discussion_text = "\n".join([f"{post.author.username}: {post.message}" for post in topic.posts.all()])
     try:
         analyst = AIAnalyst()
-        # Sınıfındaki fonksiyon ismine göre burayı kontrol et (genelde 'summarize' olur)
-        if hasattr(analyst, 'summarize_discussion'):
-            summary = analyst.summarize_discussion(discussion_text)
-        else:
-            summary = analyst.summarize(discussion_text)
-            
+        summary = analyst.summarize_discussion(discussion_text) if hasattr(analyst, 'summarize_discussion') else analyst.summarize(discussion_text)
         return JsonResponse({'summary': summary})
     except Exception as e:
         return JsonResponse({'summary': f"AI Hatası: {str(e)}"}, status=500)
-    
+
 def about(request):
-    """Vizyon 2050 - Hakkımızda sayfası."""
     return render(request, 'forum/about.html')
 
-# Sadece contact fonksiyonunu bu şekilde değiştir
 def contact(request):
-    """İletişim sayfası: Formdan gelen mesajları kaydeder."""
     if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        subject = request.POST.get('subject')
-        message_content = request.POST.get('message')
-
-        if name and email and message_content:
+        name, email = request.POST.get('name'), request.POST.get('email')
+        subject, message = request.POST.get('subject'), request.POST.get('message')
+        if name and email and message:
             from .models import ContactMessage
-            ContactMessage.objects.create(
-                name=name,
-                email=email,
-                subject=subject,
-                message=message_content
-            )
-            messages.success(request, "Mesajınız başarıyla iletildi. Akademik ekibimiz sizinle iletişime geçecek.")
+            ContactMessage.objects.create(name=name, email=email, subject=subject, message=message)
+            messages.success(request, "Mesajınız iletildi.")
             return redirect('contact')
-        else:
-            messages.error(request, "Lütfen tüm zorunlu alanları doldurun.")
-            
     return render(request, 'forum/contact.html')
