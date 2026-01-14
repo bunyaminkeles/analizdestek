@@ -1,0 +1,1030 @@
+[
+{
+  "model": "forum.section",
+  "pk": 5,
+  "fields": {
+    "title": "Nicel Analiz & İstatistik",
+    "order": 0
+  }
+},
+{
+  "model": "forum.section",
+  "pk": 6,
+  "fields": {
+    "title": "Nitel Analiz & Araştırma",
+    "order": 0
+  }
+},
+{
+  "model": "forum.section",
+  "pk": 7,
+  "fields": {
+    "title": "İş Zekası & Görselleştirme",
+    "order": 0
+  }
+},
+{
+  "model": "forum.section",
+  "pk": 8,
+  "fields": {
+    "title": "Yapay Zeka & Gelecek",
+    "order": 0
+  }
+},
+{
+  "model": "forum.category",
+  "pk": 11,
+  "fields": {
+    "section": 5,
+    "title": "SPSS & AMOS",
+    "slug": "spss-ve-amos",
+    "description": "T-testi, ANOVA, Regresyon ve Yapısal Eşitlik Modellemesi.",
+    "icon_class": "bi-bar-chart-fill",
+    "created_at": "2026-01-11T23:54:48.856Z"
+  }
+},
+{
+  "model": "forum.category",
+  "pk": 12,
+  "fields": {
+    "section": 5,
+    "title": "R Studio & İstatistik",
+    "slug": "r-studio-ve-istatistik",
+    "description": "Akademik R paketleri, ggplot2 görselleştirme.",
+    "icon_class": "bi-r-circle",
+    "created_at": "2026-01-11T23:54:48.944Z"
+  }
+},
+{
+  "model": "forum.category",
+  "pk": 13,
+  "fields": {
+    "section": 5,
+    "title": "Python & Veri Bilimi",
+    "slug": "python-ve-veri-bilimi",
+    "description": "Pandas, NumPy, Scikit-learn ile makine öğrenmesi.",
+    "icon_class": "bi-filetype-py",
+    "created_at": "2026-01-11T23:54:49.010Z"
+  }
+},
+{
+  "model": "forum.category",
+  "pk": 14,
+  "fields": {
+    "section": 5,
+    "title": "Ekonometri & Stata",
+    "slug": "ekonometri-ve-stata",
+    "description": "Zaman serileri ve panel veri analizi.",
+    "icon_class": "bi-graph-up-arrow",
+    "created_at": "2026-01-11T23:54:49.093Z"
+  }
+},
+{
+  "model": "forum.category",
+  "pk": 15,
+  "fields": {
+    "section": 6,
+    "title": "NVivo & MAXQDA",
+    "slug": "nvivo-ve-maxqda",
+    "description": "Nitel veri kodlama ve tematik analiz.",
+    "icon_class": "bi-chat-quote-fill",
+    "created_at": "2026-01-11T23:54:49.232Z"
+  }
+},
+{
+  "model": "forum.category",
+  "pk": 16,
+  "fields": {
+    "section": 6,
+    "title": "Metodoloji Tasarımı",
+    "slug": "metodoloji-tasarm",
+    "description": "Örneklem seçimi ve anket hazırlama.",
+    "icon_class": "bi-journal-richtext",
+    "created_at": "2026-01-11T23:54:49.307Z"
+  }
+},
+{
+  "model": "forum.category",
+  "pk": 17,
+  "fields": {
+    "section": 6,
+    "title": "Tez & Makale Yazımı",
+    "slug": "tez-ve-makale-yazm",
+    "description": "Akademik yazım kuralları ve dergi süreçleri.",
+    "icon_class": "bi-pen-fill",
+    "created_at": "2026-01-11T23:54:49.407Z"
+  }
+},
+{
+  "model": "forum.category",
+  "pk": 18,
+  "fields": {
+    "section": 7,
+    "title": "Power BI & Tableau",
+    "slug": "power-bi-ve-tableau",
+    "description": "Dashboard tasarımı ve DAX formülleri.",
+    "icon_class": "bi-pie-chart-fill",
+    "created_at": "2026-01-11T23:54:49.466Z"
+  }
+},
+{
+  "model": "forum.category",
+  "pk": 19,
+  "fields": {
+    "section": 7,
+    "title": "Excel & İleri Düzey",
+    "slug": "excel-ve-ileri-duzey",
+    "description": "VBA ve karmaşık Excel formülleri.",
+    "icon_class": "bi-grid-3x3-gap-fill",
+    "created_at": "2026-01-11T23:54:49.518Z"
+  }
+},
+{
+  "model": "forum.category",
+  "pk": 20,
+  "fields": {
+    "section": 8,
+    "title": "LLM & Prompt Mühendisliği",
+    "slug": "llm-ve-prompt-muhendisligi",
+    "description": "ChatGPT, Claude ve akademik AI kullanımı.",
+    "icon_class": "bi-robot",
+    "created_at": "2026-01-11T23:54:49.588Z"
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 28,
+  "fields": {
+    "category": 11,
+    "starter": 4,
+    "subject": "Hangi testi kullanacağıma karar veremedim",
+    "created_at": "2026-01-11T23:54:48.869Z",
+    "views": 166,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 29,
+  "fields": {
+    "category": 11,
+    "starter": 4,
+    "subject": "Veri setim normal dağılmıyor, ne yapmalıyım?",
+    "created_at": "2026-01-11T23:54:48.895Z",
+    "views": 190,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 30,
+  "fields": {
+    "category": 11,
+    "starter": 3,
+    "subject": "SPSS ile analiz yaparken hata alıyorum",
+    "created_at": "2026-01-11T23:54:48.921Z",
+    "views": 134,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 31,
+  "fields": {
+    "category": 12,
+    "starter": 1,
+    "subject": "R raporlama formatı nasıl olmalı?",
+    "created_at": "2026-01-11T23:54:48.952Z",
+    "views": 409,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 32,
+  "fields": {
+    "category": 12,
+    "starter": 1,
+    "subject": "Veri setim normal dağılmıyor, ne yapmalıyım?",
+    "created_at": "2026-01-11T23:54:48.979Z",
+    "views": 117,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 33,
+  "fields": {
+    "category": 13,
+    "starter": 3,
+    "subject": "Python ile analiz yaparken hata alıyorum",
+    "created_at": "2026-01-11T23:54:49.020Z",
+    "views": 88,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 34,
+  "fields": {
+    "category": 13,
+    "starter": 4,
+    "subject": "Veri setim normal dağılmıyor, ne yapmalıyım?",
+    "created_at": "2026-01-11T23:54:49.062Z",
+    "views": 263,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 35,
+  "fields": {
+    "category": 14,
+    "starter": 4,
+    "subject": "Veri setim normal dağılmıyor, ne yapmalıyım?",
+    "created_at": "2026-01-11T23:54:49.103Z",
+    "views": 424,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 36,
+  "fields": {
+    "category": 14,
+    "starter": 1,
+    "subject": "Ekonometri raporlama formatı nasıl olmalı?",
+    "created_at": "2026-01-11T23:54:49.131Z",
+    "views": 391,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 37,
+  "fields": {
+    "category": 14,
+    "starter": 8,
+    "subject": "Hangi testi kullanacağıma karar veremedim",
+    "created_at": "2026-01-11T23:54:49.165Z",
+    "views": 378,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 38,
+  "fields": {
+    "category": 14,
+    "starter": 1,
+    "subject": "Ekonometri ile analiz yaparken hata alıyorum",
+    "created_at": "2026-01-11T23:54:49.186Z",
+    "views": 257,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 39,
+  "fields": {
+    "category": 15,
+    "starter": 8,
+    "subject": "Veri setim normal dağılmıyor, ne yapmalıyım?",
+    "created_at": "2026-01-11T23:54:49.249Z",
+    "views": 109,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 40,
+  "fields": {
+    "category": 15,
+    "starter": 2,
+    "subject": "NVivo ile analiz yaparken hata alıyorum",
+    "created_at": "2026-01-11T23:54:49.279Z",
+    "views": 72,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 41,
+  "fields": {
+    "category": 16,
+    "starter": 4,
+    "subject": "Veri setim normal dağılmıyor, ne yapmalıyım?",
+    "created_at": "2026-01-11T23:54:49.316Z",
+    "views": 439,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 42,
+  "fields": {
+    "category": 16,
+    "starter": 4,
+    "subject": "Metodoloji raporlama formatı nasıl olmalı?",
+    "created_at": "2026-01-11T23:54:49.352Z",
+    "views": 213,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 43,
+  "fields": {
+    "category": 16,
+    "starter": 1,
+    "subject": "Metodoloji ile analiz yaparken hata alıyorum",
+    "created_at": "2026-01-11T23:54:49.389Z",
+    "views": 391,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 44,
+  "fields": {
+    "category": 17,
+    "starter": 8,
+    "subject": "Tez raporlama formatı nasıl olmalı?",
+    "created_at": "2026-01-11T23:54:49.416Z",
+    "views": 185,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 45,
+  "fields": {
+    "category": 17,
+    "starter": 5,
+    "subject": "Hangi testi kullanacağıma karar veremedim",
+    "created_at": "2026-01-11T23:54:49.434Z",
+    "views": 67,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 46,
+  "fields": {
+    "category": 18,
+    "starter": 2,
+    "subject": "Veri setim normal dağılmıyor, ne yapmalıyım?",
+    "created_at": "2026-01-11T23:54:49.474Z",
+    "views": 130,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 47,
+  "fields": {
+    "category": 18,
+    "starter": 8,
+    "subject": "Power raporlama formatı nasıl olmalı?",
+    "created_at": "2026-01-11T23:54:49.492Z",
+    "views": 470,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 48,
+  "fields": {
+    "category": 19,
+    "starter": 8,
+    "subject": "Veri setim normal dağılmıyor, ne yapmalıyım?",
+    "created_at": "2026-01-11T23:54:49.527Z",
+    "views": 323,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 49,
+  "fields": {
+    "category": 19,
+    "starter": 5,
+    "subject": "Hangi testi kullanacağıma karar veremedim",
+    "created_at": "2026-01-11T23:54:49.547Z",
+    "views": 146,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 50,
+  "fields": {
+    "category": 20,
+    "starter": 5,
+    "subject": "Veri setim normal dağılmıyor, ne yapmalıyım?",
+    "created_at": "2026-01-11T23:54:49.598Z",
+    "views": 246,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 51,
+  "fields": {
+    "category": 20,
+    "starter": 5,
+    "subject": "LLM raporlama formatı nasıl olmalı?",
+    "created_at": "2026-01-11T23:54:49.624Z",
+    "views": 137,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.topic",
+  "pk": 52,
+  "fields": {
+    "category": 12,
+    "starter": 7,
+    "subject": "Verilerimin analiz edilmesi",
+    "created_at": "2026-01-12T00:09:33.577Z",
+    "views": 2,
+    "is_pinned": false,
+    "is_closed": false
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 52,
+  "fields": {
+    "topic": 28,
+    "author": 4,
+    "message": "Merhaba,\n\n**Hangi testi kullanacağıma karar veremedim** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:48.878Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 53,
+  "fields": {
+    "topic": 28,
+    "author": 5,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:48.886Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 54,
+  "fields": {
+    "topic": 29,
+    "author": 4,
+    "message": "Merhaba,\n\n**Veri setim normal dağılmıyor, ne yapmalıyım?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:48.904Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 55,
+  "fields": {
+    "topic": 29,
+    "author": 8,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:48.913Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 56,
+  "fields": {
+    "topic": 30,
+    "author": 3,
+    "message": "Merhaba,\n\n**SPSS ile analiz yaparken hata alıyorum** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:48.930Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 57,
+  "fields": {
+    "topic": 31,
+    "author": 1,
+    "message": "Merhaba,\n\n**R raporlama formatı nasıl olmalı?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:48.961Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 58,
+  "fields": {
+    "topic": 31,
+    "author": 3,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:48.970Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 59,
+  "fields": {
+    "topic": 32,
+    "author": 1,
+    "message": "Merhaba,\n\n**Veri setim normal dağılmıyor, ne yapmalıyım?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:48.989Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 60,
+  "fields": {
+    "topic": 32,
+    "author": 3,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:48.999Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 61,
+  "fields": {
+    "topic": 33,
+    "author": 3,
+    "message": "Merhaba,\n\n**Python ile analiz yaparken hata alıyorum** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.029Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 62,
+  "fields": {
+    "topic": 33,
+    "author": 1,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:49.047Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 63,
+  "fields": {
+    "topic": 34,
+    "author": 4,
+    "message": "Merhaba,\n\n**Veri setim normal dağılmıyor, ne yapmalıyım?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.076Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 64,
+  "fields": {
+    "topic": 34,
+    "author": 2,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:49.085Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 65,
+  "fields": {
+    "topic": 35,
+    "author": 4,
+    "message": "Merhaba,\n\n**Veri setim normal dağılmıyor, ne yapmalıyım?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.113Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 66,
+  "fields": {
+    "topic": 35,
+    "author": 8,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:49.122Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 67,
+  "fields": {
+    "topic": 36,
+    "author": 1,
+    "message": "Merhaba,\n\n**Ekonometri raporlama formatı nasıl olmalı?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.142Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 68,
+  "fields": {
+    "topic": 36,
+    "author": 2,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:49.156Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 69,
+  "fields": {
+    "topic": 37,
+    "author": 8,
+    "message": "Merhaba,\n\n**Hangi testi kullanacağıma karar veremedim** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.177Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 70,
+  "fields": {
+    "topic": 38,
+    "author": 1,
+    "message": "Merhaba,\n\n**Ekonometri ile analiz yaparken hata alıyorum** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.194Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 71,
+  "fields": {
+    "topic": 38,
+    "author": 3,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:49.206Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 72,
+  "fields": {
+    "topic": 39,
+    "author": 8,
+    "message": "Merhaba,\n\n**Veri setim normal dağılmıyor, ne yapmalıyım?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.264Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 73,
+  "fields": {
+    "topic": 40,
+    "author": 2,
+    "message": "Merhaba,\n\n**NVivo ile analiz yaparken hata alıyorum** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.288Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 74,
+  "fields": {
+    "topic": 40,
+    "author": 5,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:49.297Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 75,
+  "fields": {
+    "topic": 41,
+    "author": 4,
+    "message": "Merhaba,\n\n**Veri setim normal dağılmıyor, ne yapmalıyım?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.325Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 76,
+  "fields": {
+    "topic": 41,
+    "author": 8,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:49.334Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 77,
+  "fields": {
+    "topic": 42,
+    "author": 4,
+    "message": "Merhaba,\n\n**Metodoloji raporlama formatı nasıl olmalı?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.368Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 78,
+  "fields": {
+    "topic": 42,
+    "author": 3,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:49.380Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 79,
+  "fields": {
+    "topic": 43,
+    "author": 1,
+    "message": "Merhaba,\n\n**Metodoloji ile analiz yaparken hata alıyorum** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.398Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 80,
+  "fields": {
+    "topic": 44,
+    "author": 8,
+    "message": "Merhaba,\n\n**Tez raporlama formatı nasıl olmalı?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.425Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 81,
+  "fields": {
+    "topic": 45,
+    "author": 5,
+    "message": "Merhaba,\n\n**Hangi testi kullanacağıma karar veremedim** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.446Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 82,
+  "fields": {
+    "topic": 46,
+    "author": 2,
+    "message": "Merhaba,\n\n**Veri setim normal dağılmıyor, ne yapmalıyım?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.483Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 83,
+  "fields": {
+    "topic": 47,
+    "author": 8,
+    "message": "Merhaba,\n\n**Power raporlama formatı nasıl olmalı?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.501Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 84,
+  "fields": {
+    "topic": 47,
+    "author": 4,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:49.510Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 85,
+  "fields": {
+    "topic": 48,
+    "author": 8,
+    "message": "Merhaba,\n\n**Veri setim normal dağılmıyor, ne yapmalıyım?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.536Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 86,
+  "fields": {
+    "topic": 49,
+    "author": 5,
+    "message": "Merhaba,\n\n**Hangi testi kullanacağıma karar veremedim** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.562Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 87,
+  "fields": {
+    "topic": 49,
+    "author": 2,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:49.570Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 88,
+  "fields": {
+    "topic": 50,
+    "author": 5,
+    "message": "Merhaba,\n\n**Veri setim normal dağılmıyor, ne yapmalıyım?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.606Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 89,
+  "fields": {
+    "topic": 50,
+    "author": 3,
+    "message": "Merhaba, veri setinizin detaylarını paylaşabilir misiniz?",
+    "created_at": "2026-01-11T23:54:49.615Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 90,
+  "fields": {
+    "topic": 51,
+    "author": 5,
+    "message": "Merhaba,\n\n**LLM raporlama formatı nasıl olmalı?** konusunda yardıma ihtiyacım var. Verilerim hazır ama analiz adımında takıldım.\n\nTeşekkürler.",
+    "created_at": "2026-01-11T23:54:49.633Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 91,
+  "fields": {
+    "topic": 52,
+    "author": 7,
+    "message": "Elimde excel verileri var ve analiz edilmesi gerekiyor",
+    "created_at": "2026-01-12T00:09:33.586Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 92,
+  "fields": {
+    "topic": 52,
+    "author": 1,
+    "message": "Merhaba, ben AnalizBot (Simülasyon Modu). 👋\n\nŞu an gerçek bir OpenAI anahtarı tanımlı olmadığı için otomatik cevap veriyorum.\n**'Verilerimin analiz edilmesi'** konusu akademik açıdan incelenmeye değer görünüyor.\n\nGenel önerim şudur:\n1. Veri setinizin normallik dağılımını kontrol edin (Shapiro-Wilk testi).\n2. Eğer verileriniz kategorik ise Ki-Kare testi uygulayabilirsiniz.\n3. Literatür taraması yaparken son 5 yılın makalelerine odaklanın.\n\n*(Not: Bu otomatik bir test mesajıdır. Gerçek AI için settings.py dosyasına geçerli bir API Key ekleyin.)*",
+    "created_at": "2026-01-12T00:09:33.595Z"
+  }
+},
+{
+  "model": "forum.post",
+  "pk": 93,
+  "fields": {
+    "topic": 28,
+    "author": 8,
+    "message": "merhaba",
+    "created_at": "2026-01-12T19:15:24.505Z"
+  }
+},
+{
+  "model": "forum.profile",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "bio": "",
+    "account_type": "Expert",
+    "title": "Yapay Zeka Asistanı",
+    "location": null,
+    "avatar": ""
+  }
+},
+{
+  "model": "forum.profile",
+  "pk": 2,
+  "fields": {
+    "user": 2,
+    "bio": "",
+    "account_type": "Expert",
+    "title": "Doç. Dr. (Ekonometri)",
+    "location": null,
+    "avatar": ""
+  }
+},
+{
+  "model": "forum.profile",
+  "pk": 3,
+  "fields": {
+    "user": 3,
+    "bio": "",
+    "account_type": "Premium",
+    "title": "Data Scientist @ TechComp",
+    "location": null,
+    "avatar": ""
+  }
+},
+{
+  "model": "forum.profile",
+  "pk": 4,
+  "fields": {
+    "user": 4,
+    "bio": "",
+    "account_type": "Standard",
+    "title": "Doktora Öğrencisi",
+    "location": null,
+    "avatar": ""
+  }
+},
+{
+  "model": "forum.profile",
+  "pk": 5,
+  "fields": {
+    "user": 5,
+    "bio": "",
+    "account_type": "Standard",
+    "title": "Yüksek Lisans Öğrencisi",
+    "location": null,
+    "avatar": ""
+  }
+},
+{
+  "model": "forum.profile",
+  "pk": 6,
+  "fields": {
+    "user": 6,
+    "bio": "",
+    "account_type": "Standard",
+    "title": null,
+    "location": null,
+    "avatar": ""
+  }
+},
+{
+  "model": "forum.profile",
+  "pk": 7,
+  "fields": {
+    "user": 7,
+    "bio": "",
+    "account_type": "Expert",
+    "title": null,
+    "location": null,
+    "avatar": ""
+  }
+},
+{
+  "model": "forum.profile",
+  "pk": 8,
+  "fields": {
+    "user": 8,
+    "bio": "",
+    "account_type": "Admin",
+    "title": "Sistem Yöneticisi",
+    "location": null,
+    "avatar": "avatars/keles.png"
+  }
+},
+{
+  "model": "forum.profile",
+  "pk": 9,
+  "fields": {
+    "user": 9,
+    "bio": "",
+    "account_type": "Standard",
+    "title": null,
+    "location": null,
+    "avatar": ""
+  }
+},
+{
+  "model": "forum.profile",
+  "pk": 12,
+  "fields": {
+    "user": 12,
+    "bio": "",
+    "account_type": "Standard",
+    "title": null,
+    "location": null,
+    "avatar": ""
+  }
+},
+{
+  "model": "forum.contactmessage",
+  "pk": 1,
+  "fields": {
+    "name": "selami haktan",
+    "email": "bkeles74@gmail.com",
+    "subject": "selam",
+    "message": "selam",
+    "created_at": "2026-01-13T21:28:42.386Z"
+  }
+}
+]
