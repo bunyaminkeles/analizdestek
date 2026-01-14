@@ -154,9 +154,10 @@
                         <a href="{% url 'inbox' %}" class="nav-link me-3 position-relative text-info">
                             <i class="bi bi-envelope-paper fs-5"></i>
                             {% if unread_count > 0 %}
-                            <span class="position-absolute top-2 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" title="{{ unread_count }} Yeni Mesaj">
-                                <span class="visually-hidden">Yeni Mesaj</span>
-                            </span>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ unread_count }}
+                                    <span class="visually-hidden">okunmamış mesaj</span>
+                                </span>
                             {% endif %}
                         </a>
                         
