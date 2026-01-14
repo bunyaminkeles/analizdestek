@@ -227,3 +227,17 @@ def create_superuser_after_migrate(sender, **kwargs):
     if not User.objects.filter(username='teğmen').exists():
         User.objects.create_superuser('teğmen', 'admin@example.com', 'Vizyon2050!')
         print("🚀 CEO Hesabı (teğmen) Sızma Başarılı!")
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# Kullanıcı Adı (Sabit)
+EMAIL_HOST_USER = 'opendata.ai@gmail.com'
+
+# Şifre (Render'ın gizli kasasından gelecek)
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+
+# Giden Maillerde Görünecek İsim
+DEFAULT_FROM_EMAIL = 'Analizus Bildirim <opendata.ai@gmail.com>'

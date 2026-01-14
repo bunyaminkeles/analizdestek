@@ -8,6 +8,10 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.http import JsonResponse
 
+from django.core.mail import send_mail
+from django.conf import settings
+import threading
+
 @login_required
 def profile_edit(request):
     user = request.user
@@ -65,8 +69,23 @@ def category_topics(request, slug):
     topics = category.topics.annotate(replies_count=Count('posts')).order_by('-created_at')
     return render(request, 'forum/category_topics.html', {'category': category, 'topics': topics})
 
+# --- YARDIMCI FONKSİYON (Maili Arka Planda Atar) ---
+def send_notification_email(subject, message, recipient_list):
+    try:
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=recipient_list,
+            fail_silently=True, 
+        )
+        print(f"✅ Mail gönderildi: {recipient_list}")
+    except Exception as e:
+        print(f"❌ Mail hatası: {e}")
+
+# --- GÜNCELLENMİŞ TOPIC_DETAIL FONKSİYONU ---
 def topic_detail(request, pk):
-    """Konu detaylarını ve mesajları gösterir."""
+    """Konu detaylarını ve mesajları gösterir + BİLDİRİM ATAR"""
     topic = get_object_or_404(Topic, pk=pk)
     
     # Görüntülenme sayısını artır
@@ -84,6 +103,33 @@ def topic_detail(request, pk):
             post.topic = topic
             post.author = request.user
             post.save()
+            
+            # --- BİLDİRİM SİSTEMİ (AKILLI MAİL) ---
+            # 1. Konu sahibinin maili var mı?
+            # 2. Cevap yazan kişi, konu sahibiyle aynı kişi değilse (Kendi kendine yazmadıysa)
+            if topic.starter.email and topic.starter != request.user:
+                subject = f"🔔 Analizus: '{topic.subject}' konunuza cevap var!"
+                
+                message = f"""
+Merhaba {topic.starter.username},
+
+Analizus platformunda açtığınız '{topic.subject}' başlıklı konuya, {request.user.username} tarafından yeni bir cevap yazıldı.
+
+Cevabı görmek ve tartışmaya katılmak için tıklayın:
+https://analizdestek-ai.onrender.com/topic/{topic.pk}/
+
+Bilimin ışığında başarılar dileriz,
+Analizus Ekibi
+"""
+                # Maili Thread (Arka plan işlemi) olarak başlat
+                # Bu sayede kullanıcı "Gönder"e basınca beklemez, site anında açılır.
+                email_thread = threading.Thread(
+                    target=send_notification_email, 
+                    args=(subject, message, [topic.starter.email])
+                )
+                email_thread.start()
+            # --------------------------------------
+
             return redirect('topic_detail', pk=pk)
     else:
         form = PostForm()
