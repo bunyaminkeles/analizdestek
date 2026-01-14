@@ -13,118 +13,22 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2050">
     
     <style>
-        /* 1. DEĞİŞKENLER VE TEMEL YAPI */
         :root {
             --neon-blue: #00d2ff;
             --glass-bg: rgba(15, 23, 42, 0.85);
             --glass-border: rgba(255, 255, 255, 0.1);
             --neon-purple: #a78bfa;
         }
-
-        body { 
-            background-color: #0f172a; 
-            color: #e2e8f0; 
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* 2. NAVİGASYON VE BİLEŞENLER */
-        .navbar {
-            background: var(--glass-bg) !important;
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .text-gradient {
-            background: linear-gradient(45deg, var(--neon-blue), #3a7bd5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* 3. FORM VE MODAL DÜZENLEMELERİ */
-        input, select, textarea, .form-control, .form-select {
-            background-color: #1e293b !important;
-            color: #ffffff !important;
-            border: 1px solid rgba(56, 189, 248, 0.3) !important;
-        }
-
-        input:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0 30px #1e293b inset !important;
-            -webkit-text-fill-color: #ffffff !important;
-        }
-
-        .form-control:focus {
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2) !important;
-            border-color: var(--neon-blue) !important;
-        }
-
-        .modal-content {
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-        }
-
-        /* 4. CANLILIK VE ANİMASYONLAR */
-        .cyber-card, .card {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid var(--glass-border);
-        }
-
-        .cyber-card:hover, .card:hover {
-            transform: translateY(-7px);
-            box-shadow: 0 10px 25px rgba(0, 210, 255, 0.2);
-            border-color: var(--neon-blue) !important;
-        }
-
-        /* İkon Parlama Efekti */
-        .bi-cpu, .bi-stars {
-            animation: neon-pulse 3s infinite ease-in-out;
-        }
-
-        @keyframes neon-pulse {
-            0%, 100% { filter: drop-shadow(0 0 2px rgba(0, 210, 255, 0.2)); opacity: 0.8; }
-            50% { filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.5)); opacity: 1; }
-        }
-
-        /* 5. KAYAN BANNER (TICKER) */
-        .cyber-ticker-wrapper {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(0, 210, 255, 0.3);
-            height: 35px;
-            z-index: 9999;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-        }
-
-        .ticker-content {
-            display: flex;
-            white-space: nowrap;
-            animation: ticker-animation 40s linear infinite;
-        }
-
-        .ticker-item {
-            padding: 0 30px;
-            color: var(--neon-blue);
-            font-family: 'Courier New', monospace;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .ticker-item i { color: var(--neon-purple); }
-
-        @keyframes ticker-animation {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
+        body { background-color: #0f172a; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
+        .navbar { background: var(--glass-bg) !important; backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-border); }
+        .text-gradient { background: linear-gradient(45deg, var(--neon-blue), #3a7bd5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        input, select, textarea, .form-control { background-color: #1e293b !important; color: #ffffff !important; border: 1px solid rgba(56, 189, 248, 0.3) !important; }
+        .cyber-card, .card { background: rgba(30, 41, 59, 0.5); border: 1px solid var(--glass-border); transition: all 0.4s; }
+        .cyber-card:hover { transform: translateY(-7px); border-color: var(--neon-blue) !important; }
+        .cyber-ticker-wrapper { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(15, 23, 42, 0.9); border-top: 1px solid rgba(0, 210, 255, 0.3); height: 35px; z-index: 9999; overflow: hidden; display: flex; align-items: center; }
+        .ticker-content { display: flex; white-space: nowrap; animation: ticker-animation 40s linear infinite; }
+        .ticker-item { padding: 0 30px; color: var(--neon-blue); font-family: 'Courier New', monospace; font-size: 0.8rem; }
+        @keyframes ticker-animation { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         main { padding-bottom: 60px; }
     </style>
 </head>
@@ -152,28 +56,31 @@
 
                     {% if user.is_authenticated %}
                         <a href="{% url 'inbox' %}" class="nav-link me-3 position-relative text-info">
-                            <i class="bi bi-envelope-paper fs-5"></i>                            
+                            <i class="bi bi-envelope-paper fs-5"></i>   
+                            {% if unread_count and unread_count > 0 %}
+                                <span class="position-absolute top-2 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                            {% endif %}                         
                         </a>
                         
                         <div class="nav-item dropdown">
                             <a class="btn btn-outline-light btn-sm dropdown-toggle rounded-pill px-3" href="#" id="userDropdown" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle text-primary me-1"></i> {{ user.username }}
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg mt-2">
-                                <li><a class="dropdown-item" href="{% url 'profile_detail' user.username %}">Profilim</a></li>
-                                <li><a class="dropdown-item" href="{% url 'inbox' %}">Gelen Kutusu</a></li>
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg mt-2 border-secondary">
+                                <li><a class="dropdown-item" href="{% url 'profile_detail' user.username %}"><i class="bi bi-person me-2"></i>Profilim</a></li>
+                                <li><a class="dropdown-item" href="{% url 'inbox' %}"><i class="bi bi-chat-dots me-2"></i>Gelen Kutusu</a></li>
                                 <li><hr class="dropdown-divider border-secondary"></li>
                                 <li>
-                                    <form action="{% url 'logout' %}" method="post" class="d-inline">
+                                    <form action="{% url 'logout' %}" method="post" class="px-3 py-1">
                                         {% csrf_token %}
-                                        <button type="submit" class="dropdown-item text-danger">Çıkış</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100 rounded-pill">Çıkış Yap</button>
                                     </form>
                                 </li>
                             </ul>
                         </div>
                     {% else %}
-                        <a class="nav-link me-3" href="{% url 'login' %}">Giriş</a>
-                        <a class="btn btn-primary btn-sm px-4 rounded-pill shadow-sm" href="{% url 'register' %}">Kayıt Ol</a>
+                        <a class="nav-link me-3 text-white-50" href="{% url 'login' %}">Giriş</a>
+                        <a class="btn btn-primary btn-sm px-4 rounded-pill shadow-sm fw-bold" href="{% url 'register' %}">Kayıt Ol</a>
                     {% endif %}
                 </div>
             </div>
@@ -198,9 +105,9 @@
     <main class="container py-4 mt-2">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4">
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4 bg-dark text-white border border-secondary">
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
                 </div>
             {% endfor %}
         {% endif %}
@@ -208,8 +115,8 @@
     </main>
 
     <footer class="py-5 mt-5 border-top border-secondary opacity-75 text-center">
-        <div class="container">
-            <p>&copy; 2026 AnalizDestek - Akademik Veri Üssü</p>
+        <div class="container text-muted small">
+            <p>&copy; 2026 AnalizDestek - Akademik Veri Üssü | Vizyon 2050</p>
         </div>
     </footer>
 
@@ -221,8 +128,6 @@
             <span class="ticker-item"><i class="bi bi-people me-2"></i>Yeni Akademik Katılım: 1.250+</span>
             <span class="ticker-item"><i class="bi bi-shield-check me-2"></i>Veri Güvenliği Protokolü v3.0</span>
             <span class="ticker-item"><i class="bi bi-graph-up me-2"></i>Bugün 450+ Veri Seti Analiz Edildi</span>
-            <span class="ticker-item"><i class="bi bi-cpu me-2"></i>AI Analiz Sistemi Aktif</span>
-            <span class="ticker-item"><i class="bi bi-people me-2"></i>Yeni Akademik Katılım: 1.250+</span>
         </div>
     </div>
 

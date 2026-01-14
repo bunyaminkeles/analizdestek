@@ -10,7 +10,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 import threading
 
-from .models import Section, Category, Topic, Post, Profile
+from .models import Section, Category, Topic, Post, Profile, PrivateMessage
 from .forms import NewTopicForm, PostForm, RegisterForm
 
 # AI Servisi importu
