@@ -1,17 +1,14 @@
 from .models import PrivateMessage
+from django.db import connection
 
 def unread_messages_count(request):
-    # Varsayılan olarak 0 döndür
-    data = {'unread_count': 0}
-    
     if request.user.is_authenticated:
-        try:
-            # Sadece alıcısı kullanıcı olan ve okunmamış mesajları say
-            count = PrivateMessage.objects.filter(receiver=request.user, is_read=False).count()
-            data['unread_count'] = count
-        except Exception as e:
-            # Veritabanı hatası olsa bile siteyi çökertme, loga yaz
-            print(f"Context Processor Hatası: {e}")
-            pass
-            
-    return data
+        # Önce tablo veritabanında gerçekten var mı diye kontrol et (Zırh katmanı)
+        table_name = PrivateMessage._meta.db_table
+        if table_name in connection.introspection.table_names():
+            try:
+                count = PrivateMessage.objects.filter(receiver=request.user, is_read=False).count()
+                return {'unread_count': count}
+            except:
+                return {'unread_count': 0}
+    return {'unread_count': 0}
