@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg bg-dark-glass rounded-4 overflow-hidden">
+                <div class="card-header border-bottom border-secondary border-opacity-25 p-4 bg-transparent">
+                    <h3 class="text-white fw-bold mb-0">
+                        <i class="bi bi-chat-right-quote text-info me-2"></i> Kripto Mesajlar
+                    </h3>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for msg in received_messages %}
+                        <div class="list-group-item bg-transparent border-bottom border-secondary border-opacity-10 p-4 hover-dark">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-info bg-opacity-10 p-2 me-3">
+                                        <i class="bi bi-person text-info"></i>
+                                    </div>
+                                    <strong class="text-white">{{ msg.sender.username }}</strong>
+                                </div>
+                                <small class="text-muted">{{ msg.created_at|timesince }} önce</small>
+                            </div>
+                            <p class="text-white-50 ms-5 mb-0" style="line-height: 1.6;">{{ msg.message }}</p>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-mailbox2 fs-1 text-muted opacity-25 d-block mb-3"></i>
+                            <p class="text-muted">Gelen kutusu boş. Veri akışı bekleniyor...</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-dark-glass { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.2); }
+    .hover-dark:hover { background: rgba(56, 189, 248, 0.05); transition: 0.3s; }
+</style>
+{% endblock %}

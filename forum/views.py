@@ -189,3 +189,18 @@ def contact(request):
             messages.success(request, "Mesajınız iletildi.")
             return redirect('contact')
     return render(request, 'forum/contact.html')
+
+@login_required
+def send_private_message(request, username):
+    receiver = get_object_or_404(User, username=username)
+    if request.method == 'POST':
+        message_text = request.POST.get('message')
+        if message_text:
+            PrivateMessage.objects.create(
+                sender=request.user,
+                receiver=receiver,
+                message=message_text
+            )
+            messages.success(request, f"{receiver.username} kullanıcısına mesajınız iletildi.")
+            # Mail bildirimi tetiklenebilir (Daha önce kurduğumuz sistemle)
+    return redirect('profile_detail', username=username)
