@@ -13,3 +13,5 @@ python manage.py migrate --noinput
 
 # 4. KATEGORİLERİ KUR (İşte yeni eklediğimiz kısım)
 python manage.py setup_categories
+
+python manage.py populate_content

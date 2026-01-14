@@ -2,45 +2,40 @@
 
 {% block content %}
 
-<div class="hero-section text-center mb-5" style="padding: 80px 20px; background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%); border-radius: 20px; box-shadow: 0 0 50px rgba(0,0,0,0.5);">
-    <h1 class="hero-title" style="font-size: 3.5rem; font-weight: 800; background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);">
+<div class="hero-section text-center mb-4" style="padding: 40px 20px; background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%); border-radius: 20px; box-shadow: 0 0 50px rgba(0,0,0,0.5);">
+    <h1 class="hero-title" style="font-size: 3.5rem; font-weight: 800; background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(0, 210, 255, 0.3); margin-bottom: 5px;">
         ANALIZUS
     </h1>
-    <h2 class="text-white mb-4">BİLİMİN IŞIĞINDA VERİYİ YÖNET</h2>
-    <p class="hero-subtitle text-muted" style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">
+    <h2 class="text-white mb-3" style="font-size: 1.8rem;">BİLİMİN IŞIĞINDA VERİYİ YÖNET</h2>
+    
+    <p class="hero-subtitle text-muted" style="font-size: 1.3rem; max-width: 800px; margin: 0 auto; line-height: 1.6;">
         Vizyon 2050'ye hazır mısın? Akademik analizler, yapay zeka destekli çözümler ve veri bilimi topluluğu tek bir çatı altında.
     </p>
 </div>
 
-<div class="section-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
+<div class="section-grid align-items-stretch" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; padding-bottom: 20px;">
 
     {% for section in sections %}
     <a href="{% url 'section_detail' pk=section.pk %}" class="text-decoration-none">
-        <div class="section-card h-100" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 40px; text-align: center; transition: all 0.3s ease; position: relative; overflow: hidden;">
+        <div class="section-card h-100 d-flex flex-column justify-content-center" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; transition: all 0.3s ease; position: relative; overflow: hidden;">
             
-            <div class="card-icon mb-4" style="font-size: 3.5rem; color: #00d2ff;">
-                {% if "YAZILIM" in section.title %}
-                    <i class="bi bi-laptop"></i> {% elif "YÖNTEM" in section.title %}
-                    <i class="bi bi-diagram-3"></i> {% elif "AKADEMİ" in section.title %}
-                    <i class="bi bi-mortarboard-fill"></i> {% else %}
-                    <i class="bi bi-grid-fill"></i> {% endif %}
+            <div class="card-icon mb-3" style="font-size: 3rem; color: #00d2ff;">
+                {% if "YAZILIM" in section.title %} <i class="bi bi-laptop"></i>
+                {% elif "YÖNTEM" in section.title %} <i class="bi bi-diagram-3"></i>
+                {% elif "AKADEMİ" in section.title %} <i class="bi bi-mortarboard-fill"></i>
+                {% else %} <i class="bi bi-grid-fill"></i> {% endif %}
             </div>
 
-            <h3 class="card-title text-white mb-3" style="font-weight: 700;">{{ section.title }}</h3>
+            <h3 class="card-title text-white mb-2" style="font-weight: 700; font-size: 1.4rem;">{{ section.title }}</h3>
             
-            <p class="card-desc text-muted">
-                {% if "YAZILIM" in section.title %}
-                    SPSS, Python, R Studio ve diğer analiz araçları.
-                {% elif "YÖNTEM" in section.title %}
-                    T-Testi, Regresyon, Anket ve Hipotez testleri.
-                {% elif "AKADEMİ" in section.title %}
-                    Tez yazımı, kariyer, makale ve yayın süreçleri.
-                {% else %}
-                    Bu alandaki tüm konular ve tartışmalar.
-                {% endif %}
+            <p class="card-desc text-muted mb-3" style="font-size: 0.95rem;">
+                {% if "YAZILIM" in section.title %} SPSS, Python, R Studio ve diğer analiz araçları.
+                {% elif "YÖNTEM" in section.title %} T-Testi, Regresyon, Anket ve Hipotez testleri.
+                {% elif "AKADEMİ" in section.title %} Tez yazımı, kariyer, makale ve yayın süreçleri.
+                {% else %} Bu alandaki tüm konular ve tartışmalar. {% endif %}
             </p>
             
-            <div class="mt-4 btn btn-outline-info rounded-pill px-4">İncele <i class="bi bi-arrow-right"></i></div>
+            <div class="mt-auto btn btn-sm btn-outline-info rounded-pill px-4">İncele <i class="bi bi-arrow-right"></i></div>
         </div>
     </a>
     {% endfor %}
@@ -49,10 +44,15 @@
 
 <style>
     .section-card:hover {
-        transform: translateY(-10px);
+        transform: translateY(-5px);
         background: rgba(255, 255, 255, 0.1);
         box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
         border-color: #00d2ff;
+    }
+    /* Mobilde paddingleri ayarlar */
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.5rem !important; }
+        .hero-section { padding: 30px 15px !important; }
     }
 </style>
 

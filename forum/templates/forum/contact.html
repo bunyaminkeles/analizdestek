@@ -1,149 +1,72 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-5">
-    
+<div class="container py-4">
     <div class="text-center mb-5">
-        <h2 class="fw-bold display-5 text-white">İletişim Merkezi</h2>
-        <p class="text-muted lead">Akademik yolculuğunuzda size rehberlik etmek için buradayız.</p>
+        <h1 class="display-5 fw-bold text-white">İletişim Merkezi</h1>
+        <p class="text-muted">Akademik yolculuğunuzda size rehberlik etmek için buradayız.</p>
     </div>
 
-    <div class="col-lg-4 col-md-5">
-    <div class="card h-100 border-0 shadow-lg info-card-cyber">
-        <div class="card-body p-4">
-            <h4 class="text-info mb-4">Hızlı Erişim</h4>
-            
-            <div class="d-flex align-items-center mb-4 text-break">
-                <div class="icon-box-cyber me-3">
-                    <i class="bi bi-envelope-at fs-5"></i>
+    <div class="row g-4">
+        
+        <div class="col-md-5">
+            <div class="p-4 h-100" style="background: rgba(21, 32, 43, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px;">
+                <h3 class="text-info mb-4">Hızlı Erişim</h3>
+                
+                <div class="d-flex align-items-start mb-4">
+                    <div class="fs-3 text-info me-3"><i class="bi bi-envelope-at"></i></div>
+                    <div>
+                        <h5 class="text-white mb-1">E-posta</h5>
+                        <p class="text-muted mb-0">opendata.ai@gmail.com</p>
+                    </div>
                 </div>
-                <div style="min-width: 0;"> <small class="text-muted d-block">E-posta</small>
-                    <a href="mailto:opendata.ai@gmail.com" class="text-white text-decoration-none fw-bold" style="font-size: 0.9rem;">
-                        opendata.ai@gmail.com
-                    </a>
-                </div>
-            </div>
-            
-            <div class="d-flex align-items-center mb-4">
-                <div class="icon-box-cyber me-3">
-                    <i class="bi bi-geo-alt fs-5"></i>
-                </div>
-                <div>
-                    <small class="text-muted d-block">Merkez</small>
-                    <span class="text-white">Dijital Akademi Kampüsü</span>
-                </div>
-            </div>
 
-            <hr class="border-secondary opacity-25 my-4">
-            <p class="small text-muted fst-italic">
-                "Veriniz bizimle güvende, geleceğiniz analizle aydınlık."
-            </p>
+                <div class="d-flex align-items-start mb-4">
+                    <div class="fs-3 text-info me-3"><i class="bi bi-geo-alt"></i></div>
+                    <div>
+                        <h5 class="text-white mb-1">Merkez</h5>
+                        <p class="text-muted mb-0">Dijital Akademi Kampüsü</p>
+                        <p class="text-muted small">Vizyon 2050 Kuleleri</p>
+                    </div>
+                </div>
+
+                <hr class="border-secondary my-4">
+                <p class="text-white-50 fst-italic">
+                    "Veriniz bizimle güvende, geleceğiniz analizle aydınlık."
+                </p>
+            </div>
         </div>
-    </div>
-</div>
 
-<style>
-    /* Taşan metinleri kontrol eden ve kartı şıklaştıran stil */
-    .info-card-cyber {
-        background: rgba(15, 23, 42, 0.95) !important;
-        border: 1px solid rgba(56, 189, 248, 0.2) !important;
-        border-radius: 20px;
-    }
-    
-    .icon-box-cyber {
-        width: 40px;
-        height: 40px;
-        background: rgba(0, 210, 255, 0.1);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #00d2ff;
-        flex-shrink: 0; /* İkonun ezilmesini önler */
-    }
-
-    /* Ekran küçüldüğünde metin boyutunu otomatik ayarla */
-    @media (max-width: 992px) {
-        .info-card-cyber a {
-            font-size: 0.8rem !important;
-        }
-    }
-</style>
-
-        <div class="col-md-8">
-            <div class="card border-0 shadow-lg contact-form-card">
-                <div class="card-body p-4 p-md-5">
-                    
-                    <form method="post" class="custom-contact-form">
-                        {% csrf_token %}
-                        
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Adınız Soyadınız</label>
-                                <input type="text" name="name" class="form-control" required placeholder="Örn: Dr. Ahmet Yılmaz">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">E-posta Adresiniz</label>
-                                <input type="email" name="email" class="form-control" required placeholder="iletisim@akademi.edu.tr">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Mesaj Konusu</label>
-                                <input type="text" name="subject" class="form-control" required placeholder="Örn: Analiz Desteği Talebi">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Mesajınız</label>
-                                <textarea name="message" class="form-control" rows="5" required placeholder="Nasıl yardımcı olabiliriz?"></textarea>
-                            </div>
-                            
-                            <div class="col-12 text-end mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg px-5 shadow-lg fw-bold" style="background: linear-gradient(45deg, #00d2ff, #2563eb); border: none;">
-                                    <i class="bi bi-send-fill me-2"></i>Mesajı Gönder
-                                </button>
-                            </div>
+        <div class="col-md-7">
+            <div class="p-4" style="background: rgba(21, 32, 43, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px;">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-info">Adınız Soyadınız</label>
+                            <input type="text" name="name" class="form-control bg-dark text-white border-secondary" placeholder="Örn: Dr. Ahmet Yılmaz" required>
                         </div>
-                    </form>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label text-info">E-posta Adresiniz</label>
+                            <input type="email" name="email" class="form-control bg-dark text-white border-secondary" placeholder="iletisim@akademi.edu.tr" required>
+                        </div>
+                    </div>
 
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label text-info">Mesaj Konusu</label>
+                        <input type="text" name="subject" class="form-control bg-dark text-white border-secondary" placeholder="Örn: Analiz Desteği Talebi" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-info">Mesajınız</label>
+                        <textarea name="message" rows="5" class="form-control bg-dark text-white border-secondary" placeholder="Nasıl yardımcı olabiliriz?" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-info w-100 py-2 fw-bold">Gönder 🚀</button>
+                </form>
             </div>
         </div>
+
     </div>
 </div>
-
-<style>
-    /* İLETİŞİM FORMU ÖZEL STİLLERİ */
-    .contact-form-card {
-        background: rgba(15, 23, 42, 0.95) !important;
-        border: 1px solid rgba(56, 189, 248, 0.3) !important;
-        border-radius: 20px;
-    }
-
-    /* Inputları Zorla Beyaz Yap (Kayıt Formuyla Aynı Mantık) */
-    .custom-contact-form input,
-    .custom-contact-form textarea,
-    .custom-contact-form select {
-        background-color: #1e293b !important; /* Koyu zemin */
-        color: #ffffff !important; /* Bembeyaz yazı */
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        padding: 12px;
-    }
-
-    .custom-contact-form input:focus,
-    .custom-contact-form textarea:focus {
-        background-color: #0f172a !important;
-        border-color: #38bdf8 !important; /* Neon mavi odak */
-        color: #ffffff !important;
-        box-shadow: 0 0 10px rgba(56, 189, 248, 0.3) !important;
-    }
-
-    .custom-contact-form label {
-        color: #38bdf8 !important; /* Etiketler Neon Mavi */
-        font-weight: 600;
-        margin-bottom: 8px;
-    }
-
-    /* Placeholder rengini biraz açalım ki okunsun */
-    ::placeholder {
-        color: rgba(255, 255, 255, 0.4) !important;
-    }
-</style>
 {% endblock %}
