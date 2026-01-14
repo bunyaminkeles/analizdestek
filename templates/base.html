@@ -153,12 +153,7 @@
                     {% if user.is_authenticated %}
                         <a href="{% url 'inbox' %}" class="nav-link me-3 position-relative text-info">
                             <i class="bi bi-envelope-paper fs-5"></i>
-                            {% if unread_count > 0 %}
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    {{ unread_count }}
-                                    <span class="visually-hidden">okunmamış mesaj</span>
-                                </span>
-                            {% endif %}
+                            
                         </a>
                         
                         <div class="nav-item dropdown">
