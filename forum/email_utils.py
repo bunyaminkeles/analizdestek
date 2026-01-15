@@ -12,39 +12,43 @@ def send_email_async(subject, message, recipient_list):
     logger.info(f"📧 Email gönderme başlıyor: {recipient_list}")
     print(f"📧 Email gönderme başlıyor: {recipient_list}")
 
-    # GEÇICI: Thread'siz senkron test - gerçek hatayı görmek için
-    try:
-        logger.info(f"📤 SMTP bağlantısı kuruluyor...")
-        print(f"📤 SMTP bağlantısı kuruluyor...")
+    def _send():
+        try:
+            logger.info(f"📤 SMTP bağlantısı kuruluyor...")
+            print(f"📤 SMTP bağlantısı kuruluyor...")
 
-        logger.info(f"🔍 FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
-        print(f"🔍 FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
+            logger.info(f"🔍 FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
+            print(f"🔍 FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
 
-        logger.info(f"🔍 EMAIL_HOST: {settings.EMAIL_HOST}")
-        print(f"🔍 EMAIL_HOST: {settings.EMAIL_HOST}")
+            logger.info(f"🔍 EMAIL_HOST: {settings.EMAIL_HOST}")
+            print(f"🔍 EMAIL_HOST: {settings.EMAIL_HOST}")
 
-        logger.info(f"🔍 EMAIL_HOST_USER: {settings.EMAIL_HOST_USER}")
-        print(f"🔍 EMAIL_HOST_USER: {settings.EMAIL_HOST_USER}")
+            logger.info(f"🔍 API KEY var mı: {'Evet' if settings.EMAIL_HOST_PASSWORD else 'HAYIR!'}")
+            print(f"🔍 API KEY var mı: {'Evet' if settings.EMAIL_HOST_PASSWORD else 'HAYIR!'}")
 
-        logger.info(f"🔍 API KEY var mı: {'Evet' if settings.EMAIL_HOST_PASSWORD else 'HAYIR!'}")
-        print(f"🔍 API KEY var mı: {'Evet' if settings.EMAIL_HOST_PASSWORD else 'HAYIR!'}")
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=recipient_list,
+                fail_silently=False,
+            )
+            logger.info(f"✅ Email gönderildi: {recipient_list}")
+            print(f"✅ Email gönderildi: {recipient_list}")
+        except Exception as e:
+            logger.error(f"❌ Email gönderim hatası: {e}", exc_info=True)
+            print(f"❌ Email gönderim hatası: {e}")
+            print(f"❌ Hata tipi: {type(e).__name__}")
+            print(f"❌ Hata detayı: {str(e)}")
+            import traceback
+            traceback.print_exc()
 
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=recipient_list,
-            fail_silently=False,
-        )
-        logger.info(f"✅ Email gönderildi: {recipient_list}")
-        print(f"✅ Email gönderildi: {recipient_list}")
-    except Exception as e:
-        logger.error(f"❌ Email gönderim hatası: {e}", exc_info=True)
-        print(f"❌ Email gönderim hatası: {e}")
-        print(f"❌ Hata tipi: {type(e).__name__}")
-        print(f"❌ Hata detayı: {str(e)}")
-        import traceback
-        traceback.print_exc()
+    # Thread'de arka planda gönder - timeout olmasın, thread uzun süre bekleyebilir
+    thread = threading.Thread(target=_send)
+    thread.daemon = False  # daemon=False -> thread tamamlanana kadar bekle
+    thread.start()
+    logger.info(f"🔄 Email thread başlatıldı (arka planda çalışıyor, timeout: 60s)")
+    print(f"🔄 Email thread başlatıldı (arka planda çalışıyor, timeout: 60s)")
 
 
 def send_topic_reply_notification(post, topic):
