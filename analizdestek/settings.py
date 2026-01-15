@@ -175,10 +175,11 @@ JAZZMIN_UI_TWEAKS = {
 }
 
 # --- E-POSTA AYARLARI ---
+# SendGrid kullanıyoruz (Render free tier SMTP desteklemiyor)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'opendata.ai@gmail.com'
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = 'Analizus Bildirim <opendata.ai@gmail.com>'
+EMAIL_HOST_USER = 'apikey'  # SendGrid için sabit
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '')
+DEFAULT_FROM_EMAIL = 'AnalizDestek <noreply@analizdestek-ai.onrender.com>'
