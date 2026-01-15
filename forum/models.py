@@ -46,6 +46,8 @@ class Post(models.Model):
     message = models.TextField()
     created_by = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_best_answer = models.BooleanField(default=False, verbose_name="En Faydalı Yanıt")
+    likes = models.PositiveIntegerField(default=0, verbose_name="Beğeni Sayısı")
 
     def __str__(self):
         return f"Post by {self.created_by.username}"
