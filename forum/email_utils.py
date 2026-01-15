@@ -15,7 +15,6 @@ def send_email_async(subject, message, recipient_list):
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=recipient_list,
             fail_silently=False,  # HATALARI GÖRELİM
-            timeout=30,  # 30 saniye timeout
         )
         logger.info(f"✅ Email gönderildi: {recipient_list}")
         print(f"✅ Email gönderildi: {recipient_list}")
