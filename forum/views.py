@@ -1,6 +1,6 @@
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
+from django.contrib.auth.models import User  # ✅ EKSİK OLAN IMPORT
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.contrib import messages
@@ -98,6 +98,24 @@ def profile_edit(request):
 def inbox(request):
     received_messages = PrivateMessage.objects.filter(receiver=request.user).order_by('-created_at')
     return render(request, 'forum/inbox.html', {'received_messages': received_messages})
+
+# --- ÖZEL MESAJ GÖNDER ---
+@login_required
+def send_message(request, username):
+    receiver = get_object_or_404(User, username=username)
+    
+    if request.method == 'POST':
+        message_content = request.POST.get('message')
+        if message_content:
+            PrivateMessage.objects.create(
+                sender=request.user,
+                receiver=receiver,
+                message=message_content
+            )
+            messages.success(request, f"{receiver.username} kullanıcısına mesajınız gönderildi!")
+            return redirect('profile_detail', username=username)
+    
+    return render(request, 'forum/send_message.html', {'receiver': receiver})
 
 # --- PROFİL DETAY ---
 def profile_detail(request, username):

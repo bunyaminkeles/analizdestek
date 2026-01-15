@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0" style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 20px;">
+            <div class="card-body p-4 p-md-5">
+                
+                <div class="text-center mb-4">
+                    <i class="bi bi-envelope-paper text-info display-4"></i>
+                    <h3 class="text-white fw-bold mt-3">Özel Mesaj Gönder</h3>
+                    <p class="text-muted">
+                        <i class="bi bi-arrow-right text-info"></i> 
+                        <span class="text-white">{{ receiver.username }}</span> kullanıcısına mesaj gönderiyorsunuz
+                    </p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label text-info small fw-bold">Mesajınız</label>
+                        <textarea 
+                            name="message" 
+                            class="form-control" 
+                            rows="8" 
+                            placeholder="Mesajınızı buraya yazın..."
+                            required
+                            style="background-color: #1e293b; color: white; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 10px;"
+                        ></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1 fw-bold py-2 shadow-sm" style="background: linear-gradient(45deg, #00d2ff, #3a7bd5); border: none; border-radius: 10px;">
+                            <i class="bi bi-send-fill me-2"></i>Mesajı Gönder
+                        </button>
+                        <a href="{% url 'profile_detail' receiver.username %}" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 10px;">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control:focus {
+        border-color: #00d2ff !important;
+        box-shadow: 0 0 15px rgba(0, 210, 255, 0.3) !important;
+    }
+</style>
+{% endblock %}

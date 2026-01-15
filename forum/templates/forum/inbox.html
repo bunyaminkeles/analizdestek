@@ -1,45 +1,90 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-lg bg-dark-glass rounded-4 overflow-hidden">
-                <div class="card-header border-bottom border-secondary border-opacity-25 p-4 bg-transparent">
-                    <h3 class="text-white fw-bold mb-0">
-                        <i class="bi bi-chat-right-quote text-info me-2"></i> Kripto Mesajlar
-                    </h3>
-                </div>
-                <div class="card-body p-0">
-                    <div class="list-group list-group-flush">
-                        {% for msg in received_messages %}
-                        <div class="list-group-item bg-transparent border-bottom border-secondary border-opacity-10 p-4 hover-dark">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle bg-info bg-opacity-10 p-2 me-3">
-                                        <i class="bi bi-person text-info"></i>
-                                    </div>
-                                    <strong class="text-white">{{ msg.sender.username }}</strong>
-                                </div>
-                                <small class="text-muted">{{ msg.created_at|timesince }} önce</small>
-                            </div>
-                            <p class="text-white-50 ms-5 mb-0" style="line-height: 1.6;">{{ msg.message }}</p>
+<div class="container py-4">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white fw-bold">
+            <i class="bi bi-envelope-paper text-info me-2"></i>Gelen Kutusu
+        </h2>
+        <span class="badge bg-info text-dark px-3 py-2 rounded-pill">
+            {{ received_messages.count }} Mesaj
+        </span>
+    </div>
+
+    {% if received_messages %}
+        <div class="list-group">
+            {% for msg in received_messages %}
+            <div class="list-group-item mb-3 border-0 shadow-sm message-card {% if not msg.is_read %}unread-message{% endif %}">
+                <div class="d-flex w-100 justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="bi bi-person-circle fs-2 text-info"></i>
                         </div>
-                        {% empty %}
-                        <div class="text-center py-5">
-                            <i class="bi bi-mailbox2 fs-1 text-muted opacity-25 d-block mb-3"></i>
-                            <p class="text-muted">Gelen kutusu boş. Veri akışı bekleniyor...</p>
+                        <div>
+                            <h5 class="mb-1 text-white">
+                                <a href="{% url 'profile_detail' msg.sender.username %}" class="text-decoration-none text-white hover-sender">
+                                    {{ msg.sender.username }}
+                                </a>
+                            </h5>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>{{ msg.created_at|date:"d M Y - H:i" }}
+                            </small>
                         </div>
-                        {% endfor %}
                     </div>
+                    
+                    {% if not msg.is_read %}
+                        <span class="badge bg-danger rounded-pill">Yeni</span>
+                    {% endif %}
+                </div>
+                
+                <p class="mb-2 text-light ps-5">{{ msg.message|truncatewords:30 }}</p>
+                
+                <div class="ps-5">
+                    <a href="{% url 'send_message' msg.sender.username %}" class="btn btn-sm btn-outline-info rounded-pill px-3">
+                        <i class="bi bi-reply-fill me-1"></i>Cevapla
+                    </a>
                 </div>
             </div>
+            {% endfor %}
         </div>
-    </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted opacity-25"></i>
+            <h4 class="text-white mt-3">Henüz mesajınız yok</h4>
+            <p class="text-muted">Gelen kutunuz boş görünüyor.</p>
+        </div>
+    {% endif %}
+
 </div>
 
 <style>
-    .bg-dark-glass { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.2); }
-    .hover-dark:hover { background: rgba(56, 189, 248, 0.05); transition: 0.3s; }
+    .message-card {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 15px;
+        padding: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .message-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(56, 189, 248, 0.5) !important;
+        box-shadow: 0 5px 20px rgba(0, 210, 255, 0.2) !important;
+    }
+    
+    .unread-message {
+        border-left: 4px solid #00d2ff !important;
+        background: rgba(0, 210, 255, 0.05);
+    }
+    
+    .hover-sender {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-sender:hover {
+        color: #00d2ff !important;
+        text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+    }
 </style>
 {% endblock %}

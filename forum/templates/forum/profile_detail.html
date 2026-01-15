@@ -34,13 +34,22 @@
                     </div>
                 </div>
 
-                {% if user == profile_user %}
-                <div class="mt-4">
-                    <a href="{% url 'profile_edit' %}" class="btn btn-outline-light w-100 rounded-pill shadow-sm py-2">
-                        <i class="bi bi-pencil-square me-2 text-info"></i>Profili Düzenle
-                    </a>
+                <div class="mt-4 d-flex gap-2">
+                    {% if user == profile_user %}
+                        <a href="{% url 'profile_edit' %}" class="btn btn-outline-light w-100 rounded-pill shadow-sm py-2">
+                            <i class="bi bi-pencil-square me-2 text-info"></i>Profili Düzenle
+                        </a>
+                    {% elif user.is_authenticated %}
+                        <!-- ✅ ÖZEL MESAJ GÖNDER BUTONU -->
+                        <a href="{% url 'send_message' profile_user.username %}" class="btn btn-primary w-100 rounded-pill shadow-sm py-2" style="background: linear-gradient(45deg, #00d2ff, #3a7bd5); border: none;">
+                            <i class="bi bi-envelope-paper me-2"></i>Özel Mesaj Gönder
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-info w-100 rounded-pill shadow-sm py-2">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Mesaj Göndermek İçin Giriş Yap
+                        </a>
+                    {% endif %}
                 </div>
-                {% endif %}
 
             </div>
         </div>
@@ -48,20 +57,17 @@
 </div>
 
 <style>
-    /* PROFİL KARTI ÖZEL STİLİ */
     .profile-card {
         background: rgba(15, 23, 42, 0.95) !important;
-        border: 1px solid rgba(56, 189, 248, 0.3) !important; /* Neon Mavi Çerçeve */
+        border: 1px solid rgba(56, 189, 248, 0.3) !important;
         border-radius: 20px;
         backdrop-filter: blur(10px);
     }
 
-    /* Avatar Arkası Parlama */
     .avatar-glow {
         filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.6));
     }
 
-    /* Rozet Tasarımı */
     .cyber-badge {
         background: linear-gradient(90deg, #38bdf8, #2563eb);
         color: white;
@@ -70,14 +76,13 @@
         letter-spacing: 1px;
     }
 
-    /* İstatistik Alanı */
     .stats-container {
         background: rgba(0, 0, 0, 0.3);
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .text-neon {
-        color: #38bdf8 !important; /* Neon Mavi Etiketler */
+        color: #38bdf8 !important;
     }
 </style>
 {% endblock %}
