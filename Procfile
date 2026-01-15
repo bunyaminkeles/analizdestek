@@ -1,1 +1,1 @@
-web: gunicorn analizdestek.wsgi
+web: gunicorn analizdestek.wsgi --timeout 120
