@@ -42,7 +42,9 @@ def send_email_async(subject, message, recipient_list):
             logger.info(f"🔍 TO_EMAILS: {recipient_list}")
             print(f"🔍 TO_EMAILS: {recipient_list}")
 
-            # SendGrid Mail objesi oluştur
+            # SendGrid Mail objesi oluştur ve gönder
+            sg = SendGridAPIClient(api_key)
+
             for recipient in recipient_list:
                 mail = Mail(
                     from_email=from_email,
@@ -51,12 +53,15 @@ def send_email_async(subject, message, recipient_list):
                     plain_text_content=message
                 )
 
-                # API client ile gönder
-                sg = SendGridAPIClient(api_key)
+                # API ile gönder
                 response = sg.send(mail)
 
                 logger.info(f"✅ Email gönderildi: {recipient} (Status: {response.status_code})")
                 print(f"✅ Email gönderildi: {recipient} (Status: {response.status_code})")
+
+                if response.status_code != 202:
+                    logger.warning(f"⚠️ Beklenmedik status code: {response.status_code}")
+                    print(f"⚠️ Beklenmedik status code: {response.status_code}")
 
         except Exception as e:
             logger.error(f"❌ Email gönderim hatası: {e}", exc_info=True)
