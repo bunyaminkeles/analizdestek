@@ -9,8 +9,14 @@ def send_email_async(subject, message, recipient_list):
     """
     Email gönderimini arka planda thread ile yapar (request timeout olmasın)
     """
+    logger.info(f"📧 Email gönderme başlıyor: {recipient_list}")
+    print(f"📧 Email gönderme başlıyor: {recipient_list}")
+
     def _send():
         try:
+            logger.info(f"📤 SMTP bağlantısı kuruluyor...")
+            print(f"📤 SMTP bağlantısı kuruluyor...")
+
             send_mail(
                 subject=subject,
                 message=message,
@@ -23,6 +29,8 @@ def send_email_async(subject, message, recipient_list):
         except Exception as e:
             logger.error(f"❌ Email gönderim hatası: {e}", exc_info=True)
             print(f"❌ Email gönderim hatası: {e}")
+            print(f"❌ Hata tipi: {type(e).__name__}")
+            print(f"❌ Hata detayı: {str(e)}")
             import traceback
             traceback.print_exc()
 
@@ -30,6 +38,8 @@ def send_email_async(subject, message, recipient_list):
     thread = threading.Thread(target=_send)
     thread.daemon = True
     thread.start()
+    logger.info(f"🔄 Email thread başlatıldı (arka planda çalışıyor)")
+    print(f"🔄 Email thread başlatıldı (arka planda çalışıyor)")
     # Thread'i beklemiyoruz - hemen return ediyoruz (timeout olmasın)
 
 
