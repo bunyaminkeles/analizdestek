@@ -1,31 +1,29 @@
 from django.core.mail import send_mail
 from django.conf import settings
-import threading
+import logging
+
+logger = logging.getLogger(__name__)
 
 def send_email_async(subject, message, recipient_list):
     """
-    Email gönderimini arka planda thread ile yapar (timeout olmaz)
+    Email gönderimini senkron yapar (Render'da thread timeout sorunu olmaması için)
     """
-    def _send():
-        try:
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=recipient_list,
-                fail_silently=False,  # HATALARI GÖRELİM
-                timeout=30,  # 30 saniye timeout
-            )
-            print(f"✅ Email gönderildi: {recipient_list}")
-        except Exception as e:
-            print(f"❌ Email gönderim hatası: {e}")
-            import traceback
-            traceback.print_exc()  # Detaylı hata logu
-
-    # Thread'i başlat ve arka plana at
-    thread = threading.Thread(target=_send)
-    thread.daemon = True  # Ana program kapanınca thread de kapansın
-    thread.start()
+    try:
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=recipient_list,
+            fail_silently=False,  # HATALARI GÖRELİM
+            timeout=30,  # 30 saniye timeout
+        )
+        logger.info(f"✅ Email gönderildi: {recipient_list}")
+        print(f"✅ Email gönderildi: {recipient_list}")
+    except Exception as e:
+        logger.error(f"❌ Email gönderim hatası: {e}", exc_info=True)
+        print(f"❌ Email gönderim hatası: {e}")
+        import traceback
+        traceback.print_exc()  # Detaylı hata logu
 
 
 def send_topic_reply_notification(post, topic):
