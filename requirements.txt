@@ -30,3 +30,4 @@ urllib3
 asgiref
 typing_extensions
 packaging
+sendgrid  # SendGrid Web API için (SMTP yerine)

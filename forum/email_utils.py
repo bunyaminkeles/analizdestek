@@ -1,40 +1,63 @@
-from django.core.mail import send_mail
 from django.conf import settings
 import logging
 import threading
+import os
+
+# SendGrid Web API kullan (SMTP yerine - Render'da SMTP engellenmiş olabilir)
+try:
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail, Email, To, Content
+    SENDGRID_AVAILABLE = True
+except ImportError:
+    SENDGRID_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
 def send_email_async(subject, message, recipient_list):
     """
     Email gönderimini arka planda thread ile yapar (request timeout olmasın)
+    SendGrid Web API kullanır (SMTP yerine - daha güvenilir)
     """
     logger.info(f"📧 Email gönderme başlıyor: {recipient_list}")
     print(f"📧 Email gönderme başlıyor: {recipient_list}")
 
     def _send():
         try:
-            logger.info(f"📤 SMTP bağlantısı kuruluyor...")
-            print(f"📤 SMTP bağlantısı kuruluyor...")
+            if not SENDGRID_AVAILABLE:
+                logger.error("❌ SendGrid kütüphanesi yüklü değil!")
+                print("❌ SendGrid kütüphanesi yüklü değil!")
+                return
 
-            logger.info(f"🔍 FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
-            print(f"🔍 FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
+            api_key = os.getenv('SENDGRID_API_KEY', '')
+            if not api_key:
+                logger.error("❌ SENDGRID_API_KEY tanımlı değil!")
+                print("❌ SENDGRID_API_KEY tanımlı değil!")
+                return
 
-            logger.info(f"🔍 EMAIL_HOST: {settings.EMAIL_HOST}")
-            print(f"🔍 EMAIL_HOST: {settings.EMAIL_HOST}")
+            from_email = settings.DEFAULT_FROM_EMAIL
+            logger.info(f"📤 SendGrid Web API ile gönderiliyor...")
+            print(f"📤 SendGrid Web API ile gönderiliyor...")
+            logger.info(f"🔍 FROM_EMAIL: {from_email}")
+            print(f"🔍 FROM_EMAIL: {from_email}")
+            logger.info(f"🔍 TO_EMAILS: {recipient_list}")
+            print(f"🔍 TO_EMAILS: {recipient_list}")
 
-            logger.info(f"🔍 API KEY var mı: {'Evet' if settings.EMAIL_HOST_PASSWORD else 'HAYIR!'}")
-            print(f"🔍 API KEY var mı: {'Evet' if settings.EMAIL_HOST_PASSWORD else 'HAYIR!'}")
+            # SendGrid Mail objesi oluştur
+            for recipient in recipient_list:
+                mail = Mail(
+                    from_email=from_email,
+                    to_emails=recipient,
+                    subject=subject,
+                    plain_text_content=message
+                )
 
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=recipient_list,
-                fail_silently=False,
-            )
-            logger.info(f"✅ Email gönderildi: {recipient_list}")
-            print(f"✅ Email gönderildi: {recipient_list}")
+                # API client ile gönder
+                sg = SendGridAPIClient(api_key)
+                response = sg.send(mail)
+
+                logger.info(f"✅ Email gönderildi: {recipient} (Status: {response.status_code})")
+                print(f"✅ Email gönderildi: {recipient} (Status: {response.status_code})")
+
         except Exception as e:
             logger.error(f"❌ Email gönderim hatası: {e}", exc_info=True)
             print(f"❌ Email gönderim hatası: {e}")
@@ -43,12 +66,12 @@ def send_email_async(subject, message, recipient_list):
             import traceback
             traceback.print_exc()
 
-    # Thread'de arka planda gönder - timeout olmasın, thread uzun süre bekleyebilir
+    # Thread'de arka planda gönder
     thread = threading.Thread(target=_send)
-    thread.daemon = False  # daemon=False -> thread tamamlanana kadar bekle
+    thread.daemon = False
     thread.start()
-    logger.info(f"🔄 Email thread başlatıldı (arka planda çalışıyor, timeout: 60s)")
-    print(f"🔄 Email thread başlatıldı (arka planda çalışıyor, timeout: 60s)")
+    logger.info(f"🔄 Email thread başlatıldı (SendGrid Web API)")
+    print(f"🔄 Email thread başlatıldı (SendGrid Web API)")
 
 
 def send_topic_reply_notification(post, topic):
