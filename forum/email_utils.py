@@ -13,13 +13,15 @@ def send_email_async(subject, message, recipient_list):
                 message=message,
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=recipient_list,
-                fail_silently=True,
-                timeout=10,  # 10 saniye timeout
+                fail_silently=False,  # HATALARI GÖRELİM
+                timeout=30,  # 30 saniye timeout
             )
             print(f"✅ Email gönderildi: {recipient_list}")
         except Exception as e:
             print(f"❌ Email gönderim hatası: {e}")
-    
+            import traceback
+            traceback.print_exc()  # Detaylı hata logu
+
     # Thread'i başlat ve arka plana at
     thread = threading.Thread(target=_send)
     thread.daemon = True  # Ana program kapanınca thread de kapansın
