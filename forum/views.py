@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
-from django.contrib.auth.models import User  # ✅ EKSİK OLAN IMPORT
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.contrib import messages
 from .models import Section, Category, Topic, Post, Profile, PrivateMessage
 from .forms import RegisterForm, NewTopicForm, PostForm
+from .email_utils import send_topic_reply_notification, send_private_message_notification  # ✅ YENİ
 
 # --- ANA SAYFA ---
 def home(request):
@@ -39,6 +40,10 @@ def topic_detail(request, pk):
             post.topic = topic
             post.created_by = request.user
             post.save()
+            
+            # ✅ EMAIL BİLDİRİMİ GÖNDER
+            send_topic_reply_notification(post, topic)
+            
             return redirect('topic_detail', pk=pk)
     else:
         form = PostForm()
@@ -85,13 +90,23 @@ def register(request):
 @login_required
 def profile_edit(request):
     user = request.user
+    profile = user.profile
+    
     if request.method == 'POST':
         new_email = request.POST.get('email')
         if new_email:
             user.email = new_email
             user.save()
-            messages.success(request, "Profil güncellendi.")
-    return render(request, 'forum/profile_edit.html', {'user': user})
+        
+        # ✅ Email tercihlerini kaydet
+        profile.email_on_reply = request.POST.get('email_on_reply') == 'on'
+        profile.email_on_private_message = request.POST.get('email_on_private_message') == 'on'
+        profile.save()
+        
+        messages.success(request, "Profil güncellendi.")
+        return redirect('profile_edit')
+    
+    return render(request, 'forum/profile_edit.html', {'user': user, 'profile': profile})
 
 # --- GELEN KUTUSU ---
 @login_required
@@ -112,6 +127,10 @@ def send_message(request, username):
                 receiver=receiver,
                 message=message_content
             )
+            
+            # ✅ EMAIL BİLDİRİMİ GÖNDER
+            send_private_message_notification(request.user, receiver, message_content)
+            
             messages.success(request, f"{receiver.username} kullanıcısına mesajınız gönderildi!")
             return redirect('profile_detail', username=username)
     

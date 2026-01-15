@@ -65,6 +65,10 @@ class Profile(models.Model):
     location = models.CharField(max_length=100, blank=True, default="", verbose_name="Konum")
     account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPES, default='Free')
     
+    # ✅ EMAIL BİLDİRİM TERCİHLERİ
+    email_on_reply = models.BooleanField(default=True, verbose_name="Konuma cevap geldiğinde email gönder")
+    email_on_private_message = models.BooleanField(default=True, verbose_name="Özel mesaj geldiğinde email gönder")
+    
     def __str__(self):
         return self.user.username
 
