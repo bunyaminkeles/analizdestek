@@ -39,14 +39,20 @@ def send_topic_reply_notification(post, topic):
     """
     # Kendi mesajına cevap yazıyorsa bildirim gönderme
     if post.created_by == topic.starter:
+        logger.info(f"⚠️ Email gönderilmedi: Kullanıcı kendi konusuna cevap yazdı ({post.created_by.username})")
+        print(f"⚠️ Email gönderilmedi: Kullanıcı kendi konusuna cevap yazdı ({post.created_by.username})")
         return
-    
+
     # Konu sahibinin email'i yoksa veya bildirim kapalıysa gönderme
     if not topic.starter.email:
+        logger.warning(f"⚠️ Email gönderilmedi: Konu sahibinin email adresi yok ({topic.starter.username})")
+        print(f"⚠️ Email gönderilmedi: Konu sahibinin email adresi yok ({topic.starter.username})")
         return
-    
+
     # Kullanıcı tercihini kontrol et
     if hasattr(topic.starter, 'profile') and not topic.starter.profile.email_on_reply:
+        logger.info(f"⚠️ Email gönderilmedi: Kullanıcı email bildirimlerini kapattı ({topic.starter.username})")
+        print(f"⚠️ Email gönderilmedi: Kullanıcı email bildirimlerini kapattı ({topic.starter.username})")
         return
     
     subject = f"🔔 {post.created_by.username} konunuza cevap yazdı: {topic.subject}"
