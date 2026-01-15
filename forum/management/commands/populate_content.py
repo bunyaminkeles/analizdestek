@@ -9,7 +9,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         self.stdout.write("🚀 İçerik Operasyonu Başlıyor...")
 
-        # 1. Bot Kullanıcıları Oluştur (Farklı kişiler soruyor gibi görünsün)
+        # 1. Bot Kullanıcıları Oluştur
         bots = [
             {"username": "Dr_Veri", "title": "İstatistik Uzmanı"},
             {"username": "Acemi_Akademisyen", "title": "Doktora Öğrencisi"},
@@ -26,8 +26,7 @@ class Command(BaseCommand):
                 Profile.objects.create(user=u, title=bot['title'], account_type="Expert")
             user_objects.append(u)
 
-        # 2. SEO Uyumlu İçerik Havuzu (Kategoriye Göre)
-        # Format: (Kategori Başlığı Kısmı, Konu Başlığı, Konu Mesajı, Cevap Mesajı)
+        # 2. SEO Uyumlu İçerik Havuzu
         contents = [
             # SPSS
             ("SPSS", "SPSS'te Normallik Testi (Kolmogorov vs Shapiro) hangisi?", 
@@ -67,9 +66,8 @@ class Command(BaseCommand):
              "Kesinlikle uzak durun Hocam. 'Hızlı yayın' ve 'Düşük ücret' vaadi genelde yağmacı dergi işaretidir. Derginin Web of Science veya Scopus indekslerinde tarandığını mutlaka kütüphane veritabanından teyit edin.")
         ]
 
-        # 3. İçerikleri Veritabanına Bas
+        # 3. İçerikleri Veritabanına Bas - ✅ DÜZELTİLDİ
         for cat_key, subject, message, reply in contents:
-            # Kategori bul (Title içinde geçen kelimeye göre)
             category = Category.objects.filter(title__icontains=cat_key).first()
             
             if category:
@@ -84,12 +82,12 @@ class Command(BaseCommand):
                 )
 
                 if created:
-                    # İlk mesajı at
-                    Post.objects.create(topic=topic, author=starter, message=message)
+                    # ✅ author yerine created_by kullanıldı
+                    Post.objects.create(topic=topic, created_by=starter, message=message)
                     self.stdout.write(f"✅ Konu Eklendi: {subject}")
 
-                    # Cevabı at
-                    Post.objects.create(topic=topic, author=responder, message=reply)
+                    # ✅ author yerine created_by kullanıldı
+                    Post.objects.create(topic=topic, created_by=responder, message=reply)
             else:
                 self.stdout.write(self.style.WARNING(f"⚠️ Kategori Bulunamadı: {cat_key}"))
 

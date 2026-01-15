@@ -22,12 +22,11 @@ class SectionAdmin(admin.ModelAdmin):
     ordering = ('order',)
 
     def order_visual(self, obj):
-        # Admin panelinde görsel bir bar oluşturur
         return format_html(
             '<div style="width:100px; background:#e9ecef; height:10px; border-radius:5px;">'
             '<div style="width:{}px; background:#00d2ff; height:10px; border-radius:5px;"></div>'
             '</div>',
-            min(obj.order * 10, 100) # 100px ile sınırla
+            min(obj.order * 10, 100)
         )
     order_visual.short_description = "Görsel Sıralama"
 
@@ -56,16 +55,16 @@ class TopicAdmin(admin.ModelAdmin):
         if obj.is_closed: res.append("🔒 Kilitli")
         return " | ".join(res) if res else "Normal"
 
-# 4. Mesaj (Post) Yönetimi
+# 4. Mesaj (Post) Yönetimi - ✅ DÜZELTİLDİ
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('author', 'topic', 'short_message', 'created_at')
-    search_fields = ('message', 'author__username')
+    list_display = ('created_by', 'topic', 'short_message', 'created_at')  # ✅ author yerine created_by
+    search_fields = ('message', 'created_by__username')  # ✅ author yerine created_by
     
     def short_message(self, obj):
         return obj.message[:50] + "..."
 
-# 5. Özel Mesaj (DM) Yönetimi - YENİ EKLENDİ!
+# 5. Özel Mesaj (DM) Yönetimi
 @admin.register(PrivateMessage)
 class PrivateMessageAdmin(admin.ModelAdmin):
     list_display = ('sender', 'receiver', 'short_content', 'created_at', 'is_read')

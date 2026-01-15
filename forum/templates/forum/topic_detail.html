@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 
@@ -9,8 +10,6 @@
             <span class="badge bg-info text-dark mb-2">{{ topic.category.title }}</span>
             <h1 class="fw-bold text-white display-6">{{ topic.subject }}</h1>
         </div>
-        {% if user.is_authenticated %}
-            {% endif %}
     </div>
     <div class="text-muted small">
         <i class="bi bi-clock"></i> {{ topic.created_at|date:"d M Y, H:i" }} | 
@@ -27,77 +26,48 @@
                 <div class="col-md-3 col-lg-2 bg-dark-glass text-center p-4 d-flex flex-column align-items-center justify-content-center border-end border-secondary border-opacity-25">
                     
                     <div class="avatar-circle mb-3 position-relative">
-                        {% if post.author.profile.avatar %}
-                            <img src="{{ post.author.profile.avatar.url }}" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
+                        {% if post.created_by.profile.avatar %}
+                            <img src="{{ post.created_by.profile.avatar.url }}" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
                         {% else %}
-                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold" style="width: 80px; height: 80px; font-size: 2rem;">
-                                {{ post.author.username|slice:":1"|upper }}
+                            <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                <span class="fs-1 text-white">{{ post.created_by.username|make_list|first|upper }}</span>
                             </div>
                         {% endif %}
-
-                        <span class="position-absolute bottom-0 start-100 translate-middle p-2 bg-success border border-dark rounded-circle"></span>
                     </div>
 
-                    <h6 class="text-white fw-bold mb-1">
-                        {{ post.author.username }}
-                        {% if post.author.profile.account_type == 'Expert' %}
-                            <i class="bi bi-patch-check-fill text-info" title="Doğrulanmış Uzman"></i>
-                        {% endif %}
-                    </h6>
-
-                    <small class="text-info d-block mb-2">
-                        {{ post.author.profile.title|default:"Üye" }}
-                    </small>
-
-                    <div class="user-stats mt-2 text-muted small">
-                        <div class="d-flex justify-content-between px-3">
-                            <span><i class="bi bi-chat-square-text-fill"></i> {{ post.author.posts.count }}</span>
-                        </div>
-                    </div>
-
+                    <h5 class="fw-bold text-white mb-1">{{ post.created_by.username }}</h5>
+                    <span class="badge bg-secondary bg-opacity-50 text-light rounded-pill px-3">Üye</span>
                 </div>
 
-                <div class="col-md-9 col-lg-10 p-4 d-flex flex-column">
-                    
+                <div class="col-md-9 col-lg-10 p-4">
                     <div class="d-flex justify-content-between mb-3 border-bottom border-secondary border-opacity-25 pb-2">
-                        <small class="text-muted">#{{ forloop.counter }}</small>
-                        <small class="text-muted">{{ post.created_at|date:"d M Y - H:i" }}</small>
+                        <small class="text-muted">{{ post.created_at|date:"d F Y - H:i" }}</small>
+                        <small class="text-info">#{{ forloop.counter }}</small>
                     </div>
-
-                    <div class="message-content text-white flex-grow-1" style="font-size: 1.05rem; line-height: 1.7;">
+                    
+                    <div class="post-content text-light opacity-75" style="min-height: 80px; line-height: 1.6;">
                         {{ post.message|linebreaks }}
                     </div>
-
-                    <div class="mt-4 d-flex justify-content-end gap-2">
-                        <button class="btn btn-sm btn-outline-secondary border-0 text-white-50">
-                            <i class="bi bi-hand-thumbs-up"></i> Beğen
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary border-0 text-white-50" onclick="quoteUser('{{ post.author.username }}')">
-                            <i class="bi bi-reply-fill"></i> Alıntıla
-                        </button>
-                    </div>
-
                 </div>
+
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
 
-<div class="card border-0 shadow-lg mt-5 bg-dark-glass reply-section">
-    <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3">
-        <h5 class="mb-0 text-white"><i class="bi bi-pen-fill text-info me-2"></i>Cevap Yaz</h5>
-    </div>
+<div class="card mt-5 border-0 shadow-lg" style="background: rgba(15, 23, 42, 0.8);">
     <div class="card-body p-4">
+        <h4 class="text-white mb-4"><i class="bi bi-reply-fill me-2 text-primary"></i>Cevap Yaz</h4>
+        
         {% if user.is_authenticated %}
-            <form method="post" id="replyForm">
+            <form method="post">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <textarea name="message" id="id_message" rows="6" class="form-control bg-dark text-white border-secondary" placeholder="Bilgi paylaştıkça çoğalır hocam..." required></textarea>
+                    {{ form|crispy }}
                 </div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">Lütfen akademik nezaket kurallarına uyunuz.</small>
-                    <button type="submit" class="btn btn-info px-5 fw-bold rounded-pill">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">
                         Gönder <i class="bi bi-send-fill ms-2"></i>
                     </button>
                 </div>
@@ -113,35 +83,8 @@
 </div>
 
 <style>
-    .bg-dark-glass {
-        background: rgba(30, 41, 59, 0.7);
-        backdrop-filter: blur(10px);
-    }
-    .post-card {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        transition: transform 0.2s;
-    }
-    .post-card:hover {
-        border-color: rgba(0, 210, 255, 0.3);
-    }
-    .avatar-circle {
-        box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
-        border-radius: 50%;
-    }
+    .bg-dark-glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); }
+    .post-card { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); }
 </style>
-
-<script>
-    // Alıntı Yapma Fonksiyonu
-    function quoteUser(username) {
-        const textarea = document.getElementById('id_message');
-        if (textarea) {
-            textarea.value += `@${username} hocam demiş ki:\n> \n\n`;
-            textarea.focus();
-            // Sayfayı aşağı kaydır
-            document.querySelector('.reply-section').scrollIntoView({behavior: 'smooth'});
-        }
-    }
-</script>
 
 {% endblock %}

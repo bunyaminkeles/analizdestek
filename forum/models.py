@@ -3,9 +3,8 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 
 class Section(models.Model):
-    """Ana Bölümler: Örn: Nicel Analizler"""
     title = models.CharField(max_length=100)
-    order = models.IntegerField(default=0, verbose_name="Sıralama")
+    order = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['order']
@@ -14,8 +13,6 @@ class Section(models.Model):
         return self.title
 
 class Category(models.Model):
-    """Alt Forumlar: Örn: SPSS Destek"""
-    # DİKKAT: related_name='categories' BURADA KRİTİK
     section = models.ForeignKey(Section, related_name='categories', on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True)
@@ -32,37 +29,54 @@ class Category(models.Model):
         return self.title
 
 class Topic(models.Model):
-    """Konu Başlıkları"""
-    # DİKKAT: related_name='topics' BURADA KRİTİK (Yoksa '0 Konu' yazar veya hata verir)
     category = models.ForeignKey(Category, related_name='topics', on_delete=models.CASCADE)
+    subject = models.CharField(max_length=255)
     starter = models.ForeignKey(User, related_name='topics', on_delete=models.CASCADE)
-    subject = models.CharField(max_length=255, verbose_name="Konu Başlığı")
     created_at = models.DateTimeField(auto_now_add=True)
     views = models.PositiveIntegerField(default=0)
-    is_pinned = models.BooleanField(default=False, verbose_name="Sabitli mi?")
-    is_closed = models.BooleanField(default=False, verbose_name="Kilitli mi?")
-    
+    # ✅ EKSİK ALANLAR EKLENDİ
+    is_pinned = models.BooleanField(default=False, verbose_name="Sabitlenmiş")
+    is_closed = models.BooleanField(default=False, verbose_name="Kilitli")
+
     def __str__(self):
         return self.subject
 
 class Post(models.Model):
-    """Mesajlar"""
     topic = models.ForeignKey(Topic, related_name='posts', on_delete=models.CASCADE)
-    author = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
-    message = models.TextField(verbose_name="Mesaj")
+    message = models.TextField()
+    created_by = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Post by {self.created_by.username}"
+
 class Profile(models.Model):
-    """Kullanıcı Profili"""
+    ACCOUNT_TYPES = (
+        ('Free', 'Ücretsiz Üye'),
+        ('Premium', 'Premium Üye'),
+        ('Expert', 'Uzman'),
+    )
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     bio = models.TextField(max_length=500, blank=True)
-    account_type = models.CharField(max_length=20, default='Standard') # Standard, Premium, Expert
-    title = models.CharField(max_length=100, blank=True, null=True) # Örn: Veri Bilimci
-    location = models.CharField(max_length=50, blank=True, null=True, verbose_name="Konum")
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True, verbose_name="Profil Resmi")
+    # ✅ EKSİK ALANLAR EKLENDİ (Varsayılan değerlerle)
+    title = models.CharField(max_length=100, blank=True, default="", verbose_name="Ünvan")
+    location = models.CharField(max_length=100, blank=True, default="", verbose_name="Konum")
+    account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPES, default='Free')
     
     def __str__(self):
         return self.user.username
+
+class PrivateMessage(models.Model):
+    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"Message from {self.sender} to {self.receiver}"
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)
@@ -73,15 +87,3 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
-    
-class PrivateMessage(models.Model):
-    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
-    receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
-    message = models.TextField()
-    is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-created_at']
-        verbose_name = "Özel Mesaj"
-        verbose_name_plural = "Özel Mesajlar"
