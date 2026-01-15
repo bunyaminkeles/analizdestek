@@ -37,6 +37,9 @@ def send_topic_reply_notification(post, topic):
     """
     Bir konuya cevap yazıldığında konu sahibine email gönderir
     """
+    logger.info(f"🔔 Email bildirim kontrolü: {post.created_by.username} -> Topic #{topic.pk} (Sahibi: {topic.starter.username})")
+    print(f"🔔 Email bildirim kontrolü: {post.created_by.username} -> Topic #{topic.pk} (Sahibi: {topic.starter.username})")
+
     # Kendi mesajına cevap yazıyorsa bildirim gönderme
     if post.created_by == topic.starter:
         logger.info(f"⚠️ Email gönderilmedi: Kullanıcı kendi konusuna cevap yazdı ({post.created_by.username})")
@@ -81,12 +84,19 @@ def send_private_message_notification(sender, receiver, message_content):
     """
     Özel mesaj geldiğinde alıcıya email gönderir
     """
+    logger.info(f"💌 Özel mesaj email kontrolü: {sender.username} -> {receiver.username}")
+    print(f"💌 Özel mesaj email kontrolü: {sender.username} -> {receiver.username}")
+
     # Alıcının email'i yoksa veya bildirim kapalıysa gönderme
     if not receiver.email:
+        logger.warning(f"⚠️ Özel mesaj email gönderilmedi: Alıcının email adresi yok ({receiver.username})")
+        print(f"⚠️ Özel mesaj email gönderilmedi: Alıcının email adresi yok ({receiver.username})")
         return
-    
+
     # Kullanıcı tercihini kontrol et
     if hasattr(receiver, 'profile') and not receiver.profile.email_on_private_message:
+        logger.info(f"⚠️ Özel mesaj email gönderilmedi: Kullanıcı bildirimleri kapattı ({receiver.username})")
+        print(f"⚠️ Özel mesaj email gönderilmedi: Kullanıcı bildirimleri kapattı ({receiver.username})")
         return
     
     subject = f"💌 {sender.username} size özel mesaj gönderdi"
