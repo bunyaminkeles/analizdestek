@@ -1,7 +1,30 @@
 from django.core.mail import send_mail
 from django.conf import settings
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
+import threading
+
+def send_email_async(subject, message, recipient_list):
+    """
+    Email gönderimini arka planda thread ile yapar (timeout olmaz)
+    """
+    def _send():
+        try:
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=recipient_list,
+                fail_silently=True,
+                timeout=10,  # 10 saniye timeout
+            )
+            print(f"✅ Email gönderildi: {recipient_list}")
+        except Exception as e:
+            print(f"❌ Email gönderim hatası: {e}")
+    
+    # Thread'i başlat ve arka plana at
+    thread = threading.Thread(target=_send)
+    thread.daemon = True  # Ana program kapanınca thread de kapansın
+    thread.start()
+
 
 def send_topic_reply_notification(post, topic):
     """
@@ -15,7 +38,7 @@ def send_topic_reply_notification(post, topic):
     if not topic.starter.email:
         return
     
-    # ✅ Kullanıcı tercihini kontrol et
+    # Kullanıcı tercihini kontrol et
     if hasattr(topic.starter, 'profile') and not topic.starter.profile.email_on_reply:
         return
     
@@ -37,16 +60,8 @@ Bu bir otomatik bildirimdir. Cevap vermek için siteye giriş yapın.
 AnalizDestek - Akademik Veri Üssü
 """
     
-    try:
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[topic.starter.email],
-            fail_silently=True,  # Hata olursa sessizce geç
-        )
-    except Exception as e:
-        print(f"Email gönderim hatası: {e}")
+    # Asenkron gönder (timeout olmaz)
+    send_email_async(subject, message, [topic.starter.email])
 
 
 def send_private_message_notification(sender, receiver, message_content):
@@ -57,7 +72,7 @@ def send_private_message_notification(sender, receiver, message_content):
     if not receiver.email:
         return
     
-    # ✅ Kullanıcı tercihini kontrol et
+    # Kullanıcı tercihini kontrol et
     if hasattr(receiver, 'profile') and not receiver.profile.email_on_private_message:
         return
     
@@ -79,16 +94,8 @@ Bu bir otomatik bildirimdir.
 AnalizDestek - Akademik Veri Üssü
 """
     
-    try:
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[receiver.email],
-            fail_silently=True,
-        )
-    except Exception as e:
-        print(f"Email gönderim hatası: {e}")
+    # Asenkron gönder (timeout olmaz)
+    send_email_async(subject, message, [receiver.email])
 
 
 def send_mention_notification(mentioned_user, post, topic):
@@ -113,13 +120,5 @@ https://analizdestek-ai.onrender.com/topic/{topic.pk}/
 AnalizDestek - Akademik Veri Üssü
 """
     
-    try:
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[mentioned_user.email],
-            fail_silently=True,
-        )
-    except Exception as e:
-        print(f"Email gönderim hatası: {e}")
+    # Asenkron gönder (timeout olmaz)
+    send_email_async(subject, message, [mentioned_user.email])
