@@ -2,44 +2,39 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Sum # ✅ Sum eklendi (Dashboard için şart)
+from django.db.models import Count, Sum
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
-
-# Modellerin hepsi burada olmalı
 from .models import Section, Category, Topic, Post, Profile, PrivateMessage, PostLike
 from .forms import RegisterForm, NewTopicForm, PostForm
-# Email servisi (Eğer dosya yoksa bu satırı yorum satırı yapın)
-from .email_utils import send_topic_reply_notification, send_private_message_notification
+from .email_utils import send_topic_reply_notification, send_private_message_notification  # ✅ YENİ
+# views.py dosyasının en üstüne ekleyin:
+from django.db.models import Sum
+from .models import Section, Category, Topic, Post, Profile, User
 
-# --- ANA SAYFA (DASHBOARD & LOBBY) ---
+# --- ANA SAYFA ---
 def home(request):
-    """
-    ANALIZUS Ana Ekranı:
-    Hem bölüm kartlarını hem de dashboard istatistiklerini yükler.
-    """
     sections = Section.objects.all().order_by('order')
 
-    # 1. Dashboard İstatistikleri
+    # Widget verileri
+    # İstatistikler
     total_topics = Topic.objects.count()
     total_posts = Post.objects.count()
     total_users = User.objects.count()
-    # Tüm konuların toplam görüntülenme sayısını toplar. Boşsa 0 döner.
     total_views = Topic.objects.aggregate(total=Sum('views'))['total'] or 0
 
-    # 2. Son Tartışmalar (En yeni 5 konu)
+    # Son tartışmalar (son 5 aktif konu)
     recent_topics = Topic.objects.select_related('starter', 'category').annotate(
         replies_count=Count('posts')
     ).order_by('-created_at')[:5]
 
-    # 3. Popüler Konular (En çok görüntülenen 5 konu)
+    # Popüler konular (en çok görüntülenen 5 konu)
     popular_topics = Topic.objects.select_related('starter', 'category').annotate(
         replies_count=Count('posts')
     ).order_by('-views')[:5]
 
-    # 4. Son Aktiviteler (Son atılan 10 mesaj)
-    # DİKKAT: Post modelinde 'created_by' kullandığınız için burada da onu çağırıyoruz.
+    # Son aktiviteler (son 10 post)
     recent_activities = Post.objects.select_related('created_by', 'topic').order_by('-created_at')[:10]
 
     context = {
@@ -49,7 +44,7 @@ def home(request):
         'total_posts': total_posts,
         'total_users': total_users,
         'total_views': total_views,
-        # Listeler
+        # Widgetlar
         'recent_topics': recent_topics,
         'popular_topics': popular_topics,
         'recent_activities': recent_activities,
@@ -65,21 +60,19 @@ def section_detail(request, pk):
 # --- KATEGORİ VE KONULAR ---
 def category_topics(request, slug):
     category = get_object_or_404(Category, slug=slug)
-    # Sabitlenen konular (pinned) en üstte, sonra en yeni tarihli konular
+    # Pinned konular en üstte, sonra tarihe göre sırala
     topics = category.topics.annotate(replies_count=Count('posts')).order_by('-is_pinned', '-created_at')
     return render(request, 'forum/category_topics.html', {'category': category, 'topics': topics})
 
 # --- KONU DETAY VE CEVAP YAZMA ---
 def topic_detail(request, pk):
     topic = get_object_or_404(Topic, pk=pk)
-    
-    # Görüntülenme sayısını artır (F5 yapınca artmasın diye session kontrolü eklenebilir ama şimdilik basit kalsın)
     topic.views += 1
     topic.save()
 
     posts = topic.posts.all().order_by('created_at')
 
-    # Kullanıcının beğendiği postları belirle (Kalp ikonunu dolu göstermek için)
+    # Kullanıcının beğendiği post ID'leri
     user_liked_posts = []
     if request.user.is_authenticated:
         user_liked_posts = list(PostLike.objects.filter(
@@ -92,14 +85,11 @@ def topic_detail(request, pk):
         if form.is_valid():
             post = form.save(commit=False)
             post.topic = topic
-            post.created_by = request.user # ✅ Post modelinizde author yerine created_by var
+            post.created_by = request.user
             post.save()
 
-            # Email Bildirimi (Opsiyonel)
-            try:
-                send_topic_reply_notification(post, topic)
-            except:
-                pass # Mail gitmezse sistem çökmesin
+            # ✅ EMAIL BİLDİRİMİ GÖNDER
+            send_topic_reply_notification(post, topic)
 
             return redirect('topic_detail', pk=pk)
     else:
@@ -123,8 +113,7 @@ def new_topic(request, slug):
             topic.category = category
             topic.starter = request.user
             topic.save()
-            
-            # Konuyla birlikte ilk mesajı da oluştur
+            # İlk mesajı oluştur
             Post.objects.create(
                 topic=topic,
                 message=form.cleaned_data['message'],
@@ -141,7 +130,6 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # ✅ Profil Sigortası: Eğer profil oluşmadıysa manuel oluştur
             if not hasattr(user, 'profile'):
                 Profile.objects.create(user=user)
             login(request, user)
@@ -154,33 +142,25 @@ def register(request):
 @login_required
 def profile_edit(request):
     user = request.user
-    # Profil yoksa oluştur (Güvenlik)
-    if not hasattr(user, 'profile'):
-        Profile.objects.create(user=user)
-        
     profile = user.profile
     
     if request.method == 'POST':
-        # E-posta güncelleme
         new_email = request.POST.get('email')
         if new_email:
             user.email = new_email
             user.save()
         
-        # Bildirim ayarları
+        # ✅ Email tercihlerini kaydet
         profile.email_on_reply = request.POST.get('email_on_reply') == 'on'
         profile.email_on_private_message = request.POST.get('email_on_private_message') == 'on'
-        
-        # Avatar ve Bio işlemleri form üzerinden geliyorsa buraya eklenebilir
-        # Veya modelform kullanılabilir. Şimdilik temel ayarlar:
         profile.save()
         
-        messages.success(request, "Profiliniz başarıyla güncellendi.")
+        messages.success(request, "Profil güncellendi.")
         return redirect('profile_edit')
     
     return render(request, 'forum/profile_edit.html', {'user': user, 'profile': profile})
 
-# --- GELEN KUTUSU (INBOX) ---
+# --- GELEN KUTUSU ---
 @login_required
 def inbox(request):
     received_messages = PrivateMessage.objects.filter(receiver=request.user).order_by('-created_at')
@@ -200,13 +180,10 @@ def send_message(request, username):
                 message=message_content
             )
             
-            # Email Bildirimi
-            try:
-                send_private_message_notification(request.user, receiver, message_content)
-            except:
-                pass
-
-            messages.success(request, f"{receiver.username} adlı kullanıcıya mesajınız iletildi!")
+            # ✅ EMAIL BİLDİRİMİ GÖNDER
+            send_private_message_notification(request.user, receiver, message_content)
+            
+            messages.success(request, f"{receiver.username} kullanıcısına mesajınız gönderildi!")
             return redirect('profile_detail', username=username)
     
     return render(request, 'forum/send_message.html', {'receiver': receiver})
@@ -214,13 +191,9 @@ def send_message(request, username):
 # --- PROFİL DETAY ---
 def profile_detail(request, username):
     profile_user = get_object_or_404(User, username=username)
-    # ✅ Hata Önleyici: Eski kullanıcıların profili yoksa anında oluştur
-    if not hasattr(profile_user, 'profile'):
-        Profile.objects.create(user=profile_user)
-        
     return render(request, 'forum/profile_detail.html', {'profile_user': profile_user})
 
-# --- STATİK SAYFALAR ---
+# --- DİĞER ---
 def about(request):
     return render(request, 'forum/about.html')
 
@@ -231,10 +204,9 @@ def search_result(request):
     return render(request, 'forum/search_results.html')
 
 def summarize_topic(request, pk):
-    # İleride AI Entegrasyonu buraya gelecek
     return redirect('topic_detail', pk=pk)
 
-# --- BEĞENİ (LIKE) SİSTEMİ ---
+# --- LIKE SİSTEMİ ---
 @login_required
 def toggle_like(request, post_id):
     """Post beğenme/beğenmekten vazgeçme"""
@@ -244,12 +216,12 @@ def toggle_like(request, post_id):
     like, created = PostLike.objects.get_or_create(user=request.user, post=post)
 
     if created:
-        # Yeni like - Post üzerindeki sayacı artır
+        # Yeni like - sayacı artır
         post.likes += 1
         post.save()
         messages.success(request, "Yanıtı beğendiniz!")
     else:
-        # Zaten like var - kaldır ve sayacı azalt
+        # Zaten like var - kaldır
         like.delete()
         post.likes = max(0, post.likes - 1)
         post.save()
