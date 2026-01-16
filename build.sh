@@ -1,18 +1,23 @@
-#!/usr/bin/env bash
-# exit on error
-set -o errexit
+#!/bin/bash
+# Render build script
 
-# 1. Paketleri yükle
+echo "📦 Installing dependencies..."
 pip install -r requirements.txt
 
-# 2. Statik dosyaları topla
-python manage.py collectstatic --noinput
-
-# 3. Veritabanını güncelle
+echo "🔄 Running migrations..."
 python manage.py migrate --noinput
 
-# 4. KATEGORİLERİ KUR (İşte yeni eklediğimiz kısım)
-python manage.py setup_categories
+echo "📁 Collecting static files..."
+python manage.py collectstatic --noinput
 
-python manage.py populate_content
-python manage.py populate_scenarios
+echo "📚 Loading seed content (if database is empty)..."
+TOPIC_COUNT=$(python manage.py shell -c "from forum.models import Topic; print(Topic.objects.count())" 2>/dev/null | tail -1)
+
+if [ "$TOPIC_COUNT" = "0" ]; then
+    echo "✓ Database is empty, loading seed content..."
+    python manage.py load_seed_content
+else
+    echo "✓ Database already has $TOPIC_COUNT topics, skipping seed"
+fi
+
+echo "✅ Build complete!"
