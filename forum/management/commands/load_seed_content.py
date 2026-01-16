@@ -7,7 +7,7 @@ from django.utils import timezone
 
 
 class Command(BaseCommand):
-    help = 'Forum seed content yükler (50 Q&A)'
+    help = 'Forum seed content yükler (Part1 + Part2)'
 
     def handle(self, *args, **kwargs):
         self.stdout.write("📚 Seed content yükleme başlıyor...")
@@ -15,8 +15,9 @@ class Command(BaseCommand):
         # 1. Kullanıcı profillerini oluştur
         self.create_users()
 
-        # 2. Seed content dosyasını oku
-        self.load_content_from_file()
+        # 2. Seed content dosyalarını oku (Part1 + Part2)
+        self.load_content_from_file('AnalizDestek_Forum_Seed_Content.md')
+        self.load_content_from_file('AnalizDestek_Forum_Part2.md')
 
         self.stdout.write(self.style.SUCCESS('✅ Seed content başarıyla yüklendi!'))
 
@@ -81,15 +82,31 @@ class Command(BaseCommand):
             }
         ]
 
-        # Soru soracak kullanıcılar (seed content'te geçenler)
+        # Soru soracak kullanıcılar (seed content'te geçenler - Part1 + Part2)
         question_users = [
+            # Part 1
             'YeniAraştırmacı23', 'TezYolculugu2024', 'AnketUstasi', 'SosyalBilimci',
             'YeniBaslayan2024', 'AnketAnalisti', 'KavramKarmasasi', 'VeriTemizleyici',
             'ChartMerakli', 'SPSSYardım', 'RegresyonSorusu', 'MedyasyonSorunu',
             'PythonOgrenci', 'VeriKaziyici', 'MLOgreniyorum', 'RHataları',
             'GGPlotSorusu', 'KarmaYontemSorusu', 'SEMOgrencisi', 'MetaAnalizci',
             'OrneklemKrizi', 'GuvenilirlikSorusu', 'TezYazarken', 'LiteratürAvcısı',
-            'APA7Karmasasi', 'EtikKurulSorusu', 'MakaleRevize', 'Doktora2024'
+            'APA7Karmasasi', 'EtikKurulSorusu', 'MakaleRevize', 'Doktora2024',
+            # Part 2 - Python
+            'PyDataAnalist', 'GorselHata', 'ML_Ogrenci', 'RamSorunu', 'VeriMadencisi',
+            # Part 2 - R
+            'R_Artist', 'VeriAyiklayici', 'YeniRci', 'TezYazimiR', 'Istatistikci',
+            # Part 2 - Excel
+            'ExcelSeven', 'Raporcu', 'BIDeveloper', 'GorselExcel', 'Otomasyoncu',
+            # Part 2 - AI
+            'EtikAI', 'DeepLearner', 'ModelEgitmeni', 'FrameworkSecimi', 'MetinMadencisi',
+            # Part 2 - Yazım
+            'KaynakcaMagduru', 'YazimKurallari', 'TabloTasari', 'PanikAtak', 'SonDuzluk',
+            # Cevap veren uzmanlar (Part2)
+            'KodMimari', 'AI_Uzmani', 'SysAdmin_Tr', 'HukukVeBilisim', 'TidyverseFan',
+            'AkademikR', 'OfisGurusu', 'ExcelMaster', 'DashboardUzmani', 'VBACoder',
+            'AkademikEtik', 'AI_Researcher', 'VeriBilimci', 'NLPEngineer',
+            'AkademikAsistan', 'EditorProf', 'TezDanismani', 'EtikKurulu', 'AkademikYazar'
         ]
 
         for user_data in users_data:
@@ -127,18 +144,22 @@ class Command(BaseCommand):
                 user.save()
                 Profile.objects.get_or_create(user=user)
 
-    def load_content_from_file(self):
-        """AnalizDestek_Forum_Seed_Content.md dosyasını parse eder"""
-        self.stdout.write("📄 Seed content dosyası okunuyor...")
-
+    def load_content_from_file(self, filename):
+        """Seed content dosyasını parse eder"""
         import os
-        file_path = os.path.join(os.getcwd(), 'AnalizDestek_Forum_Seed_Content.md')
+        file_path = os.path.join(os.getcwd(), filename)
+
+        if not os.path.exists(file_path):
+            self.stdout.write(f"⚠️ Dosya bulunamadı: {filename}")
+            return
+
+        self.stdout.write(f"📄 {filename} okunuyor...")
 
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
 
         # Tüm soru bloklarını bul (## SORU ile başlayan)
-        all_questions = re.findall(r'(## SORU \d+:.*?)(?=## SORU \d+:|# KULLANICI PROFİLLERİ|# ETİKET SİSTEMİ|$)', content, re.DOTALL)
+        all_questions = re.findall(r'(## SORU \d+:.*?)(?=## SORU \d+:|# KULLANICI PROFİLLERİ|# ETİKET SİSTEMİ|# 🐍|# 📈|# 📊|# 🤖|# 📝|```\s*$)', content, re.DOTALL)
 
         for question_block in all_questions:
             # Her soruyu ilgili kategoriye yönlendir
@@ -221,10 +242,16 @@ class Command(BaseCommand):
         # Etiket bazlı kategori eşleştirme
         if any(tag in tags_lower for tag in ['#spss', '#amos', '#cronbach', '#normallik']):
             return Category.objects.filter(title='SPSS & AMOS').first()
-        elif any(tag in tags_lower for tag in ['#python', '#pandas', '#machinelearning', '#veri']):
+        elif any(tag in tags_lower for tag in ['#python', '#pandas', '#machinelearning', '#sklearn', '#jupyter', '#webscraping', '#beautifulsoup', '#matplotlib']):
             return Category.objects.filter(title='Python & Veri Bilimi').first()
-        elif any(tag in tags_lower for tag in ['#r ', '#rstudio', '#ggplot']):
+        elif any(tag in tags_lower for tag in ['#r ', '#rstudio', '#ggplot', '#dplyr', '#rmarkdown', '#tidyverse']):
             return Category.objects.filter(title='R Studio & İstatistik').first()
+        elif any(tag in tags_lower for tag in ['#excel', '#pivottable', '#powerbi', '#vlookup', '#xlookup', '#vba', '#makro']):
+            return Category.objects.filter(title='Excel & Temel Araçlar').first()
+        elif any(tag in tags_lower for tag in ['#deeplearning', '#yapayze', '#cnn', '#bert', '#nlp', '#keras', '#pytorch', '#overfitting']):
+            return Category.objects.filter(title='Python & Veri Bilimi').first()
+        elif any(tag in tags_lower for tag in ['#zotero', '#mendeley', '#referans', '#akademikdil', '#özet', '#abstract', '#intihal', '#turnitin', '#paraphrasing']):
+            return Category.objects.filter(title='Tez & Makale Yazımı').first()
         elif any(tag in tags_lower for tag in ['#sem', '#metodoloji', '#örneklem', '#güvenilirlik', '#geçerlilik']):
             return Category.objects.filter(title='Metodoloji Tasarımı').first()
         elif any(tag in tags_lower for tag in ['#tez', '#makale', '#literatür', '#apa', '#etik', '#kongre']):
@@ -236,8 +263,8 @@ class Command(BaseCommand):
     def add_answers(self, topic, block, question_date):
         """Bir topic'e cevapları ekler"""
 
-        # En faydalı cevabı bul
-        best_answer = re.search(r'\*\*✅ EN FAYDA YANIT\*\* \((.+?) - (\d+) beğeni\):\n(.*?)(?=\n\*\*|---|\Z)', block, re.DOTALL)
+        # En faydalı cevabı bul (Part1: "EN FAYDA YANIT", Part2: "EN FAYDALI YANIT")
+        best_answer = re.search(r'\*\*✅ EN FAYDALI? YANIT\*\* \((.+?) - (\d+) beğeni\):\n(.*?)(?=\n---|\Z)', block, re.DOTALL)
 
         if best_answer:
             answerer_username = best_answer.group(1)

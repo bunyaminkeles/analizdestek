@@ -18,6 +18,7 @@ urlpatterns = [
     path('forum/<slug:slug>/new/', views.new_topic, name='new_topic'),
     path('topic/<int:pk>/', views.topic_detail, name='topic_detail'),
     path('topic/<int:pk>/summarize/', views.summarize_topic, name='summarize_topic'),
+    path('post/<int:post_id>/like/', views.toggle_like, name='toggle_like'),
     
     # Diğer
     path('search/', views.search_result, name='search'),

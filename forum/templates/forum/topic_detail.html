@@ -61,13 +61,27 @@
                         {{ post.message|linebreaks }}
                     </div>
 
-                    {% if post.likes > 0 %}
-                    <div class="mt-3 pt-2 border-top border-secondary border-opacity-25">
-                        <small class="text-muted">
-                            <i class="bi bi-hand-thumbs-up-fill text-primary"></i> {{ post.likes }} beğeni
-                        </small>
+                    <div class="mt-3 pt-2 border-top border-secondary border-opacity-25 d-flex align-items-center justify-content-between">
+                        <div>
+                            {% if post.likes > 0 %}
+                            <small class="text-muted">
+                                <i class="bi bi-hand-thumbs-up-fill text-primary"></i> {{ post.likes }} beğeni
+                            </small>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'toggle_like' post.id %}" class="btn btn-sm {% if post.id in user_liked_posts %}btn-primary{% else %}btn-outline-secondary{% endif %} rounded-pill like-btn">
+                                    <i class="bi {% if post.id in user_liked_posts %}bi-hand-thumbs-up-fill{% else %}bi-hand-thumbs-up{% endif %}"></i>
+                                    {% if post.id in user_liked_posts %}Beğendin{% else %}Beğen{% endif %}
+                                </a>
+                            {% else %}
+                                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                                    <i class="bi bi-hand-thumbs-up"></i> Beğen
+                                </a>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% endif %}
                 </div>
 
             </div>
@@ -121,6 +135,14 @@
         color: #00d2ff !important;
         text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
         transform: translateX(3px);
+    }
+
+    /* ✅ LIKE BUTONU STİLİ */
+    .like-btn {
+        transition: all 0.3s ease;
+    }
+    .like-btn:hover {
+        transform: scale(1.05);
     }
 </style>
 

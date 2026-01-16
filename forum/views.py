@@ -6,7 +6,7 @@ from django.db.models import Count, Sum
 from django.contrib import messages
 from django.utils import timezone
 from datetime import timedelta
-from .models import Section, Category, Topic, Post, Profile, PrivateMessage
+from .models import Section, Category, Topic, Post, Profile, PrivateMessage, PostLike
 from .forms import RegisterForm, NewTopicForm, PostForm
 from .email_utils import send_topic_reply_notification, send_private_message_notification  # ✅ YENİ
 
@@ -65,8 +65,16 @@ def topic_detail(request, pk):
     topic = get_object_or_404(Topic, pk=pk)
     topic.views += 1
     topic.save()
-    
+
     posts = topic.posts.all().order_by('created_at')
+
+    # Kullanıcının beğendiği post ID'leri
+    user_liked_posts = []
+    if request.user.is_authenticated:
+        user_liked_posts = list(PostLike.objects.filter(
+            user=request.user,
+            post__in=posts
+        ).values_list('post_id', flat=True))
 
     if request.method == 'POST':
         form = PostForm(request.POST)
@@ -75,15 +83,20 @@ def topic_detail(request, pk):
             post.topic = topic
             post.created_by = request.user
             post.save()
-            
+
             # ✅ EMAIL BİLDİRİMİ GÖNDER
             send_topic_reply_notification(post, topic)
-            
+
             return redirect('topic_detail', pk=pk)
     else:
         form = PostForm()
 
-    return render(request, 'forum/topic_detail.html', {'topic': topic, 'posts': posts, 'form': form})
+    return render(request, 'forum/topic_detail.html', {
+        'topic': topic,
+        'posts': posts,
+        'form': form,
+        'user_liked_posts': user_liked_posts,
+    })
 
 # --- YENİ KONU AÇMA ---
 @login_required
@@ -188,3 +201,26 @@ def search_result(request):
 
 def summarize_topic(request, pk):
     return redirect('topic_detail', pk=pk)
+
+# --- LIKE SİSTEMİ ---
+@login_required
+def toggle_like(request, post_id):
+    """Post beğenme/beğenmekten vazgeçme"""
+    post = get_object_or_404(Post, pk=post_id)
+
+    # Kullanıcı daha önce beğenmiş mi?
+    like, created = PostLike.objects.get_or_create(user=request.user, post=post)
+
+    if created:
+        # Yeni like - sayacı artır
+        post.likes += 1
+        post.save()
+        messages.success(request, "Yanıtı beğendiniz!")
+    else:
+        # Zaten like var - kaldır
+        like.delete()
+        post.likes = max(0, post.likes - 1)
+        post.save()
+        messages.info(request, "Beğeniniz kaldırıldı.")
+
+    return redirect('topic_detail', pk=post.topic.pk)

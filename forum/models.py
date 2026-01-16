@@ -93,3 +93,18 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
+
+
+class PostLike(models.Model):
+    """Kullanıcıların post beğenilerini takip eden model"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_likes')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_likes')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'post')  # Her kullanıcı bir post'a sadece 1 kez like verebilir
+        verbose_name = "Beğeni"
+        verbose_name_plural = "Beğeniler"
+
+    def __str__(self):
+        return f"{self.user.username} liked Post #{self.post.id}"
