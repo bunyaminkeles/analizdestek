@@ -1,27 +1,23 @@
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
 from django.urls import reverse
-from .models import Post, PrivateMessage, Notification, PostLike
+from django.contrib.contenttypes.models import ContentType
+import logging
 
-@receiver(post_save, sender=Post)
-def post_save_receiver(sender, instance, created, **kwargs):
-    if created and instance.topic.starter != instance.created_by:
-        recipient = instance.topic.starter
-        message = f"<b>{instance.created_by.username}</b>, '{instance.topic.subject}' konusuna yeni bir yanıt yazdı."
-        url = instance.get_absolute_url()
-        
-        Notification.objects.create(
-            recipient=recipient,
-            sender=instance.created_by,
-            verb=message,
-            target=instance
-        )
-        
+logger = logging.getLogger(__name__)
+
+
+def send_realtime_notification(recipient_id, message, url):
+    """WebSocket üzerinden gerçek zamanlı bildirim gönder (opsiyonel)"""
+    try:
+        from asgiref.sync import async_to_sync
+        from channels.layers import get_channel_layer
+
         channel_layer = get_channel_layer()
-        group_name = f"notifications_{recipient.id}"
-        
+        if channel_layer is None:
+            return  # Channel layer yapılandırılmamış
+
+        group_name = f"notifications_{recipient_id}"
         async_to_sync(channel_layer.group_send)(
             group_name,
             {
@@ -30,47 +26,87 @@ def post_save_receiver(sender, instance, created, **kwargs):
                 "url": url,
             },
         )
+    except Exception as e:
+        # WebSocket hatası olursa sessizce devam et
+        # Bildirim zaten veritabanına kaydedildi
+        logger.warning(f"WebSocket bildirimi gönderilemedi: {e}")
+
+
+from .models import Post, PrivateMessage, Notification, PostLike
+
+
+@receiver(post_save, sender=Post)
+def post_save_receiver(sender, instance, created, **kwargs):
+    """Yeni post oluşturulduğunda konu sahibine bildirim gönder"""
+    if created and instance.topic.starter != instance.created_by:
+        recipient = instance.topic.starter
+        message = f"<b>{instance.created_by.username}</b>, '{instance.topic.subject}' konusuna yeni bir yanıt yazdı."
+        url = instance.get_absolute_url()
+
+        try:
+            # Notification oluştur
+            content_type = ContentType.objects.get_for_model(instance)
+            Notification.objects.create(
+                recipient=recipient,
+                sender=instance.created_by,
+                verb=message,
+                content_type=content_type,
+                object_id=instance.pk
+            )
+
+            # Gerçek zamanlı bildirim (opsiyonel)
+            send_realtime_notification(recipient.id, message, url)
+        except Exception as e:
+            logger.error(f"Post bildirimi oluşturulamadı: {e}")
+
 
 @receiver(post_save, sender=PrivateMessage)
 def private_message_post_save(sender, instance, created, **kwargs):
+    """Yeni özel mesaj geldiğinde bildirim gönder"""
     if created:
         recipient = instance.receiver
         message = f"<b>{instance.sender.username}</b>'den yeni bir özel mesajınız var."
         url = reverse('inbox')
 
-        Notification.objects.create(
-            recipient=recipient,
-            sender=instance.sender,
-            verb=message,
-            target=instance
-        )
+        try:
+            # Notification oluştur
+            content_type = ContentType.objects.get_for_model(instance)
+            Notification.objects.create(
+                recipient=recipient,
+                sender=instance.sender,
+                verb=message,
+                content_type=content_type,
+                object_id=instance.pk
+            )
 
-        channel_layer = get_channel_layer()
-        group_name = f"notifications_{recipient.id}"
+            # Gerçek zamanlı bildirim (opsiyonel)
+            send_realtime_notification(recipient.id, message, url)
+        except Exception as e:
+            logger.error(f"Özel mesaj bildirimi oluşturulamadı: {e}")
 
-        async_to_sync(channel_layer.group_send)(
-            group_name,
-            {
-                'type': 'notification_message',
-                'message': message,
-                'url': url
-            }
-        )
 
 @receiver(post_save, sender=PostLike)
 def add_reputation_on_like(sender, instance, created, **kwargs):
     """Bir gönderi beğenildiğinde yazarına +5 puan ver"""
     if created:
-        profile = instance.post.created_by.profile
-        profile.reputation += 5
-        profile.save()
+        try:
+            profile = instance.post.created_by.profile
+            profile.reputation += 5
+            profile.save(update_fields=['reputation'])
+        except Exception as e:
+            logger.error(f"Like reputation eklenemedi: {e}")
+
 
 @receiver(post_delete, sender=PostLike)
 def remove_reputation_on_unlike(sender, instance, **kwargs):
     """Beğeni geri alınırsa puanı sil"""
-    profile = instance.post.created_by.profile
-    profile.reputation = max(0, profile.reputation - 5)
-    profile.save()
+    try:
+        profile = instance.post.created_by.profile
+        profile.reputation = max(0, profile.reputation - 5)
+        profile.save(update_fields=['reputation'])
+    except Exception as e:
+        logger.error(f"Unlike reputation silinemedi: {e}")
+
 
 @receiver(pre_save, sender=Post)
 def capture_old_best_answer(sender, instance, **kwargs):
@@ -82,15 +118,19 @@ def capture_old_best_answer(sender, instance, **kwargs):
         except Post.DoesNotExist:
             pass
 
+
 @receiver(post_save, sender=Post)
 def handle_best_answer_reputation(sender, instance, created, **kwargs):
     """En iyi cevap seçildiğinde +20 puan ver, geri alınırsa sil"""
     if not created and hasattr(instance, '_old_is_best_answer'):
-        if instance.is_best_answer and not instance._old_is_best_answer:
-            profile = instance.created_by.profile
-            profile.reputation += 20
-            profile.save()
-        elif not instance.is_best_answer and instance._old_is_best_answer:
-            profile = instance.created_by.profile
-            profile.reputation = max(0, profile.reputation - 20)
-            profile.save()
+        try:
+            if instance.is_best_answer and not instance._old_is_best_answer:
+                profile = instance.created_by.profile
+                profile.reputation += 20
+                profile.save(update_fields=['reputation'])
+            elif not instance.is_best_answer and instance._old_is_best_answer:
+                profile = instance.created_by.profile
+                profile.reputation = max(0, profile.reputation - 20)
+                profile.save(update_fields=['reputation'])
+        except Exception as e:
+            logger.error(f"Best answer reputation güncellenemedi: {e}")
