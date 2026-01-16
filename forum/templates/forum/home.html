@@ -1,196 +1,213 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
-<div class="hero-section text-center mb-4" style="padding: 40px 20px; background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%); border-radius: 20px; box-shadow: 0 0 50px rgba(0,0,0,0.5);">
-    <h1 class="hero-title" style="font-size: 3.5rem; font-weight: 800; background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(0, 210, 255, 0.3); margin-bottom: 5px;">
+<div class="text-center mb-5 fade-in-up" style="animation: fadeInUp 1s ease-out;">
+    <h1 class="display-4 fw-bold" style="background: linear-gradient(90deg, #00d2ff, #3a7bd5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(0, 210, 255, 0.3); font-family: 'Orbitron', sans-serif;">
         ANALIZUS
     </h1>
-    <h2 class="text-white mb-3" style="font-size: 1.8rem;">BİLİMİN IŞIĞINDA VERİYİ YÖNET</h2>
-
-    <p class="hero-subtitle text-muted" style="font-size: 1.3rem; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+    <h3 class="text-white fw-light mb-3 letter-spacing-2">BİLİMİN IŞIĞINDA VERİYİ YÖNET</h3>
+    <p class="text-muted small mx-auto" style="max-width: 600px;">
         Vizyon 2050'ye hazır mısın? Akademik analizler, yapay zeka destekli çözümler ve veri bilimi topluluğu tek bir çatı altında.
     </p>
-</div>
-
-<!-- İSTATİSTİK KARTLARI -->
-<div class="stats-grid mb-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto;">
-    <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-        <div class="stat-label" style="font-size: 0.9em; opacity: 0.9;">Toplam Konu</div>
-        <div class="stat-number" style="font-size: 2.5em; font-weight: bold; margin: 10px 0;">{{ total_topics }}</div>
-        <div class="stat-label" style="font-size: 0.85em; opacity: 0.8;">Tartışma</div>
-    </div>
-
-    <div class="stat-card" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-        <div class="stat-label" style="font-size: 0.9em; opacity: 0.9;">Toplam Gönderi</div>
-        <div class="stat-number" style="font-size: 2.5em; font-weight: bold; margin: 10px 0;">{{ total_posts }}</div>
-        <div class="stat-label" style="font-size: 0.85em; opacity: 0.8;">Yanıt</div>
-    </div>
-
-    <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-        <div class="stat-label" style="font-size: 0.9em; opacity: 0.9;">Toplam Üye</div>
-        <div class="stat-number" style="font-size: 2.5em; font-weight: bold; margin: 10px 0;">{{ total_users }}</div>
-        <div class="stat-label" style="font-size: 0.85em; opacity: 0.8;">Uzman</div>
-    </div>
-
-    <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
-        <div class="stat-label" style="font-size: 0.9em; opacity: 0.9;">Toplam Görüntülenme</div>
-        <div class="stat-number" style="font-size: 2.5em; font-weight: bold; margin: 10px 0;">{{ total_views }}</div>
-        <div class="stat-label" style="font-size: 0.85em; opacity: 0.8;">Okuma</div>
+    
+    <div class="mt-4 d-flex justify-content-center gap-3">
+        {% if user.is_authenticated %}
+            <a href="#sections-area" class="btn btn-primary rounded-pill px-5 fw-bold shadow-lg glow-btn">
+                <i class="bi bi-arrow-down-circle me-2"></i> İncelemeye Başla
+            </a>
+        {% else %}
+            <a href="{% url 'register' %}" class="btn btn-primary rounded-pill px-5 fw-bold shadow-lg glow-btn">
+                <i class="bi bi-rocket-takeoff-fill me-2"></i> Hemen Başla
+            </a>
+            <a href="{% url 'login' %}" class="btn btn-outline-light rounded-pill px-5 fw-bold">
+                Giriş Yap
+            </a>
+        {% endif %}
     </div>
 </div>
 
-<!-- BÖLÜMLER -->
-<div class="section-grid align-items-stretch mb-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; padding-bottom: 20px;">
-
-    {% for section in sections %}
-    <a href="{% url 'section_detail' pk=section.pk %}" class="text-decoration-none">
-        <div class="section-card h-100 d-flex flex-column justify-content-center" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; text-align: center; transition: all 0.3s ease; position: relative; overflow: hidden;">
-
-            <div class="card-icon mb-3" style="font-size: 3rem; color: #00d2ff;">
-                {% if "YAZILIM" in section.title %} <i class="bi bi-laptop"></i>
-                {% elif "YÖNTEM" in section.title %} <i class="bi bi-diagram-3"></i>
-                {% elif "AKADEMİ" in section.title %} <i class="bi bi-mortarboard-fill"></i>
-                {% else %} <i class="bi bi-grid-fill"></i> {% endif %}
-            </div>
-
-            <h3 class="card-title text-white mb-2" style="font-weight: 700; font-size: 1.4rem;">{{ section.title }}</h3>
-
-            <p class="card-desc text-muted mb-3" style="font-size: 0.95rem;">
-                {% if "YAZILIM" in section.title %} SPSS, Python, R Studio ve diğer analiz araçları.
-                {% elif "YÖNTEM" in section.title %} T-Testi, Regresyon, Anket ve Hipotez testleri.
-                {% elif "AKADEMİ" in section.title %} Tez yazımı, kariyer, makale ve yayın süreçleri.
-                {% else %} Bu alandaki tüm konular ve tartışmalar. {% endif %}
-            </p>
-
-            <div class="mt-auto btn btn-sm btn-outline-info rounded-pill px-4">İncele <i class="bi bi-arrow-right"></i></div>
+<div class="row g-3 mb-5">
+    <div class="col-md-3">
+        <div class="stat-card bg-indigo p-4 text-center text-white h-100 rounded-4 shadow-lg position-relative overflow-hidden">
+            <div class="small opacity-75">Toplam Konu</div>
+            <div class="display-4 fw-bold my-2">{{ total_topics }}</div>
+            <div class="small">Tartışma</div>
+            <div class="card-glow" style="background: rgba(111, 66, 193, 0.5);"></div>
         </div>
-    </a>
-    {% endfor %}
-
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-teal p-4 text-center text-white h-100 rounded-4 shadow-lg position-relative overflow-hidden">
+            <div class="small opacity-75">Toplam Gönderi</div>
+            <div class="display-4 fw-bold my-2">{{ total_posts }}</div>
+            <div class="small">Yanıt</div>
+            <div class="card-glow" style="background: rgba(32, 201, 151, 0.5);"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-pink p-4 text-center text-white h-100 rounded-4 shadow-lg position-relative overflow-hidden">
+            <div class="small opacity-75">Toplam Üye</div>
+            <div class="display-4 fw-bold my-2">{{ total_users }}</div>
+            <div class="small">Uzman</div>
+            <div class="card-glow" style="background: rgba(232, 62, 140, 0.5);"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-cyan p-4 text-center text-white h-100 rounded-4 shadow-lg position-relative overflow-hidden">
+            <div class="small opacity-75">Toplam Görüntülenme</div>
+            <div class="display-4 fw-bold my-2">{{ total_views }}</div>
+            <div class="small">Okuma</div>
+            <div class="card-glow" style="background: rgba(13, 202, 240, 0.5);"></div>
+        </div>
+    </div>
 </div>
 
-<!-- SON TARTIŞMALAR & POPÜLER KONULAR -->
-<div class="widgets-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto 30px auto;">
-
-    <!-- SON TARTIŞMALAR -->
-    <div class="widget-card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 25px;">
-        <h3 style="color: #00d2ff; margin-bottom: 20px; font-size: 1.3rem; border-left: 4px solid #00d2ff; padding-left: 15px;">
-            <i class="bi bi-chat-dots-fill"></i> Son Tartışmalar
-        </h3>
-
-        <ul class="recent-discussions" style="list-style: none; padding: 0; margin: 0;">
-            {% for topic in recent_topics %}
-            <li class="discussion-item" style="display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <div class="discussion-icon" style="flex-shrink: 0; width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 15px; font-size: 0.85em;">
-                    {{ topic.starter.username|slice:":2"|upper }}
-                </div>
-                <div class="discussion-content" style="flex-grow: 1;">
-                    <a href="{% url 'topic_detail' pk=topic.pk %}" class="discussion-title text-decoration-none" style="font-weight: 600; color: #e0e0e0; display: block; margin-bottom: 5px; font-size: 0.95em;">
-                        {{ topic.subject|truncatechars:50 }}
-                    </a>
-                    <div class="discussion-meta" style="font-size: 0.8em; color: #888;">
-                        <span style="margin-right: 12px;"><i class="bi bi-person"></i> {{ topic.starter.username }}</span>
-                        <span style="margin-right: 12px;"><i class="bi bi-chat"></i> {{ topic.replies_count }} yanıt</span>
-                        <span><i class="bi bi-eye"></i> {{ topic.views }}</span>
+<div id="sections-area" class="row g-4 mb-5">
+    {% for section in sections %}
+    <div class="col-md-4">
+        <a href="{% url 'section_detail' section.pk %}" class="text-decoration-none">
+            <div class="card bg-dark border-secondary h-100 text-center p-4 hover-lift position-relative overflow-hidden">
+                <div class="card-bg-effect"></div>
+                <div class="position-relative z-index-1">
+                    <div class="mb-3 text-info fs-1">
+                        {% if "YAZILIM" in section.title %} <i class="bi bi-laptop display-4"></i>
+                        {% elif "YÖNTEM" in section.title %} <i class="bi bi-diagram-3 display-4"></i>
+                        {% else %} <i class="bi bi-mortarboard display-4"></i> {% endif %}
                     </div>
+                    <h5 class="text-white fw-bold">{{ section.title }}</h5>
+                    <p class="text-muted small mb-4">
+                        {% if "YAZILIM" in section.title %}SPSS, Python, R ve Excel dünyası.{% endif %}
+                        {% if "YÖNTEM" in section.title %}İstatistiksel testler ve metodoloji.{% endif %}
+                        {% if "AKADEMİ" in section.title %}Tez yazımı ve yayın süreçleri.{% endif %}
+                    </p>
+                    <span class="btn btn-outline-info btn-sm rounded-pill px-4">İncele &rarr;</span>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row g-4 mb-5">
+    
+    <div class="col-lg-6">
+        <div class="card bg-dark border-secondary h-100 shadow-sm">
+            <div class="card-header bg-transparent border-secondary border-opacity-25 py-3">
+                <h5 class="text-info mb-0 fw-bold"><i class="bi bi-chat-dots-fill me-2"></i> Son Tartışmalar</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for topic in recent_topics %}
+                <a href="{% url 'topic_detail' topic.pk %}" class="list-group-item list-group-item-action bg-transparent border-secondary border-opacity-10 text-white py-3 hover-dark-row">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-circle bg-primary bg-opacity-10 text-primary me-3 fw-bold d-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px; border: 1px solid rgba(0, 210, 255, 0.3);">
+                            {{ topic.starter.username|slice:":2"|upper }}
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0 text-truncate" style="max-width: 300px;">{{ topic.subject }}</h6>
+                            <small class="text-muted"><i class="bi bi-person me-1"></i> {{ topic.starter.username }} &bull; {{ topic.replies_count }} yanıt</small>
+                        </div>
+                        <div class="text-muted small"><i class="bi bi-eye"></i> {{ topic.views }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card bg-dark border-secondary h-100 shadow-sm">
+            <div class="card-header bg-transparent border-secondary border-opacity-25 py-3">
+                <h5 class="text-danger mb-0 fw-bold"><i class="bi bi-fire me-2"></i> Popüler Konular</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for topic in popular_topics %}
+                <a href="{% url 'topic_detail' topic.pk %}" class="list-group-item list-group-item-action bg-transparent border-secondary border-opacity-10 text-white py-3 hover-dark-row">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3 text-danger fs-5"><i class="bi bi-graph-up-arrow"></i></div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0 text-truncate" style="max-width: 300px;">{{ topic.subject }}</h6>
+                            <small class="text-muted">{{ topic.views }} görüntülenme</small>
+                        </div>
+                        <div class="badge bg-secondary bg-opacity-25 text-light rounded-pill"><i class="bi bi-chat"></i> {{ topic.replies_count }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card bg-dark border-secondary mb-5">
+    <div class="card-header bg-transparent border-secondary border-opacity-25 py-3">
+        <h5 class="text-success mb-0 fw-bold"><i class="bi bi-lightning-fill me-2"></i> Son Aktiviteler</h5>
+    </div>
+    <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+            {% for activity in recent_activities %}
+            <li class="list-group-item bg-transparent border-secondary border-opacity-10 text-white py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-success bg-opacity-25 text-success me-2 rounded-circle p-2"><i class="bi bi-reply-fill"></i></span>
+                        <strong class="text-info">{{ activity.created_by.username }}</strong>, 
+                        "{{ activity.topic.subject|truncatechars:30 }}" konusuna yanıt verdi.
+                    </div>
+                    <small class="text-muted">{{ activity.created_at|timesince }} önce</small>
                 </div>
             </li>
-            {% empty %}
-            <li class="text-muted text-center py-3">Henüz tartışma yok</li>
             {% endfor %}
         </ul>
-    </div>
-
-    <!-- POPÜLER KONULAR -->
-    <div class="widget-card" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 25px;">
-        <h3 style="color: #f5576c; margin-bottom: 20px; font-size: 1.3rem; border-left: 4px solid #f5576c; padding-left: 15px;">
-            <i class="bi bi-fire"></i> Popüler Konular
-        </h3>
-
-        <div class="popular-topics">
-            {% for topic in popular_topics %}
-            <a href="{% url 'topic_detail' pk=topic.pk %}" class="topic-card text-decoration-none" style="display: block; background: rgba(255,255,255,0.03); padding: 12px 15px; border-radius: 8px; border-left: 4px solid #f5576c; margin-bottom: 10px; transition: all 0.3s;">
-                <div class="topic-title" style="font-weight: 600; color: #e0e0e0; margin-bottom: 6px; font-size: 0.9em;">
-                    {{ topic.subject|truncatechars:45 }}
-                </div>
-                <div class="topic-stats" style="display: flex; justify-content: space-between; font-size: 0.8em; color: #888;">
-                    <span><i class="bi bi-eye"></i> {{ topic.views }} görüntülenme</span>
-                    <span><i class="bi bi-chat"></i> {{ topic.replies_count }} yanıt</span>
-                </div>
-            </a>
-            {% empty %}
-            <p class="text-muted text-center py-3">Henüz popüler konu yok</p>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-
-<!-- CANLI AKTİVİTE -->
-<div class="activity-widget" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 25px; max-width: 1200px; margin: 0 auto;">
-    <h3 style="color: #38ef7d; margin-bottom: 20px; font-size: 1.3rem; border-left: 4px solid #38ef7d; padding-left: 15px;">
-        <i class="bi bi-lightning-fill"></i> Son Aktiviteler
-    </h3>
-
-    <div class="activity-feed" style="max-height: 300px; overflow-y: auto;">
-        {% for activity in recent_activities %}
-        <div class="activity-item" style="display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-            <div class="activity-avatar" style="width: 35px; height: 35px; border-radius: 50%; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 12px; font-size: 0.8em;">
-                {{ activity.created_by.username|slice:":2"|upper }}
-            </div>
-            <div class="activity-text" style="flex-grow: 1; color: #ccc; font-size: 0.9em;">
-                <span style="font-weight: 600; color: #00d2ff;">{{ activity.created_by.username }}</span>
-                "<a href="{% url 'topic_detail' pk=activity.topic.pk %}" class="text-decoration-none" style="color: #e0e0e0;">{{ activity.topic.subject|truncatechars:35 }}</a>" konusuna yanıt verdi
-            </div>
-            <div class="activity-time" style="color: #666; font-size: 0.75em; white-space: nowrap;">
-                {{ activity.created_at|timesince }} önce
-            </div>
-        </div>
-        {% empty %}
-        <p class="text-muted text-center py-3">Henüz aktivite yok</p>
-        {% endfor %}
     </div>
 </div>
 
 <style>
-    .section-card:hover {
-        transform: translateY(-5px);
-        background: rgba(255, 255, 255, 0.1);
-        box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
-        border-color: #00d2ff;
+    /* Renk Paleti */
+    .bg-indigo { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .bg-teal { background: linear-gradient(135deg, #2af598 0%, #009efd 100%); }
+    .bg-pink { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); }
+    .bg-cyan { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
+
+    .stat-card { transition: transform 0.3s ease; border: none; }
+    .stat-card:hover { transform: translateY(-5px); }
+    
+    .hover-lift { transition: all 0.3s ease; }
+    .hover-lift:hover { 
+        transform: translateY(-5px); 
+        border-color: #00d2ff !important; 
+        box-shadow: 0 5px 15px rgba(0, 210, 255, 0.2);
     }
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    
+    .glow-btn {
+        box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        transition: all 0.3s ease;
     }
-    .discussion-item:hover {
-        background: rgba(255,255,255,0.03);
+    .glow-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 25px rgba(0, 210, 255, 0.6);
     }
-    .topic-card:hover {
-        background: rgba(255,255,255,0.08) !important;
-        transform: translateX(5px);
+
+    .card-glow {
+        position: absolute;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        filter: blur(50px);
+        opacity: 0.2;
+        pointer-events: none;
     }
-    .activity-item:hover {
-        background: rgba(255,255,255,0.03);
+
+    /* Listeler için */
+    .hover-dark-row:hover {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        border-left: 3px solid #00d2ff;
+        padding-left: 1.5rem !important;
+        transition: all 0.2s ease;
     }
-    /* Scrollbar styling */
-    .activity-feed::-webkit-scrollbar {
-        width: 6px;
-    }
-    .activity-feed::-webkit-scrollbar-track {
-        background: rgba(255,255,255,0.05);
-        border-radius: 3px;
-    }
-    .activity-feed::-webkit-scrollbar-thumb {
-        background: rgba(255,255,255,0.2);
-        border-radius: 3px;
-    }
-    /* Mobilde paddingleri ayarlar */
-    @media (max-width: 768px) {
-        .hero-title { font-size: 2.5rem !important; }
-        .hero-section { padding: 30px 15px !important; }
-        .widgets-row { grid-template-columns: 1fr !important; }
-        .stat-card .stat-number { font-size: 2em !important; }
+    
+    .letter-spacing-2 { letter-spacing: 2px; }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 
