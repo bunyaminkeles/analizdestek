@@ -183,3 +183,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'  # SendGrid için sabit değer
 EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'AnalizDestek <noreply@analizdestek-ai.onrender.com>')
+
+# --- SESSION AYARLARI (Otomatik Logout) ---
+SESSION_COOKIE_AGE = 60 * 60 * 24  # 24 saat (saniye cinsinden)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Tarayıcı kapandığında oturum sonlanır
+SESSION_SAVE_EVERY_REQUEST = True  # Her istekte session süresini yeniler (aktif kullanıcılar için)

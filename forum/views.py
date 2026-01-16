@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.contrib import messages
+from django.utils import timezone
+from datetime import timedelta
 from .models import Section, Category, Topic, Post, Profile, PrivateMessage
 from .forms import RegisterForm, NewTopicForm, PostForm
 from .email_utils import send_topic_reply_notification, send_private_message_notification  # ✅ YENİ
@@ -11,7 +13,40 @@ from .email_utils import send_topic_reply_notification, send_private_message_not
 # --- ANA SAYFA ---
 def home(request):
     sections = Section.objects.all().order_by('order')
-    return render(request, 'forum/home.html', {'sections': sections})
+
+    # Widget verileri
+    # İstatistikler
+    total_topics = Topic.objects.count()
+    total_posts = Post.objects.count()
+    total_users = User.objects.count()
+    total_views = Topic.objects.aggregate(total=Sum('views'))['total'] or 0
+
+    # Son tartışmalar (son 5 aktif konu)
+    recent_topics = Topic.objects.select_related('starter', 'category').annotate(
+        replies_count=Count('posts')
+    ).order_by('-created_at')[:5]
+
+    # Popüler konular (en çok görüntülenen 5 konu)
+    popular_topics = Topic.objects.select_related('starter', 'category').annotate(
+        replies_count=Count('posts')
+    ).order_by('-views')[:5]
+
+    # Son aktiviteler (son 10 post)
+    recent_activities = Post.objects.select_related('created_by', 'topic').order_by('-created_at')[:10]
+
+    context = {
+        'sections': sections,
+        # İstatistikler
+        'total_topics': total_topics,
+        'total_posts': total_posts,
+        'total_users': total_users,
+        'total_views': total_views,
+        # Widgetlar
+        'recent_topics': recent_topics,
+        'popular_topics': popular_topics,
+        'recent_activities': recent_activities,
+    }
+    return render(request, 'forum/home.html', context)
 
 # --- BÖLÜM DETAY ---
 def section_detail(request, pk):
