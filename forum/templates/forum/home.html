@@ -2,105 +2,82 @@
 {% load static %}
 
 {% block content %}
-
 <style>
     :root {
-        --neon-blue: #00d2ff;
-        --neon-purple: #9d50bb;
-        --neon-green: #38ef7d;
-        --neon-orange: #ff9966;
-        --deep-dark: #0f172a;
+        --neon-blue: #00d2ff; --neon-purple: #9d50bb;
+        --neon-green: #38ef7d; --neon-orange: #ff9966;
     }
-
     body { background-color: #050a14 !important; }
-
+    
+    /* DASHBOARD LAYOUT */
+    .dashboard-grid { display: grid; gap: 1.5rem; margin-bottom: 3rem; }
+    
     .neon-card {
-        background: rgba(30, 41, 59, 0.5) !important;
+        background: rgba(30, 41, 59, 0.4) !important;
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        backdrop-filter: blur(15px);
-        transition: all 0.4s ease;
-    }
-
-    /* GERÇEK PARLAMA EFEKTLERİ */
-    .glow-purple { box-shadow: 0 0 20px rgba(157, 80, 187, 0.4) !important; border-bottom: 3px solid var(--neon-purple) !important; }
-    .glow-green { box-shadow: 0 0 20px rgba(56, 239, 125, 0.4) !important; border-bottom: 3px solid var(--neon-green) !important; }
-    .glow-orange { box-shadow: 0 0 20px rgba(255, 153, 102, 0.4) !important; border-bottom: 3px solid var(--neon-orange) !important; }
-    .glow-blue { box-shadow: 0 0 20px rgba(0, 210, 255, 0.4) !important; border-bottom: 3px solid var(--neon-blue) !important; }
-
-    .neon-title-main {
-        font-size: 5rem;
-        font-weight: 900;
-        color: #fff;
-        text-transform: uppercase;
-        text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue), 0 0 40px var(--neon-blue);
-        letter-spacing: 8px;
-    }
-
-    .btn-neon-action {
-        background: transparent !important;
-        border: 2px solid var(--neon-blue) !important;
-        color: var(--neon-blue) !important;
-        box-shadow: 0 0 15px var(--neon-blue) !important;
-        text-transform: uppercase;
-        font-weight: bold;
-        padding: 12px 40px;
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 1.5rem;
         transition: 0.3s;
     }
 
-    .btn-neon-action:hover {
-        background: var(--neon-blue) !important;
-        color: #000 !important;
-        box-shadow: 0 0 40px var(--neon-blue) !important;
+    /* GÖRSELDEKİ PARLAYAN KUTULAR */
+    .stat-purple { border-bottom: 3px solid var(--neon-purple); box-shadow: 0 0 15px rgba(157, 80, 187, 0.3); }
+    .stat-green { border-bottom: 3px solid var(--neon-green); box-shadow: 0 0 15px rgba(56, 239, 125, 0.3); }
+    .stat-orange { border-bottom: 3px solid var(--neon-orange); box-shadow: 0 0 15px rgba(255, 153, 102, 0.3); }
+    .stat-blue { border-bottom: 3px solid var(--neon-blue); box-shadow: 0 0 15px rgba(0, 210, 255, 0.3); }
+
+    .neon-brand {
+        font-size: 4.5rem; font-weight: 900; color: #fff;
+        text-shadow: 0 0 20px var(--neon-blue); letter-spacing: 10px;
     }
 
-    .section-icon-box {
-        width: 70px; height: 70px;
-        margin: 0 auto 15px;
-        display: flex; align-items: center; justify-content: center;
-        border-radius: 50%;
-        background: rgba(0, 210, 255, 0.1);
-        border: 1px solid var(--neon-blue);
-        box-shadow: 0 0 15px var(--neon-blue);
+    /* KATEGORİ KARTLARINI SABİTLEME (Görseldeki 3'lü yapı) */
+    .category-card {
+        min-height: 250px;
+        display: flex; flex-direction: column; justify-content: center;
+        border: 1px solid rgba(0, 210, 255, 0.2) !important;
     }
+    
+    .category-card:hover { transform: translateY(-5px); border-color: var(--neon-blue) !important; }
 </style>
 
-<div class="container py-5">
-    
-    <div class="text-center mb-5 pb-4">
-        <h1 class="neon-title-main mb-2">ANALIZUS</h1>
-        <h5 class="text-info letter-spacing-3 fw-light">BİLİMİN IŞIĞINDA VERİYİ YÖNET</h5>
-        <div class="mt-4">
-            <a href="{% url 'register' %}" class="btn btn-neon-action rounded-pill">Hemen Başla</a>
+<div class="container py-4">
+    <div class="text-center mb-5">
+        <h1 class="neon-brand mb-0">ANALIZUS</h1>
+        <p class="text-info tracking-widest small mb-4 opacity-75">BİLİMİN IŞIĞINDA VERİYİ YÖNET</p>
+        <div class="mt-3">
+            <a href="{% url 'register' %}" class="btn btn-outline-info rounded-pill px-5 fw-bold" style="box-shadow: 0 0 15px var(--neon-blue);">HEMEN BAŞLA</a>
         </div>
     </div>
 
     <div class="row g-4 mb-5">
         <div class="col-md-3">
-            <div class="neon-card glow-purple p-4 text-center rounded-4 h-100">
-                <small class="text-muted d-block mb-1">TOPLAM KONU</small>
-                <h2 class="display-5 fw-bold text-white mb-0">{{ total_topics }}</h2>
-                <small class="text-purple" style="color: var(--neon-purple)">Tartışma</small>
+            <div class="neon-card stat-purple text-center text-white">
+                <small class="text-muted d-block">Toplam Konu</small>
+                <h2 class="fw-bold my-1">{{ total_topics }}</h2>
+                <small style="color:var(--neon-purple)">Tartışma</small>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="neon-card glow-green p-4 text-center rounded-4 h-100">
-                <small class="text-muted d-block mb-1">TOPLAM GÖNDERİ</small>
-                <h2 class="display-5 fw-bold text-white mb-0">{{ total_posts }}</h2>
-                <small class="text-green" style="color: var(--neon-green)">Yanıt</small>
+            <div class="neon-card stat-green text-center text-white">
+                <small class="text-muted d-block">Toplam Gönderi</small>
+                <h2 class="fw-bold my-1">{{ total_posts }}</h2>
+                <small style="color:var(--neon-green)">Yanıt</small>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="neon-card glow-orange p-4 text-center rounded-4 h-100">
-                <small class="text-muted d-block mb-1">TOPLAM ÜYE</small>
-                <h2 class="display-5 fw-bold text-white mb-0">{{ total_users }}</h2>
-                <small class="text-orange" style="color: var(--neon-orange)">Uzman</small>
+            <div class="neon-card stat-orange text-center text-white">
+                <small class="text-muted d-block">Toplam Üye</small>
+                <h2 class="fw-bold my-1">{{ total_users }}</h2>
+                <small style="color:var(--neon-orange)">Uzman</small>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="neon-card glow-blue p-4 text-center rounded-4 h-100">
-                <small class="text-muted d-block mb-1">GÖRÜNTÜLENME</small>
-                <h2 class="display-5 fw-bold text-white mb-0">{{ total_views }}</h2>
-                <small class="text-info" style="color: var(--neon-blue)">Okuma</small>
+            <div class="neon-card stat-blue text-center text-white">
+                <small class="text-muted d-block">Görüntülenme</small>
+                <h2 class="fw-bold my-1">{{ total_views }}</h2>
+                <small style="color:var(--neon-blue)">Okuma</small>
             </div>
         </div>
     </div>
@@ -108,29 +85,32 @@
     <div class="row g-4 mb-5">
         {% for section in sections %}
         <div class="col-md-4">
-            <div class="neon-card p-4 rounded-4 h-100 text-center shadow-sm" style="border: 1px solid rgba(0, 210, 255, 0.2) !important;">
-                <div class="section-icon-box">
-                    <i class="bi bi-cpu fs-2 text-info"></i>
+            <div class="neon-card category-card text-center">
+                <div class="mb-3 text-info">
+                    {% if "YAZILIM" in section.title %}<i class="bi bi-cpu fs-1"></i>
+                    {% elif "YÖNTEM" in section.title %}<i class="bi bi-diagram-3 fs-1"></i>
+                    {% else %}<i class="bi bi-mortarboard fs-1"></i>{% endif %}
                 </div>
                 <h4 class="text-white fw-bold">{{ section.title }}</h4>
-                <p class="text-muted small">Bu kategorideki en güncel analizleri ve tartışmaları keşfedin.</p>
-                <a href="{% url 'section_detail' section.pk %}" class="btn btn-sm btn-outline-info rounded-pill px-4">Giriş</a>
+                <p class="text-muted small px-3">En güncel rehberler ve akademik tartışmalar.</p>
+                <div class="mt-auto">
+                    <a href="{% url 'section_detail' section.pk %}" class="btn btn-sm btn-outline-info rounded-pill px-4">İncele &rarr;</a>
+                </div>
             </div>
+        </div>
         {% endfor %}
     </div>
 
     <div class="row g-4 mb-5">
         <div class="col-lg-6">
-            <div class="neon-card rounded-4 overflow-hidden h-100">
-                <div class="p-3 border-bottom border-secondary bg-dark bg-opacity-50">
-                    <h6 class="text-info mb-0 fw-bold"><i class="bi bi-chat-dots me-2"></i> SON TARTIŞMALAR</h6>
-                </div>
+            <div class="neon-card p-0 overflow-hidden">
+                <div class="p-3 border-bottom border-secondary bg-dark bg-opacity-50 text-info small fw-bold"><i class="bi bi-chat-left-dots me-2"></i> SON TARTIŞMALAR</div>
                 <div class="list-group list-group-flush">
                     {% for topic in recent_topics %}
-                    <a href="{% url 'topic_detail' topic.pk %}" class="list-group-item list-group-item-action bg-transparent text-white border-secondary border-opacity-10 py-3">
-                        <div class="d-flex justify-content-between">
-                            <span class="small fw-bold">{{ topic.subject }}</span>
-                            <span class="x-small text-muted">{{ topic.views }} göz</span>
+                    <a href="{% url 'topic_detail' topic.pk %}" class="list-group-item bg-transparent text-white border-secondary border-opacity-10 py-3">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-info me-3 d-flex align-items-center justify-content-center fw-bold" style="width:35px; height:35px; font-size:10px;">{{ topic.starter.username|slice:":2"|upper }}</div>
+                            <div class="small fw-bold">{{ topic.subject }}</div>
                         </div>
                     </a>
                     {% endfor %}
@@ -138,16 +118,14 @@
             </div>
         </div>
         <div class="col-lg-6">
-            <div class="neon-card rounded-4 overflow-hidden h-100">
-                <div class="p-3 border-bottom border-secondary bg-dark bg-opacity-50">
-                    <h6 class="text-danger mb-0 fw-bold"><i class="bi bi-fire me-2"></i> POPÜLER KONULAR</h6>
-                </div>
+            <div class="neon-card p-0 overflow-hidden">
+                <div class="p-3 border-bottom border-secondary bg-dark bg-opacity-50 text-danger small fw-bold"><i class="bi bi-fire me-2"></i> POPÜLER KONULAR</div>
                 <div class="list-group list-group-flush">
                     {% for topic in popular_topics %}
-                    <a href="{% url 'topic_detail' topic.pk %}" class="list-group-item list-group-item-action bg-transparent text-white border-secondary border-opacity-10 py-3">
-                        <div class="d-flex justify-content-between">
-                            <span class="small fw-bold">{{ topic.subject }}</span>
-                            <span class="badge bg-secondary rounded-pill x-small">{{ topic.replies_count }}</span>
+                    <a href="{% url 'topic_detail' topic.pk %}" class="list-group-item bg-transparent text-white border-secondary border-opacity-10 py-3">
+                        <div class="d-flex justify-content-between align-items-center small">
+                            <span>{{ topic.subject }}</span>
+                            <span class="badge bg-secondary rounded-pill" style="font-size:9px;">{{ topic.views }} göz</span>
                         </div>
                     </a>
                     {% endfor %}
@@ -156,21 +134,14 @@
         </div>
     </div>
 
-    <div class="neon-card rounded-4 overflow-hidden mb-5">
-        <div class="p-3 border-bottom border-secondary bg-dark bg-opacity-50 text-success">
-            <h6 class="mb-0 fw-bold"><i class="bi bi-lightning-charge-fill me-2"></i> SON AKTİVİTELER</h6>
+    <div class="neon-card p-0 overflow-hidden mb-5">
+        <div class="p-3 border-bottom border-secondary bg-dark bg-opacity-50 text-success small fw-bold"><i class="bi bi-lightning-charge me-2"></i> SON AKTİVİTELER</div>
+        {% for activity in recent_activities %}
+        <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex align-items-center justify-content-between text-white small">
+            <span><strong class="text-info">{{ activity.created_by.username }}</strong>, "{{ activity.topic.subject|truncatechars:30 }}" konusuna yanıt verdi.</span>
+            <span class="text-muted x-small">{{ activity.created_at|timesince }} önce</span>
         </div>
-        <div class="list-group list-group-flush">
-            {% for activity in recent_activities %}
-            <div class="list-group-item bg-transparent text-white border-secondary border-opacity-10 py-3 d-flex align-items-center">
-                <div class="rounded-circle bg-success me-3" style="width: 10px; height: 10px; box-shadow: 0 0 10px var(--neon-green);"></div>
-                <span class="small"><strong class="text-info">{{ activity.created_by.username }}</strong>, "{{ activity.topic.subject|truncatechars:40 }}" konusuna yanıt verdi.</span>
-                <span class="ms-auto x-small text-muted">{{ activity.created_at|timesince }} önce</span>
-            </div>
-            {% endfor %}
-        </div>
+        {% endfor %}
     </div>
-
 </div>
-
 {% endblock %}
