@@ -1,0 +1,12 @@
+# AnalizDestek Robots.txt
+# https://analizdestek-ai.onrender.com
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /inbox/
+Disallow: /profile/edit/
+Disallow: /send-message/
+
+# Sitemap
+Sitemap: https://analizdestek-ai.onrender.com/sitemap.xml

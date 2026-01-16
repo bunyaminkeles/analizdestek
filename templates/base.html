@@ -5,8 +5,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Analiz Destek Platformu | Vizyon 2050</title>
-    
+
+    <!-- SEO Meta Tags -->
+    <title>{% block title %}AnalizDestek - Akademik Analiz ve Veri Bilimi Topluluğu{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}SPSS, Python, R Studio ile istatistik analizi, tez yazımı ve akademik araştırma desteği. Türkiye'nin en büyük veri bilimi topluluğu.{% endblock %}">
+    <meta name="keywords" content="SPSS, Python, R Studio, istatistik analizi, tez yazımı, akademik araştırma, veri bilimi, regresyon, ANOVA, t-test">
+    <meta name="author" content="AnalizDestek">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://analizdestek-ai.onrender.com{% block canonical %}{{ request.path }}{% endblock %}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://analizdestek-ai.onrender.com{{ request.path }}">
+    <meta property="og:title" content="{% block og_title %}AnalizDestek - Akademik Analiz Topluluğu{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}SPSS, Python, R ile akademik analiz desteği ve veri bilimi topluluğu.{% endblock %}">
+    <meta property="og:image" content="https://analizdestek-ai.onrender.com{% static 'images/og-image.png' %}">
+    <meta property="og:locale" content="tr_TR">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AnalizDestek - Akademik Analiz Topluluğu">
+    <meta name="twitter:description" content="SPSS, Python, R ile akademik analiz desteği.">
+
+    <!-- Google Analytics GA4 -->
+    {% if GOOGLE_ANALYTICS_ID %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ GOOGLE_ANALYTICS_ID }}');
+    </script>
+    {% endif %}
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">

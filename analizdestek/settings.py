@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',  # SEO Sitemap
     # Kendi Uygulamalarımız
     'forum',
     'crispy_forms',
@@ -62,7 +63,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.i18n',
-                'forum.context_processors.unread_messages_count', # BU GEÇİCİ OLARAK KAPALI
+                'forum.context_processors.unread_messages_count',
+                'forum.context_processors.google_analytics',  # Google Analytics
             ],
         },
     },
@@ -188,3 +190,7 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'AnalizDestek <noreply@anal
 SESSION_COOKIE_AGE = 60 * 60 * 24  # 24 saat (saniye cinsinden)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Tarayıcı kapandığında oturum sonlanır
 SESSION_SAVE_EVERY_REQUEST = True  # Her istekte session süresini yeniler (aktif kullanıcılar için)
+
+# --- GOOGLE ANALYTICS ---
+# GA4 Measurement ID (örn: G-XXXXXXXXXX)
+GOOGLE_ANALYTICS_ID = os.getenv('GOOGLE_ANALYTICS_ID', '')

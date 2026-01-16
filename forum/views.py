@@ -57,7 +57,8 @@ def section_detail(request, pk):
 # --- KATEGORİ VE KONULAR ---
 def category_topics(request, slug):
     category = get_object_or_404(Category, slug=slug)
-    topics = category.topics.annotate(replies_count=Count('posts')).order_by('-created_at')
+    # Pinned konular en üstte, sonra tarihe göre sırala
+    topics = category.topics.annotate(replies_count=Count('posts')).order_by('-is_pinned', '-created_at')
     return render(request, 'forum/category_topics.html', {'category': category, 'topics': topics})
 
 # --- KONU DETAY VE CEVAP YAZMA ---
