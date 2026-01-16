@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 from django.utils.text import slugify
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 class Section(models.Model):
     title = models.CharField(max_length=100)
@@ -41,6 +44,14 @@ class Topic(models.Model):
     def __str__(self):
         return self.subject
 
+    def get_absolute_url(self):
+        return reverse('topic_detail', kwargs={'pk': self.pk})
+
+    @property
+    def last_post(self):
+        """Bu konuya atılan son gönderiyi döndürür."""
+        return self.posts.order_by('-created_at').first()
+
 class Post(models.Model):
     topic = models.ForeignKey(Topic, related_name='posts', on_delete=models.CASCADE)
     message = models.TextField()
@@ -51,6 +62,10 @@ class Post(models.Model):
 
     def __str__(self):
         return f"Post by {self.created_by.username}"
+
+    def get_absolute_url(self):
+        topic_url = self.topic.get_absolute_url()
+        return f"{topic_url}#post-{self.id}"
 
 class Profile(models.Model):
     ACCOUNT_TYPES = (
@@ -66,6 +81,7 @@ class Profile(models.Model):
     title = models.CharField(max_length=100, blank=True, default="", verbose_name="Ünvan")
     location = models.CharField(max_length=100, blank=True, default="", verbose_name="Konum")
     account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPES, default='Free')
+    reputation = models.IntegerField(default=0, verbose_name="Akademik Puan")
     
     # ✅ EMAIL BİLDİRİM TERCİHLERİ
     email_on_reply = models.BooleanField(default=True, verbose_name="Konuma cevap geldiğinde email gönder")
@@ -108,3 +124,28 @@ class PostLike(models.Model):
 
     def __str__(self):
         return f"{self.user.username} liked Post #{self.post.id}"
+
+class Notification(models.Model):
+    """Gerçek zamanlı bildirimler için model"""
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications', verbose_name="Alıcı")
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_notifications', null=True, blank=True, verbose_name="Gönderen")
+    verb = models.CharField(max_length=255, verbose_name="Eylem")
+    
+    # Bildirimin ilişkili olduğu nesne (örneğin, bir Post, bir Topic, vb.)
+    # ContentType framework'ü kullanılarak esnek bir yapı oluşturulur.
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    target = GenericForeignKey('content_type', 'object_id')
+
+    is_read = models.BooleanField(default=False, verbose_name="Okundu mu?")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Oluşturulma Zamanı")
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Bildirim"
+        verbose_name_plural = "Bildirimler"
+
+    def __str__(self):
+        if self.target:
+            return f"{self.sender.username} -> {self.recipient.username}: {self.verb} -> {self.target}"
+        return f"{self.sender.username} -> {self.recipient.username}: {self.verb}"

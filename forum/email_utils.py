@@ -119,7 +119,7 @@ https://analizdestek-ai.onrender.com/topic/{topic.pk}/
 
 ---
 Bu bir otomatik bildirimdir. Cevap vermek için siteye giriş yapın.
-AnalizDestek - Akademik Veri Üssü
+Analizus - Akademik Veri Üssü
 """
     
     # Asenkron gönder (timeout olmaz)
@@ -160,7 +160,7 @@ https://analizdestek-ai.onrender.com/inbox/
 
 ---
 Bu bir otomatik bildirimdir.
-AnalizDestek - Akademik Veri Üssü
+Analizus - Akademik Veri Üssü
 """
     
     # Asenkron gönder (timeout olmaz)
@@ -186,7 +186,7 @@ Konuya gitmek için:
 https://analizdestek-ai.onrender.com/topic/{topic.pk}/
 
 ---
-AnalizDestek - Akademik Veri Üssü
+Analizus - Akademik Veri Üssü
 """
     
     # Asenkron gönder (timeout olmaz)

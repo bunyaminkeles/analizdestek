@@ -73,8 +73,15 @@
                         </td>
 
                         <td class="pe-4 text-end text-muted small">
-                            <div class="fw-bold text-white-50">{{ topic.created_at|timesince }} önce</div>
-                            <div class="opacity-50">Sinyal Alındı</div>
+                            {% if topic.last_post %}
+                                <div class="fw-bold text-white-50">{{ topic.last_post.created_at|timesince }} önce</div>
+                                <div class="opacity-50">
+                                    <i class="bi bi-person"></i> {{ topic.last_post.created_by.username }}
+                                </div>
+                            {% else %}
+                                <div class="fw-bold text-white-50">{{ topic.created_at|timesince }} önce</div>
+                                <div class="opacity-50">Henüz yanıt yok</div>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}

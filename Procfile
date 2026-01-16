@@ -1,1 +1,1 @@
-web: gunicorn analizdestek.wsgi --timeout 120
+web: daphne analizdestek.asgi:application -p ${PORT:-8000}

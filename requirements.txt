@@ -31,3 +31,8 @@ asgiref
 typing_extensions
 packaging
 sendgrid  # SendGrid Web API için (SMTP yerine)
+
+# --- GERÇEK ZAMANLI (REAL-TIME) ---
+daphne
+channels
+channels-redis

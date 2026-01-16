@@ -3,7 +3,7 @@ from django.utils.html import format_html
 from .models import Section, Category, Topic, Post, Profile, ContactMessage, PrivateMessage
 
 # --- GENEL AYARLAR ---
-admin.site.site_header = "AnalizDestek Komuta Merkezi"
+admin.site.site_header = "Analizus Komuta Merkezi"
 admin.site.site_title = "Vizyon 2050 Admin"
 admin.site.index_title = "Sistem Yönetim Paneli"
 

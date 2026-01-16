@@ -7,3 +7,7 @@ staticfiles/
 .gitignore
 avatars/keles.png
 .gitignore
+forum/views-claude.py
+
+forum/templates/forum/home copy.html
+forum/views copy.py

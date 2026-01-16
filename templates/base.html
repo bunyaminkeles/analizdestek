@@ -6,15 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- SEO Meta Tags -->
     <title>{% block title %}AnalizDestek - Akademik Analiz ve Veri Bilimi Topluluğu{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}SPSS, Python, R Studio ile istatistik analizi, tez yazımı ve akademik araştırma desteği. Türkiye'nin en büyük veri bilimi topluluğu.{% endblock %}">
     <meta name="keywords" content="SPSS, Python, R Studio, istatistik analizi, tez yazımı, akademik araştırma, veri bilimi, regresyon, ANOVA, t-test">
-    <meta name="author" content="AnalizDestek">
+    <meta name="author" content="Analizus">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://analizdestek-ai.onrender.com{% block canonical %}{{ request.path }}{% endblock %}">
 
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://analizdestek-ai.onrender.com{{ request.path }}">
     <meta property="og:title" content="{% block og_title %}AnalizDestek - Akademik Analiz Topluluğu{% endblock %}">
@@ -22,12 +20,10 @@
     <meta property="og:image" content="https://analizdestek-ai.onrender.com{% static 'images/og-image.png' %}">
     <meta property="og:locale" content="tr_TR">
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="AnalizDestek - Akademik Analiz Topluluğu">
+    <meta name="twitter:title" content="Analizus - Akademik Analiz Topluluğu">
     <meta name="twitter:description" content="SPSS, Python, R ile akademik analiz desteği.">
 
-    <!-- Google Analytics GA4 -->
     {% if GOOGLE_ANALYTICS_ID %}
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ GOOGLE_ANALYTICS_ID }}"></script>
     <script>
@@ -41,6 +37,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2050">
     
     <style>
@@ -61,9 +61,45 @@
         .ticker-item { padding: 0 30px; color: var(--neon-blue); font-family: 'Courier New', monospace; font-size: 0.8rem; }
         @keyframes ticker-animation { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         main { padding-bottom: 60px; }
+
+        /* KOD BLOKLARI İÇİN ÖZEL NEON STİL (Paket 2) */
+        pre[class*="language-"] {
+            background: #0b1120 !important; /* Daha koyu lacivert */
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            margin: 1.5em 0;
+        }
+        code[class*="language-"], pre[class*="language-"] {
+            text-shadow: none !important;
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+        /* Toolbar (Kopyala butonu) Ayarları */
+        div.code-toolbar > .toolbar {
+            opacity: 1;
+        }
+        div.code-toolbar > .toolbar > .toolbar-item > button {
+            background: var(--neon-blue);
+            color: #000;
+            border-radius: 4px;
+            font-weight: bold;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        /* MATEMATİK FORMÜLLERİ (MathJax) */
+        mjx-container {
+            color: #e2e8f0;
+            font-size: 1.15em;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
+
+    <!-- BİLDİRİMLERİN GÖRÜNECEĞİ ALAN -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+        <!-- Yeni bildirimler buraya JavaScript tarafından eklenecek -->
+    </div>
 
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
@@ -146,12 +182,27 @@
 
     <footer class="py-5 mt-5 border-top border-secondary opacity-75 text-center">
         <div class="container text-muted small">
-            <p>&copy; 2026 AnalizDestek - Akademik Veri Üssü | Vizyon 2050</p>
+            <p>&copy; 2026 Analizus - Akademik Veri Üssü | Vizyon 2050</p>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+    
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <div class="cyber-ticker-wrapper">
         <div class="ticker-content">
             <span class="ticker-item"><i class="bi bi-cpu me-2"></i>AI Analiz Sistemi Aktif</span>
@@ -161,6 +212,10 @@
         </div>
     </div>
 
-    {% block extra_js %}{% endblock %}
+    {% block extra_js %}
+        {% if user.is_authenticated %}
+            <script src="{% static 'js/notifications.js' %}?v=2050"></script>
+        {% endif %}
+    {% endblock %}
 </body>
 </html>

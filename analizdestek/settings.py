@@ -23,7 +23,9 @@ CSRF_TRUSTED_ORIGINS = ['https://analizdestek-ai.onrender.com']
 
 # --- UYGULAMA TANIMLARI ---
 INSTALLED_APPS = [
-    'jazzmin',  # Admin paneli teması
+    'daphne',           # Channels için ASGI sunucusu
+    'channels',         # Gerçek zamanlı özellikler için
+    'jazzmin',          # Admin paneli teması
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -70,7 +72,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'analizdestek.wsgi.application'
+# WSGI_APPLICATION = 'analizdestek.wsgi.application'
+ASGI_APPLICATION = 'analizdestek.asgi.application'
 
 # --- VERİTABANI ---
 DATABASES = {
@@ -194,3 +197,22 @@ SESSION_SAVE_EVERY_REQUEST = True  # Her istekte session süresini yeniler (akti
 # --- GOOGLE ANALYTICS ---
 # GA4 Measurement ID (örn: G-XXXXXXXXXX)
 GOOGLE_ANALYTICS_ID = os.getenv('GOOGLE_ANALYTICS_ID', '')
+
+# --- CHANNEL (GERÇEK-ZAMANLI) AYARLARI ---
+if DEBUG:
+    # Geliştirme ortamında, Redis gerektirmeyen basit bir katman kullan
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer"
+        }
+    }
+else:
+    # Üretim ortamında, ölçeklenebilir Redis katmanını kullan
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379')],
+            },
+        },
+    }

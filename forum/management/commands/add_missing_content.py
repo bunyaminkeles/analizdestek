@@ -5,79 +5,58 @@ from forum.models import Section, Category, Topic, Post, Profile
 from django.utils.text import slugify
 
 class Command(BaseCommand):
-    help = 'Veritabanını temizler ve ANALIZUS içerikleriyle doldurur.'
+    help = 'Eksik kategorilere içerik ekler (mevcut verileri silmeden)'
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.WARNING('Veritabanı temizleniyor...'))
+        self.stdout.write(self.style.WARNING('Eksik içerikler ekleniyor...'))
 
-        # 1. TEMİZLİK
-        Post.objects.all().delete()
-        Topic.objects.all().delete()
-        Category.objects.all().delete()
-        Section.objects.all().delete()
-
-        # 2. KULLANICILAR
-        users = []
+        # Kullanıcıları al veya oluştur
         user_data = [
             ('VeriGorselci', 'Expert', 'Data Visualization Uzmanı'),
             ('MuhasebeUzmani', 'Premium', 'Finans Analisti'),
             ('Otomasyoncu', 'Premium', 'VBA & Makro Uzmanı'),
-            ('Planlama_Y', 'Standard', 'İş Planlama Uzmanı'),
+            ('Planlama_Y', 'Free', 'İş Planlama Uzmanı'),
             ('StratejiAnalisti', 'Expert', 'Business Intelligence'),
             ('Sosyolog_N', 'Expert', 'Dr. Nitel Araştırmacı'),
             ('GorselAnaliz', 'Premium', 'Etnograf'),
-            ('Sahada_Arastirma', 'Standard', 'Saha Araştırmacısı'),
+            ('Sahada_Arastirma', 'Free', 'Saha Araştırmacısı'),
             ('AkademikEtik', 'Expert', 'Araştırma Metodolojisti'),
-            ('Iletisimci', 'Standard', 'İletişim Uzmanı'),
+            ('Iletisimci', 'Free', 'İletişim Uzmanı'),
             ('Ekonometrist', 'Expert', 'Doç. Dr. Ekonometri'),
             ('Muhendislik_R', 'Premium', 'Makine Mühendisi'),
-            ('VeriBilimci_A', 'Premium', 'Data Scientist'),
-            ('AI_Ogrenci', 'Standard', 'YL Öğrencisi'),
-            ('SaglikIst', 'Standard', 'Sağlık İstatistikçisi'),
+            ('AI_Ogrenci', 'Free', 'YL Öğrencisi'),
+            ('SaglikIst', 'Free', 'Sağlık İstatistikçisi'),
             ('Klinik_Aras', 'Expert', 'Dr. Klinik Araştırmacı'),
             ('Ekonometri_S', 'Premium', 'Ekonometri Uzmanı'),
-            ('Psikoloji_Tez', 'Standard', 'Doktora Öğrencisi'),
+            ('Psikoloji_Tez', 'Free', 'Doktora Öğrencisi'),
             ('Yonetim_Aras', 'Premium', 'İşletme Araştırmacısı'),
-            ('Sosyal_Veri', 'Standard', 'Sosyal Bilimci'),
-            ('AI_Junior', 'Standard', 'AI Meraklısı'),
-            ('Donanim_Meraklisi', 'Premium', 'Deep Learning Dev'),
-            ('ModelEgitmeni', 'Expert', 'ML Engineer'),
-            ('Dil_Islemci', 'Premium', 'NLP Uzmanı'),
-            ('Etik_AI', 'Standard', 'AI Ethics Researcher'),
+            ('Sosyal_Veri', 'Free', 'Sosyal Bilimci'),
             ('Literatur_Tarama', 'Expert', 'Bibliyometri Uzmanı'),
             ('Arastirmaci_X', 'Premium', 'Akademisyen'),
-            ('Bilim_Haritaci', 'Standard', 'Scientometrics'),
-            ('AkademikKariyer', 'Standard', 'Doktora Adayı'),
+            ('Bilim_Haritaci', 'Free', 'Scientometrics'),
+            ('AkademikKariyer', 'Free', 'Doktora Adayı'),
             ('YayinHedefi', 'Premium', 'Araştırmacı'),
             ('AnalizBot', 'Expert', 'AI Asistan'),
-            ('Akademik_Kus', 'Standard', 'Doktora Öğrencisi'),
         ]
 
-        admin_user = User.objects.filter(is_superuser=True).first()
-
+        users = {}
         for username, acc_type, title in user_data:
             user, created = User.objects.get_or_create(username=username)
             if created:
                 user.set_password('pass1234')
                 user.save()
 
-            if not hasattr(user, 'profile'):
-                Profile.objects.create(user=user, account_type=acc_type, title=title)
-            else:
-                user.profile.account_type = acc_type
-                user.profile.title = title
-                user.profile.save()
+            profile, _ = Profile.objects.get_or_create(user=user)
+            profile.account_type = acc_type
+            profile.title = title
+            profile.save()
 
-            users.append(user)
+            users[username] = user
 
-        if admin_user:
-            users.append(admin_user)
-            if not hasattr(admin_user, 'profile'):
-                Profile.objects.create(user=admin_user, account_type='Expert', title='Sistem Yöneticisi')
+        # AnalizBot'u al
+        analizbot = users.get('AnalizBot')
 
-        # 3. İÇERİK YAPISI - PART3 DAHİL TÜM İÇERİKLER
-
-        # ===== EXCEL & İŞ ZEKASI =====
+        # ===== EXCEL & İŞ ZEKASI İÇERİKLERİ =====
         excel_topics = [
             {
                 'subject': "Excel'de otomatik güncellenen Dashboard nasıl yapılır?",
@@ -116,7 +95,7 @@ class Command(BaseCommand):
             },
         ]
 
-        # ===== NİTEL ANALİZ ARAÇLARI =====
+        # ===== NİTEL ANALİZ ARAÇLARI İÇERİKLERİ =====
         nitel_topics = [
             {
                 'subject': "Mülakat metinlerini kodlarken nelere dikkat edilmeli?",
@@ -155,7 +134,7 @@ class Command(BaseCommand):
             },
         ]
 
-        # ===== STATA & MATLAB =====
+        # ===== DİĞER ARAÇLAR (STATA, MATLAB) İÇERİKLERİ =====
         stata_topics = [
             {
                 'subject': "Panel veride Fixed Effects vs Random Effects?",
@@ -173,7 +152,7 @@ class Command(BaseCommand):
             },
             {
                 'subject': "Analizlerimi neden Do-File ile kaydetmeliyim?",
-                'starter': 'VeriBilimci_A',
+                'starter': 'Ekonometrist',
                 'message': "Komut penceresinden yazmak daha hızlı değil mi?",
                 'answer': 'Hayır, Do-File analizin "kara kutusu"dur. Hata yaptığında veya hakem düzeltme istediğinde tek tıkla her şeyi en baştan hatasız çalıştırabilirsin.',
                 'views': 534,
@@ -194,7 +173,7 @@ class Command(BaseCommand):
             },
         ]
 
-        # ===== REGRESYON & İLİŞKİ ANALİZİ =====
+        # ===== İLİŞKİ & REGRESYON İÇERİKLERİ =====
         regresyon_topics = [
             {
                 'subject': "Odds Ratio (Olasılıklar Oranı) nedir?",
@@ -233,46 +212,7 @@ class Command(BaseCommand):
             },
         ]
 
-        # ===== YAPAY ZEKA & DERİN ÖĞRENME =====
-        ai_topics = [
-            {
-                'subject': "Tez çalışmamda Kaggle verisi kullanabilir miyim?",
-                'starter': 'AI_Junior',
-                'message': "Gerçek dünya verisi yerine Kaggle kullanmak akademik değerini düşürür mü?",
-                'answer': 'Hayır, ancak verinin kaynağını (metadata) iyi açıklamalı ve "Secondary Data" olarak belirtmelisin. Çok popüler veri setleri (Titanic gibi) yerine daha spesifik olanları seç.',
-                'views': 1234,
-            },
-            {
-                'subject': "Derin öğrenme için RTX 3060 yeterli mi?",
-                'starter': 'Donanim_Meraklisi',
-                'message': "Kendi bilgisayarımda mı yoksa Colab bulutunda mı model eğitmeliyim?",
-                'answer': "3060 giriş seviyesi için harika. Ancak çok katmanlı CNN veya Transformer eğiteceksen Google Colab'ın ücretsiz T4 GPU'su bazen daha hızlı olabilir.",
-                'views': 1567,
-            },
-            {
-                'subject': "Eğitim kaybı düşüyor ama test kaybı artıyor!",
-                'starter': 'ModelEgitmeni',
-                'message': "Modelim eğitim verisini ezberliyor, ne yapmalıyım?",
-                'answer': "Dropout katmanları ekle, öğrenme oranını (learning rate) düşür veya veri artırma (Data Augmentation) tekniklerini kullan.",
-                'views': 2134,
-            },
-            {
-                'subject': "Metin sınıflandırmada BERT neden bu kadar popüler?",
-                'starter': 'Dil_Islemci',
-                'message': "Word2Vec'ten farkı nedir?",
-                'answer': 'BERT kelimenin "bağlamını" anlar. "Yüz" kelimesinin sayı mı yoksa çehre mi olduğunu sağındaki ve solundaki kelimelere bakarak (Bi-directional) çözer.',
-                'views': 1890,
-            },
-            {
-                'subject': "Yapay zeka modellerindeki taraflılık (Bias) sorunu",
-                'starter': 'Etik_AI',
-                'message': "Modelim neden hep belirli bir gruba karşı ayrımcı sonuçlar veriyor?",
-                'answer': "Eğitim verin yanlı (biased) olabilir. Eğer veride temsil edilmeyen gruplar varsa model bunu öğrenir. Verini dengelemen (balancing) şart.",
-                'views': 1345,
-            },
-        ]
-
-        # ===== BİBLİYOMETRİK ANALİZLER =====
+        # ===== BİBLİYOMETRİK ANALİZLER İÇERİKLERİ =====
         biblio_topics = [
             {
                 'subject': "Bibliyometrik görselleştirme için hangi araç daha iyi?",
@@ -311,113 +251,35 @@ class Command(BaseCommand):
             },
         ]
 
-        # ===== SPSS & AMOS =====
-        spss_topics = [
-            {
-                'subject': "SPSS'de normallik testi nasıl yapılır?",
-                'starter': 'Akademik_Kus',
-                'message': "Verimin normal dağılıp dağılmadığını kontrol etmem gerekiyor.",
-                'answer': "Analyze > Descriptive Statistics > Explore yolunu izle. Shapiro-Wilk (n<50) veya Kolmogorov-Smirnov (n>50) testlerini kullan. p>0.05 ise normal dağılım var demektir.",
-                'views': 2345,
-            },
-            {
-                'subject': "AMOS'ta model uyum indeksleri nasıl yorumlanır?",
-                'starter': 'Psikoloji_Tez',
-                'message': "CFI, GFI, RMSEA değerleri ne olmalı?",
-                'answer': "CFI ve GFI > 0.90 (ideal >0.95), RMSEA < 0.08 (ideal <0.05) olmalıdır. Chi-square/df oranı da 3'ün altında olmalı.",
-                'views': 1890,
-            },
-            {
-                'subject': "Cronbach Alpha değeri düşük çıkıyor",
-                'starter': 'Sosyal_Veri',
-                'message': "Ölçeğimin güvenirliği 0.60 çıktı, ne yapmalıyım?",
-                'answer': "Item-Total Correlation değerlerine bak. 0.30'un altındaki maddeleri çıkarmayı düşün. Ayrıca 'Alpha if Item Deleted' sütununa bakarak hangi maddenin çıkarılmasının alpha'yı artıracağını gör.",
-                'views': 1567,
-            },
-        ]
-
-        # ===== PYTHON & VERİ BİLİMİ =====
-        python_topics = [
-            {
-                'subject': "Pandas ile büyük CSV dosyası nasıl okunur?",
-                'starter': 'VeriBilimci_A',
-                'message': "5GB'lık dosyayı açmaya çalışınca RAM dolup taşıyor.",
-                'answer': "`pd.read_csv('dosya.csv', chunksize=100000)` kullanarak parça parça oku. Veya `dtype` parametresiyle veri tiplerini optimize et. Dask kütüphanesi de alternatif.",
-                'views': 1678,
-            },
-            {
-                'subject': "Scikit-learn ile Cross Validation nasıl yapılır?",
-                'starter': 'ModelEgitmeni',
-                'message': "Modelimin gerçek performansını nasıl ölçerim?",
-                'answer': "`from sklearn.model_selection import cross_val_score` kullan. `cross_val_score(model, X, y, cv=5)` ile 5-katlı çapraz doğrulama yapabilirsin.",
-                'views': 1234,
-            },
-            {
-                'subject': "Matplotlib vs Seaborn hangisi daha iyi?",
-                'starter': 'VeriGorselci',
-                'message': "Akademik makale için hangi kütüphaneyi kullanmalıyım?",
-                'answer': "Seaborn, Matplotlib üzerine kurulu ve daha estetik grafikler üretiyor. Ancak tam kontrol istiyorsan Matplotlib kullan. İkisini birlikte kullanmak en iyisi.",
-                'views': 987,
-            },
-        ]
-
-        # ===== R STUDIO =====
-        r_topics = [
-            {
-                'subject': "R'da ggplot2 ile profesyonel grafik nasıl yapılır?",
-                'starter': 'Arastirmaci_X',
-                'message': "Makalem için yayın kalitesinde grafik lazım.",
-                'answer': "`theme_minimal()` veya `theme_classic()` kullan. `ggsave('grafik.png', dpi=300, width=8, height=6)` ile yüksek çözünürlüklü kaydet.",
-                'views': 1345,
-            },
-            {
-                'subject': "R'da tidyverse paketi ne işe yarar?",
-                'starter': 'VeriBilimci_A',
-                'message': "Herkes tidyverse kullanın diyor ama neden?",
-                'answer': "tidyverse; dplyr, ggplot2, tidyr gibi paketleri içeren bir koleksiyon. Veri manipülasyonu için pipe operatörü (%>%) ile okunabilir kod yazmanı sağlar.",
-                'views': 1123,
-            },
-        ]
-
-        # 4. KATEGORİ YAPISI OLUŞTUR
-        structure = {
-            "Yazılımlar": [
-                ("SPSS & AMOS", "bi-bar-chart-fill", "İstatistiksel analiz ve yapısal eşitlik modellemesi.", spss_topics),
-                ("Python & Veri Bilimi", "bi-filetype-py", "Pandas, NumPy, Scikit-learn ile veri analizi.", python_topics),
-                ("R Studio", "bi-r-circle", "Akademik R paketleri ve ggplot2 görselleştirme.", r_topics),
-                ("Excel & Power Query", "bi-file-earmark-spreadsheet", "İleri Excel, VBA ve iş zekası.", excel_topics),
-                ("Stata & MATLAB", "bi-graph-up-arrow", "Ekonometri ve mühendislik analizleri.", stata_topics),
-                ("NVivo & MAXQDA", "bi-chat-quote-fill", "Nitel veri kodlama ve tematik analiz.", nitel_topics),
-            ],
-            "Yöntemler": [
-                ("Regresyon & İlişki Analizi", "bi-diagram-3", "Lojistik regresyon, moderasyon ve aracılık.", regresyon_topics),
-                ("Bibliyometrik Analizler", "bi-book", "VOSviewer, Biblioshiny ve atıf analizleri.", biblio_topics),
-            ],
-            "Akademi": [
-                ("Yapay Zeka & Deep Learning", "bi-robot", "Machine Learning, NLP ve AI etiği.", ai_topics),
-            ],
+        # Kategori slug eşleştirmeleri (canlı siteye göre)
+        category_content_map = {
+            'excel-is-zekasi': excel_topics,
+            'excel-ve-is-zekasi': excel_topics,
+            'nitel-analiz-araclari': nitel_topics,
+            'diger-araclar': stata_topics,
+            'iliski-regresyon': regresyon_topics,
+            'iliski-ve-regresyon': regresyon_topics,
+            'bibliometrik-analizler': biblio_topics,
         }
 
-        # 5. VERİLERİ OLUŞTUR
-        user_dict = {u.username: u for u in users}
+        added_topics = 0
+        added_posts = 0
 
-        for sec_title, categories in structure.items():
-            section = Section.objects.create(title=sec_title)
+        for category in Category.objects.all():
+            slug = category.slug
+            topics_data = None
 
-            for cat_title, icon, desc, topics_data in categories:
-                slug_val = slugify(cat_title.replace('&', 've').replace('/', '-'))
+            # Slug eşleştirmesi
+            for key, data in category_content_map.items():
+                if key in slug or slug in key:
+                    topics_data = data
+                    break
 
-                category = Category.objects.create(
-                    section=section,
-                    title=cat_title,
-                    description=desc,
-                    icon_class=icon,
-                    slug=slug_val
-                )
+            if topics_data and category.topics.count() == 0:
+                self.stdout.write(f"  → {category.title} kategorisine içerik ekleniyor...")
 
                 for topic_data in topics_data:
-                    starter_username = topic_data['starter']
-                    starter = user_dict.get(starter_username, random.choice(users))
+                    starter = users.get(topic_data['starter'], analizbot)
 
                     topic = Topic.objects.create(
                         category=category,
@@ -425,34 +287,36 @@ class Command(BaseCommand):
                         starter=starter,
                         views=topic_data.get('views', random.randint(100, 500))
                     )
+                    added_topics += 1
 
-                    # İlk mesaj (soru)
+                    # Soru
                     Post.objects.create(
                         topic=topic,
                         created_by=starter,
                         message=f"Merhaba,\n\n{topic_data['message']}\n\nTeşekkürler."
                     )
+                    added_posts += 1
 
-                    # Cevap (AnalizBot veya rastgele uzman)
-                    responder = user_dict.get('AnalizBot', random.choice(users))
+                    # Cevap
                     Post.objects.create(
                         topic=topic,
-                        created_by=responder,
+                        created_by=analizbot,
                         message=f"Merhaba,\n\n{topic_data['answer']}\n\nBaşarılar dilerim!",
                         is_best_answer=True
                     )
+                    added_posts += 1
 
         # İstatistikleri göster
         total_topics = Topic.objects.count()
         total_posts = Post.objects.count()
-        total_users = User.objects.count()
 
         self.stdout.write(self.style.SUCCESS(f'''
 ╔══════════════════════════════════════════════╗
-║     🚀 ANALIZUS VERİTABANI HAZIR! 🚀         ║
+║     ✅ EKSİK İÇERİKLER EKLENDİ!              ║
 ╠══════════════════════════════════════════════╣
-║  📊 Toplam Konu: {total_topics:<27} ║
-║  💬 Toplam Gönderi: {total_posts:<24} ║
-║  👥 Toplam Üye: {total_users:<28} ║
+║  ➕ Eklenen Konu: {added_topics:<25} ║
+║  ➕ Eklenen Gönderi: {added_posts:<22} ║
+║  📊 Toplam Konu: {total_topics:<26} ║
+║  💬 Toplam Gönderi: {total_posts:<23} ║
 ╚══════════════════════════════════════════════╝
         '''))
