@@ -13,4 +13,7 @@ python manage.py collectstatic --noinput
 echo "📚 Adding missing content to empty categories..."
 python manage.py add_missing_content
 
+echo "🏆 Creating badges and updating ranks..."
+python manage.py create_badges
+
 echo "✅ Build complete!"

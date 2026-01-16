@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Section, Category, Topic, Post, Profile, ContactMessage, PrivateMessage
+from .models import Section, Category, Topic, Post, Profile, ContactMessage, PrivateMessage, Badge, Notification
 
 # --- GENEL AYARLAR ---
 admin.site.site_header = "Analizus Komuta Merkezi"
@@ -122,13 +122,37 @@ class PrivateMessageAdmin(admin.ModelAdmin):
         updated = queryset.update(is_read=False)
         self.message_user(request, f'{updated} mesaj okunmadı olarak işaretlendi.')
 
-# 6. Profil Yönetimi
+# 6. Rozet (Badge) Yönetimi
+@admin.register(Badge)
+class BadgeAdmin(admin.ModelAdmin):
+    list_display = ('badge_preview', 'name', 'badge_type', 'points_required', 'user_count', 'is_active')
+    list_filter = ('badge_type', 'is_active')
+    search_fields = ('name', 'description')
+    prepopulated_fields = {'slug': ('name',)}
+    list_editable = ('is_active', 'points_required')
+
+    def badge_preview(self, obj):
+        return format_html(
+            '<span style="background: {}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px;">'
+            '<i class="{}"></i> {}</span>',
+            obj.color, obj.icon, obj.name
+        )
+    badge_preview.short_description = "Rozet"
+
+    def user_count(self, obj):
+        return obj.users.count()
+    user_count.short_description = "Kullanıcı Sayısı"
+
+
+# 7. Profil Yönetimi
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'avatar_preview', 'account_type', 'title', 'location', 'email_preferences')
+    list_display = ('user', 'avatar_preview', 'rank_display', 'reputation', 'account_type', 'badge_count', 'email_preferences')
     list_editable = ('account_type',)
     search_fields = ('user__username', 'title')
-    list_filter = ('account_type',)
+    list_filter = ('account_type', 'rank')
+    filter_horizontal = ('badges',)
+    actions = ['update_all_ranks', 'award_selected_badge']
 
     def avatar_preview(self, obj):
         if obj.avatar:
@@ -136,10 +160,20 @@ class ProfileAdmin(admin.ModelAdmin):
         return format_html('<div style="width: 40px; height: 40px; border-radius: 50%; background: #555; display: flex; align-items: center; justify-content: center; color: white;">{}</div>', obj.user.username[0].upper())
     avatar_preview.short_description = "Avatar"
 
-    def account_type_colored(self, obj):
-        colors = {'Free': '#6c757d', 'Premium': '#FFD700', 'Expert': '#00d2ff'}
-        return format_html('<span style="color: {}; font-weight: bold;">{}</span>', colors.get(obj.account_type, '#fff'), obj.get_account_type_display())
-    account_type_colored.short_description = "Üyelik Türü"
+    def rank_display(self, obj):
+        rank_info = obj.get_rank_display_with_icon()
+        return format_html(
+            '<span style="color: {};">{} {}</span>',
+            rank_info['color'], rank_info['icon'], rank_info['name']
+        )
+    rank_display.short_description = "Rütbe"
+
+    def badge_count(self, obj):
+        count = obj.badges.count()
+        if count > 0:
+            return format_html('<span style="background: #6366f1; color: white; padding: 2px 8px; border-radius: 10px;">{} rozet</span>', count)
+        return format_html('<span style="color: #888;">-</span>')
+    badge_count.short_description = "Rozetler"
 
     def email_preferences(self, obj):
         icons = []
@@ -149,6 +183,27 @@ class ProfileAdmin(admin.ModelAdmin):
             icons.append('<span title="Özel mesaj bildirimi açık">✉️</span>')
         return format_html(' '.join(icons) if icons else '<span style="color: #888;">Bildirim kapalı</span>')
     email_preferences.short_description = "Email Tercihleri"
+
+    @admin.action(description='🔄 Seçili kullanıcıların rütbelerini güncelle')
+    def update_all_ranks(self, request, queryset):
+        for profile in queryset:
+            profile.update_rank()
+        self.message_user(request, f'{queryset.count()} kullanıcının rütbesi güncellendi.')
+
+
+# 8. Bildirim Yönetimi
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('recipient', 'sender', 'verb', 'is_read', 'created_at')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('recipient__username', 'sender__username', 'verb')
+    date_hierarchy = 'created_at'
+    actions = ['mark_as_read']
+
+    @admin.action(description='✅ Okundu olarak işaretle')
+    def mark_as_read(self, request, queryset):
+        updated = queryset.update(is_read=True)
+        self.message_user(request, f'{updated} bildirim okundu olarak işaretlendi.')
 
 # 7. İletişim Mesajları
 @admin.register(ContactMessage)
