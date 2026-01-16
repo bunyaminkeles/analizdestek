@@ -95,6 +95,23 @@ class Badge(models.Model):
         return self.name
 
 
+class Skill(models.Model):
+    """Kullanıcı uzmanlık alanları"""
+    name = models.CharField(max_length=50, unique=True, verbose_name="Yetenek Adı")
+    slug = models.SlugField(unique=True)
+    icon = models.CharField(max_length=50, default="bi-lightbulb", verbose_name="İkon")
+    color = models.CharField(max_length=20, default="#6366f1", verbose_name="Renk")
+    category = models.CharField(max_length=50, blank=True, verbose_name="Kategori")
+
+    class Meta:
+        verbose_name = "Yetenek"
+        verbose_name_plural = "Yetenekler"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class Profile(models.Model):
     ACCOUNT_TYPES = (
         ('Free', 'Ücretsiz Üye'),
@@ -116,6 +133,7 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    cover_image = models.ImageField(upload_to='covers/', blank=True, null=True, verbose_name="Kapak Fotoğrafı")
     bio = models.TextField(max_length=500, blank=True)
     title = models.CharField(max_length=100, blank=True, default="", verbose_name="Ünvan")
     location = models.CharField(max_length=100, blank=True, default="", verbose_name="Konum")
@@ -126,9 +144,37 @@ class Profile(models.Model):
     rank = models.CharField(max_length=20, choices=RANK_CHOICES, default='newbie', verbose_name="Rütbe")
     badges = models.ManyToManyField(Badge, blank=True, related_name='users', verbose_name="Rozetler")
 
+    # GELİŞMİŞ PROFİL ALANLARI
+    skills = models.ManyToManyField(Skill, blank=True, related_name='users', verbose_name="Uzmanlık Alanları")
+    university = models.CharField(max_length=150, blank=True, default="", verbose_name="Üniversite")
+    department = models.CharField(max_length=150, blank=True, default="", verbose_name="Bölüm")
+    academic_title = models.CharField(max_length=50, blank=True, default="", verbose_name="Akademik Unvan")
+
+    # Sosyal medya linkleri
+    website = models.URLField(blank=True, default="", verbose_name="Web Sitesi")
+    linkedin = models.URLField(blank=True, default="", verbose_name="LinkedIn")
+    twitter = models.CharField(max_length=50, blank=True, default="", verbose_name="Twitter/X Kullanıcı Adı")
+    github = models.CharField(max_length=50, blank=True, default="", verbose_name="GitHub Kullanıcı Adı")
+    orcid = models.CharField(max_length=20, blank=True, default="", verbose_name="ORCID ID")
+    google_scholar = models.URLField(blank=True, default="", verbose_name="Google Scholar")
+
+    # İstatistikler (cache için)
+    total_topics = models.PositiveIntegerField(default=0, verbose_name="Toplam Konu")
+    total_posts = models.PositiveIntegerField(default=0, verbose_name="Toplam Gönderi")
+    total_likes_received = models.PositiveIntegerField(default=0, verbose_name="Alınan Beğeni")
+    best_answers_count = models.PositiveIntegerField(default=0, verbose_name="En İyi Cevap Sayısı")
+
+    # Tarihler
+    last_seen = models.DateTimeField(null=True, blank=True, verbose_name="Son Görülme")
+    created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name="Kayıt Tarihi")
+
     # EMAIL BİLDİRİM TERCİHLERİ
     email_on_reply = models.BooleanField(default=True, verbose_name="Konuma cevap geldiğinde email gönder")
     email_on_private_message = models.BooleanField(default=True, verbose_name="Özel mesaj geldiğinde email gönder")
+
+    # Profil görünürlüğü
+    is_public = models.BooleanField(default=True, verbose_name="Profil Herkese Açık")
+    show_email = models.BooleanField(default=False, verbose_name="Email Adresini Göster")
 
     def __str__(self):
         return self.user.username
@@ -173,6 +219,39 @@ class Profile(models.Model):
         auto_badges = Badge.objects.filter(points_required__gt=0, points_required__lte=self.reputation)
         for badge in auto_badges:
             self.badges.add(badge)
+
+    def update_stats(self):
+        """Kullanıcı istatistiklerini günceller"""
+        self.total_topics = self.user.topics.count()
+        self.total_posts = self.user.posts.count()
+        self.total_likes_received = sum(p.likes for p in self.user.posts.all())
+        self.best_answers_count = self.user.posts.filter(is_best_answer=True).count()
+        self.save(update_fields=['total_topics', 'total_posts', 'total_likes_received', 'best_answers_count'])
+
+    def get_activity_stats(self):
+        """Aktivite istatistiklerini sözlük olarak döndürür"""
+        return {
+            'topics': self.total_topics,
+            'posts': self.total_posts,
+            'likes': self.total_likes_received,
+            'best_answers': self.best_answers_count,
+            'reputation': self.reputation,
+            'badges': self.badges.count(),
+        }
+
+    def get_full_name(self):
+        """Tam adı veya kullanıcı adını döndürür"""
+        if self.user.first_name and self.user.last_name:
+            return f"{self.user.first_name} {self.user.last_name}"
+        return self.user.username
+
+    def get_display_title(self):
+        """Görüntülenecek ünvanı döndürür"""
+        if self.academic_title:
+            return self.academic_title
+        if self.title:
+            return self.title
+        return self.get_rank_display()
 
 class PrivateMessage(models.Model):
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)

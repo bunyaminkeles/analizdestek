@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Section, Category, Topic, Post, Profile, ContactMessage, PrivateMessage, Badge, Notification
+from .models import Section, Category, Topic, Post, Profile, ContactMessage, PrivateMessage, Badge, Notification, Skill
 
 # --- GENEL AYARLAR ---
 admin.site.site_header = "Analizus Komuta Merkezi"
@@ -122,7 +122,28 @@ class PrivateMessageAdmin(admin.ModelAdmin):
         updated = queryset.update(is_read=False)
         self.message_user(request, f'{updated} mesaj okunmadı olarak işaretlendi.')
 
-# 6. Rozet (Badge) Yönetimi
+# 6. Yetenek (Skill) Yönetimi
+@admin.register(Skill)
+class SkillAdmin(admin.ModelAdmin):
+    list_display = ('skill_preview', 'name', 'category', 'user_count')
+    list_filter = ('category',)
+    search_fields = ('name',)
+    prepopulated_fields = {'slug': ('name',)}
+
+    def skill_preview(self, obj):
+        return format_html(
+            '<span style="background: {}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px;">'
+            '<i class="{}"></i> {}</span>',
+            obj.color, obj.icon, obj.name
+        )
+    skill_preview.short_description = "Yetenek"
+
+    def user_count(self, obj):
+        return obj.users.count()
+    user_count.short_description = "Kullanıcı Sayısı"
+
+
+# 7. Rozet (Badge) Yönetimi
 @admin.register(Badge)
 class BadgeAdmin(admin.ModelAdmin):
     list_display = ('badge_preview', 'name', 'badge_type', 'points_required', 'user_count', 'is_active')
@@ -144,15 +165,40 @@ class BadgeAdmin(admin.ModelAdmin):
     user_count.short_description = "Kullanıcı Sayısı"
 
 
-# 7. Profil Yönetimi
+# 8. Profil Yönetimi
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'avatar_preview', 'rank_display', 'reputation', 'account_type', 'badge_count', 'email_preferences')
+    list_display = ('user', 'avatar_preview', 'rank_display', 'reputation', 'account_type', 'university_info', 'stats_display')
     list_editable = ('account_type',)
-    search_fields = ('user__username', 'title')
-    list_filter = ('account_type', 'rank')
-    filter_horizontal = ('badges',)
-    actions = ['update_all_ranks', 'award_selected_badge']
+    search_fields = ('user__username', 'title', 'university', 'department')
+    list_filter = ('account_type', 'rank', 'is_public')
+    filter_horizontal = ('badges', 'skills')
+    actions = ['update_all_ranks', 'update_all_stats']
+
+    fieldsets = (
+        ('Temel Bilgiler', {
+            'fields': ('user', 'avatar', 'cover_image', 'bio', 'title', 'location')
+        }),
+        ('Akademik Bilgiler', {
+            'fields': ('university', 'department', 'academic_title'),
+            'classes': ('collapse',)
+        }),
+        ('Sosyal Medya', {
+            'fields': ('website', 'linkedin', 'twitter', 'github', 'orcid', 'google_scholar'),
+            'classes': ('collapse',)
+        }),
+        ('Sistem Bilgileri', {
+            'fields': ('account_type', 'rank', 'reputation', 'badges', 'skills')
+        }),
+        ('İstatistikler', {
+            'fields': ('total_topics', 'total_posts', 'total_likes_received', 'best_answers_count'),
+            'classes': ('collapse',)
+        }),
+        ('Tercihler', {
+            'fields': ('email_on_reply', 'email_on_private_message', 'is_public', 'show_email'),
+            'classes': ('collapse',)
+        }),
+    )
 
     def avatar_preview(self, obj):
         if obj.avatar:
@@ -168,27 +214,31 @@ class ProfileAdmin(admin.ModelAdmin):
         )
     rank_display.short_description = "Rütbe"
 
-    def badge_count(self, obj):
-        count = obj.badges.count()
-        if count > 0:
-            return format_html('<span style="background: #6366f1; color: white; padding: 2px 8px; border-radius: 10px;">{} rozet</span>', count)
+    def university_info(self, obj):
+        if obj.university:
+            return format_html('<span title="{}">{}</span>', obj.department or '-', obj.university[:20] + '...' if len(obj.university) > 20 else obj.university)
         return format_html('<span style="color: #888;">-</span>')
-    badge_count.short_description = "Rozetler"
+    university_info.short_description = "Üniversite"
 
-    def email_preferences(self, obj):
-        icons = []
-        if obj.email_on_reply:
-            icons.append('<span title="Konuma cevap bildirimi açık">💬</span>')
-        if obj.email_on_private_message:
-            icons.append('<span title="Özel mesaj bildirimi açık">✉️</span>')
-        return format_html(' '.join(icons) if icons else '<span style="color: #888;">Bildirim kapalı</span>')
-    email_preferences.short_description = "Email Tercihleri"
+    def stats_display(self, obj):
+        return format_html(
+            '<span title="Konu: {}, Gönderi: {}, Beğeni: {}">📊 {}/{}/{}</span>',
+            obj.total_topics, obj.total_posts, obj.total_likes_received,
+            obj.total_topics, obj.total_posts, obj.total_likes_received
+        )
+    stats_display.short_description = "İstatistikler"
 
     @admin.action(description='🔄 Seçili kullanıcıların rütbelerini güncelle')
     def update_all_ranks(self, request, queryset):
         for profile in queryset:
             profile.update_rank()
         self.message_user(request, f'{queryset.count()} kullanıcının rütbesi güncellendi.')
+
+    @admin.action(description='📊 Seçili kullanıcıların istatistiklerini güncelle')
+    def update_all_stats(self, request, queryset):
+        for profile in queryset:
+            profile.update_stats()
+        self.message_user(request, f'{queryset.count()} kullanıcının istatistikleri güncellendi.')
 
 
 # 8. Bildirim Yönetimi

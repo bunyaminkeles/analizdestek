@@ -16,4 +16,7 @@ python manage.py add_missing_content
 echo "🏆 Creating badges and updating ranks..."
 python manage.py create_badges
 
+echo "🎯 Creating skills..."
+python manage.py create_skills
+
 echo "✅ Build complete!"
