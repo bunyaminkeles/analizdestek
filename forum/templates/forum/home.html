@@ -4,256 +4,617 @@
 {% block content %}
 <div class="analizus-home">
 
-<!-- HERO -->
-<div class="hero-box">
-    <div class="hero-bg">
-        <!-- Circuit lines left -->
-        <svg class="circuit-svg left" viewBox="0 0 200 400">
-            <path d="M0 50 H80 V30 H120" stroke="url(#cyan-grad)" stroke-width="2" fill="none"/>
-            <path d="M0 90 H60 V120 H100" stroke="url(#cyan-grad)" stroke-width="2" fill="none"/>
-            <path d="M0 150 H40 V180 H90" stroke="url(#cyan-grad)" stroke-width="2" fill="none"/>
-            <path d="M0 250 H70 V220 H110" stroke="url(#cyan-grad)" stroke-width="2" fill="none"/>
-            <path d="M0 320 H50 V350 H95" stroke="url(#cyan-grad)" stroke-width="2" fill="none"/>
-            <circle cx="80" cy="50" r="5" fill="#00f0ff" class="node-glow"/>
-            <circle cx="120" cy="30" r="4" fill="#00f0ff" class="node-glow"/>
-            <circle cx="60" cy="90" r="5" fill="#00f0ff" class="node-glow anim-1"/>
-            <circle cx="100" cy="120" r="4" fill="#00f0ff" class="node-glow"/>
-            <circle cx="40" cy="150" r="5" fill="#00f0ff" class="node-glow anim-2"/>
-            <circle cx="90" cy="180" r="4" fill="#00f0ff" class="node-glow"/>
-            <circle cx="70" cy="250" r="5" fill="#00f0ff" class="node-glow anim-3"/>
-            <circle cx="110" cy="220" r="4" fill="#00f0ff" class="node-glow"/>
-            <circle cx="50" cy="320" r="5" fill="#00f0ff" class="node-glow anim-1"/>
-            <circle cx="95" cy="350" r="4" fill="#00f0ff" class="node-glow"/>
-            <defs>
-                <linearGradient id="cyan-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#00f0ff;stop-opacity:0.8"/>
-                    <stop offset="100%" style="stop-color:#00f0ff;stop-opacity:0.2"/>
-                </linearGradient>
-            </defs>
-        </svg>
-
-        <!-- Circuit lines right -->
-        <svg class="circuit-svg right" viewBox="0 0 200 400">
-            <path d="M200 50 H120 V30 H80" stroke="url(#cyan-grad-r)" stroke-width="2" fill="none"/>
-            <path d="M200 90 H140 V120 H100" stroke="url(#cyan-grad-r)" stroke-width="2" fill="none"/>
-            <path d="M200 150 H160 V180 H110" stroke="url(#cyan-grad-r)" stroke-width="2" fill="none"/>
-            <path d="M200 250 H130 V220 H90" stroke="url(#cyan-grad-r)" stroke-width="2" fill="none"/>
-            <path d="M200 320 H150 V350 H105" stroke="url(#cyan-grad-r)" stroke-width="2" fill="none"/>
-            <circle cx="120" cy="50" r="5" fill="#00f0ff" class="node-glow anim-2"/>
-            <circle cx="80" cy="30" r="4" fill="#00f0ff" class="node-glow"/>
-            <circle cx="140" cy="90" r="5" fill="#00f0ff" class="node-glow"/>
-            <circle cx="100" cy="120" r="4" fill="#00f0ff" class="node-glow anim-3"/>
-            <circle cx="160" cy="150" r="5" fill="#00f0ff" class="node-glow anim-1"/>
-            <circle cx="110" cy="180" r="4" fill="#00f0ff" class="node-glow"/>
-            <circle cx="130" cy="250" r="5" fill="#00f0ff" class="node-glow"/>
-            <circle cx="90" cy="220" r="4" fill="#00f0ff" class="node-glow anim-2"/>
-            <circle cx="150" cy="320" r="5" fill="#00f0ff" class="node-glow anim-3"/>
-            <circle cx="105" cy="350" r="4" fill="#00f0ff" class="node-glow"/>
-            <defs>
-                <linearGradient id="cyan-grad-r" x1="100%" y1="0%" x2="0%" y2="0%">
-                    <stop offset="0%" style="stop-color:#00f0ff;stop-opacity:0.8"/>
-                    <stop offset="100%" style="stop-color:#00f0ff;stop-opacity:0.2"/>
-                </linearGradient>
-            </defs>
-        </svg>
-
-        <!-- Center glow -->
-        <div class="center-glow"></div>
+<!-- HERO SECTION -->
+<div class="hero-section">
+    <div class="circuit-bg">
+        <div class="circuit-line left-1"></div>
+        <div class="circuit-line left-2"></div>
+        <div class="circuit-line left-3"></div>
+        <div class="circuit-line right-1"></div>
+        <div class="circuit-line right-2"></div>
+        <div class="circuit-line right-3"></div>
+        <div class="circuit-dot dot-1"></div>
+        <div class="circuit-dot dot-2"></div>
+        <div class="circuit-dot dot-3"></div>
+        <div class="circuit-dot dot-4"></div>
+        <div class="circuit-dot dot-5"></div>
+        <div class="circuit-dot dot-6"></div>
     </div>
 
     <div class="hero-content">
         <h1 class="hero-title">ANALİZUS</h1>
-        <p class="hero-sub">BİLİMİN IŞIĞINDA VERİYİ YÖNET</p>
+        <p class="hero-subtitle">BİLİMİN IŞIĞINDA VERİYİ YÖNET</p>
     </div>
 </div>
 
-<!-- STATS -->
+<!-- STATS ROW -->
 <div class="stats-row">
-    <div class="stat-pill">
-        <div class="stat-icon"><i class="bi bi-chat-square-text-fill"></i></div>
-        <div class="stat-data">
-            <small>Toplam Konu</small>
-            <strong>{{ total_topics }}</strong>
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="bi bi-chat-square-text-fill"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Konu</span>
+            <span class="stat-value">{{ total_topics }}</span>
         </div>
     </div>
-    <div class="stat-pill">
-        <div class="stat-icon"><i class="bi bi-file-text-fill"></i></div>
-        <div class="stat-data">
-            <small>Toplam Gönderi</small>
-            <strong>{{ total_posts }}</strong>
+    <div class="stat-card">
+        <div class="stat-icon purple"><i class="bi bi-file-text-fill"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Gönderi</span>
+            <span class="stat-value">{{ total_posts }}</span>
         </div>
     </div>
-    <div class="stat-pill">
-        <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
-        <div class="stat-data">
-            <small>Toplam Üye</small>
-            <strong>{{ total_users }}</strong>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="bi bi-people-fill"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Üye</span>
+            <span class="stat-value">{{ total_users }}</span>
         </div>
     </div>
-    <div class="stat-pill">
-        <div class="stat-icon"><i class="bi bi-globe2"></i></div>
-        <div class="stat-data">
-            <small>Görüntülenme</small>
-            <strong>{{ total_views|default:0 }}</strong>
+    <div class="stat-card">
+        <div class="stat-icon orange"><i class="bi bi-eye-fill"></i></div>
+        <div class="stat-info">
+            <span class="stat-label">Görüntülenme</span>
+            <span class="stat-value">{{ total_views|default:"0" }}</span>
         </div>
     </div>
 </div>
 
-<!-- SECTIONS -->
-<div class="sections-row">
+<!-- CATEGORIES ROW -->
+<div class="categories-row">
     {% for section in sections %}
-    <a href="{% url 'section_detail' pk=section.pk %}" class="section-card">
-        <div class="section-icon">
+    <a href="{% url 'section_detail' pk=section.pk %}" class="category-card">
+        <div class="category-icon">
             {% if "Yazılım" in section.title %}<i class="bi bi-code-slash"></i>
             {% elif "Yöntem" in section.title %}<i class="bi bi-diagram-3-fill"></i>
             {% elif "Akademi" in section.title %}<i class="bi bi-mortarboard-fill"></i>
             {% else %}<i class="bi bi-grid-fill"></i>{% endif %}
         </div>
-        <h3>{{ section.title }}</h3>
-        <p>{% if "Yazılım" in section.title %}SPSS, Python, R ve analiz araçları.{% elif "Yöntem" in section.title %}İstatistik yöntemler ve teknikler.{% elif "Akademi" in section.title %}Akademik kariyer ve araştırma.{% else %}Tüm konular ve tartışmalar.{% endif %}</p>
+        <div class="category-info">
+            <h3>{{ section.title }}</h3>
+            <p>{% if "Yazılım" in section.title %}SPSS, Python, R ve analiz araçları
+            {% elif "Yöntem" in section.title %}İstatistik yöntemler ve teknikler
+            {% elif "Akademi" in section.title %}Akademik kariyer ve araştırma
+            {% else %}Tüm konular ve tartışmalar{% endif %}</p>
+        </div>
+        <div class="category-arrow"><i class="bi bi-chevron-right"></i></div>
     </a>
     {% endfor %}
 </div>
 
-<!-- WIDGETS -->
+<!-- WIDGETS ROW -->
 <div class="widgets-row">
-    <div class="widget">
-        <div class="widget-head"><i class="bi bi-chat-dots-fill"></i> Son Tartışmalar</div>
+    <!-- Son Tartışmalar -->
+    <div class="widget-card cyan">
+        <div class="widget-header">
+            <i class="bi bi-chat-dots-fill"></i>
+            <span>Son Tartışmalar</span>
+        </div>
         <div class="widget-body">
             {% for topic in recent_topics %}
-            <div class="w-item">
-                <div class="w-avatar" style="background:linear-gradient(135deg,{% cycle '#8B5CF6' '#06B6D4' '#EC4899' '#10B981' %},{% cycle '#6366F1' '#0891B2' '#DB2777' '#059669' %})">{{ topic.starter.username|slice:":2"|upper }}</div>
-                <div class="w-info">
-                    <a href="{% url 'topic_detail' pk=topic.pk %}">{{ topic.subject|truncatechars:35 }}</a>
-                    <span>{{ topic.starter.username }} {{ topic.starter|get_rank_badge }}</span>
+            <a href="{% url 'topic_detail' pk=topic.pk %}" class="widget-item">
+                <div class="item-avatar" style="background: linear-gradient(135deg, {% cycle '#8B5CF6' '#06B6D4' '#EC4899' '#10B981' %}, {% cycle '#6366F1' '#0891B2' '#DB2777' '#059669' %})">
+                    {{ topic.starter.username|slice:":2"|upper }}
                 </div>
-            </div>
-            {% empty %}<p class="empty">Henüz tartışma yok</p>{% endfor %}
-        </div>
-    </div>
-
-    <div class="widget orange">
-        <div class="widget-head"><i class="bi bi-fire"></i> Popüler Konular</div>
-        <div class="widget-body">
-            {% for topic in popular_topics %}
-            <a href="{% url 'topic_detail' pk=topic.pk %}" class="pop-item">
-                <i class="bi bi-lightning-charge-fill"></i>
-                <div>
-                    <span class="pop-title">{{ topic.subject|truncatechars:42 }}</span>
-                    <span class="pop-views">{{ topic.views }} Görüntülenme</span>
+                <div class="item-content">
+                    <span class="item-title">{{ topic.subject|truncatechars:40 }}</span>
+                    <span class="item-meta">{{ topic.starter.username }} · {{ topic.created_at|timesince }} önce</span>
                 </div>
             </a>
-            {% empty %}<p class="empty">Henüz popüler konu yok</p>{% endfor %}
+            {% empty %}
+            <p class="empty-text">Henüz tartışma yok</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Popüler Konular -->
+    <div class="widget-card orange">
+        <div class="widget-header">
+            <i class="bi bi-fire"></i>
+            <span>Popüler Konular</span>
+        </div>
+        <div class="widget-body">
+            {% for topic in popular_topics %}
+            <a href="{% url 'topic_detail' pk=topic.pk %}" class="widget-item popular">
+                <div class="item-rank">#{{ forloop.counter }}</div>
+                <div class="item-content">
+                    <span class="item-title">{{ topic.subject|truncatechars:40 }}</span>
+                    <span class="item-meta"><i class="bi bi-eye"></i> {{ topic.views }} görüntülenme</span>
+                </div>
+            </a>
+            {% empty %}
+            <p class="empty-text">Henüz popüler konu yok</p>
+            {% endfor %}
         </div>
     </div>
 </div>
 
-<!-- ACTIVITY -->
-<div class="widget full green">
-    <div class="widget-head"><i class="bi bi-lightning-fill"></i> Son Aktiviteler</div>
-    <div class="widget-body act-body">
-        {% for act in recent_activities %}
-        <div class="act-item">
-            <div class="act-av">{{ act.created_by.username|slice:":2"|upper }}</div>
-            <div class="act-txt"><b>{{ act.created_by.username }}</b> {{ act.created_by|get_rank_badge }} "<a href="{% url 'topic_detail' pk=act.topic.pk %}">{{ act.topic.subject|truncatechars:28 }}</a>" konusuna yanıt verdi</div>
-            <span class="act-time">{{ act.created_at|timesince }} önce</span>
+<!-- ACTIVITY SECTION -->
+<div class="activity-section">
+    <div class="widget-card green full-width">
+        <div class="widget-header">
+            <i class="bi bi-lightning-fill"></i>
+            <span>Son Aktiviteler</span>
         </div>
-        {% empty %}<p class="empty">Henüz aktivite yok</p>{% endfor %}
+        <div class="widget-body activity-body">
+            {% for act in recent_activities %}
+            <div class="activity-item">
+                <div class="activity-avatar">{{ act.created_by.username|slice:":2"|upper }}</div>
+                <div class="activity-content">
+                    <b>{{ act.created_by.username }}</b>
+                    "<a href="{% url 'topic_detail' pk=act.topic.pk %}">{{ act.topic.subject|truncatechars:35 }}</a>" konusuna yanıt verdi
+                </div>
+                <span class="activity-time">{{ act.created_at|timesince }} önce</span>
+            </div>
+            {% empty %}
+            <p class="empty-text">Henüz aktivite yok</p>
+            {% endfor %}
+        </div>
     </div>
 </div>
 
-<!-- Corner star -->
-<div class="corner-star">✦</div>
+<!-- Corner Elements -->
+<div class="corner-star top-right">✦</div>
+<div class="corner-star bottom-left">✦</div>
 
 </div>
 
 <style>
-.analizus-home{position:relative}
+/* ===== MAIN CONTAINER ===== */
+.analizus-home {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
-/* ===== HERO ===== */
-.hero-box{position:relative;border-radius:20px;overflow:hidden;margin-bottom:24px;background:linear-gradient(180deg,#020617 0%,#0a0f1a 50%,#000 100%);border:1px solid rgba(0,240,255,0.15)}
-.hero-bg{position:absolute;inset:0;overflow:hidden}
-.circuit-svg{position:absolute;height:100%;width:200px;top:0}
-.circuit-svg.left{left:0}
-.circuit-svg.right{right:0}
-.node-glow{filter:drop-shadow(0 0 6px #00f0ff) drop-shadow(0 0 12px #00f0ff)}
-.node-glow.anim-1{animation:pulse 2s ease-in-out infinite}
-.node-glow.anim-2{animation:pulse 2s ease-in-out infinite 0.5s}
-.node-glow.anim-3{animation:pulse 2s ease-in-out infinite 1s}
-@keyframes pulse{0%,100%{opacity:.5;r:4}50%{opacity:1;r:6}}
-.center-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60%;height:70%;background:radial-gradient(ellipse,rgba(0,240,255,0.12) 0%,transparent 70%);pointer-events:none}
-.hero-content{position:relative;z-index:10;text-align:center;padding:70px 20px 60px}
-.hero-title{font-family:'Arial Black',Impact,sans-serif;font-size:5.5rem;font-weight:900;letter-spacing:16px;margin:0 0 16px;background:linear-gradient(180deg,#fff 0%,#00e5ff 35%,#a855f7 65%,#00e5ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 40px rgba(0,229,255,0.5)) drop-shadow(0 0 80px rgba(168,85,247,0.3));animation:glow 3s ease-in-out infinite alternate}
-@keyframes glow{from{filter:drop-shadow(0 0 30px rgba(0,229,255,0.4)) drop-shadow(0 0 60px rgba(168,85,247,0.2))}to{filter:drop-shadow(0 0 50px rgba(0,229,255,0.7)) drop-shadow(0 0 100px rgba(168,85,247,0.4))}}
-.hero-sub{font-size:1.1rem;color:#475569;letter-spacing:8px;margin:0;text-transform:uppercase}
+/* ===== HERO SECTION ===== */
+.hero-section {
+    position: relative;
+    background: linear-gradient(180deg, #020617 0%, #0a0f1a 100%);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 20px;
+    padding: 60px 20px;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
 
-/* ===== STATS ===== */
-.stats-row{display:flex;justify-content:center;gap:16px;margin-bottom:24px;flex-wrap:wrap}
-.stat-pill{display:flex;align-items:center;gap:12px;background:rgba(10,15,30,0.9);border:1px solid rgba(0,240,255,0.25);border-radius:999px;padding:10px 22px 10px 12px;transition:all .3s}
-.stat-pill:hover{border-color:#00f0ff;box-shadow:0 0 20px rgba(0,240,255,0.2);transform:translateY(-2px)}
-.stat-icon{width:40px;height:40px;background:rgba(0,240,255,0.1);border:1px solid rgba(0,240,255,0.35);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#00f0ff;font-size:1rem}
-.stat-data{display:flex;flex-direction:column}
-.stat-data small{font-size:.65rem;color:#64748b;text-transform:uppercase;letter-spacing:1px}
-.stat-data strong{font-size:1.5rem;font-weight:800;color:#fff;line-height:1.1}
+.circuit-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
 
-/* ===== SECTIONS ===== */
-.sections-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:24px}
-.section-card{display:block;background:rgba(10,15,30,0.85);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:28px 20px;text-align:center;text-decoration:none;transition:all .4s}
-.section-card:hover{border-color:rgba(0,240,255,0.35);transform:translateY(-6px);box-shadow:0 15px 40px rgba(0,0,0,0.4),0 0 20px rgba(0,240,255,0.08)}
-.section-icon{width:65px;height:65px;margin:0 auto 16px;background:linear-gradient(135deg,rgba(0,240,255,0.1),rgba(168,85,247,0.1));border:1px solid rgba(0,240,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;color:#00f0ff;transition:all .3s}
-.section-card:hover .section-icon{border-color:#00f0ff;box-shadow:0 0 20px rgba(0,240,255,0.35)}
-.section-card h3{color:#fff;font-size:1.15rem;font-weight:700;margin:0 0 8px}
-.section-card p{color:#64748b;font-size:.8rem;line-height:1.4;margin:0}
+.circuit-line {
+    position: absolute;
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.4), transparent);
+    height: 2px;
+}
 
-/* ===== WIDGETS ===== */
-.widgets-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
-.widget{background:rgba(10,15,30,0.85);border:1px solid rgba(255,255,255,0.05);border-radius:16px;overflow:hidden}
-.widget.full{grid-column:1/-1}
-.widget-head{display:flex;align-items:center;gap:10px;padding:14px 18px;font-weight:600;font-size:.9rem;color:#00f0ff;border-bottom:1px solid rgba(255,255,255,0.05)}
-.widget.orange .widget-head{color:#f97316}
-.widget.green .widget-head{color:#22c55e}
-.widget-head i{font-size:1.1rem}
-.widget-body{padding:10px 16px}
+.circuit-line.left-1 { top: 20%; left: 0; width: 120px; }
+.circuit-line.left-2 { top: 50%; left: 0; width: 80px; }
+.circuit-line.left-3 { top: 80%; left: 0; width: 100px; }
+.circuit-line.right-1 { top: 20%; right: 0; width: 120px; background: linear-gradient(270deg, rgba(0, 240, 255, 0.4), transparent); }
+.circuit-line.right-2 { top: 50%; right: 0; width: 80px; background: linear-gradient(270deg, rgba(0, 240, 255, 0.4), transparent); }
+.circuit-line.right-3 { top: 80%; right: 0; width: 100px; background: linear-gradient(270deg, rgba(0, 240, 255, 0.4), transparent); }
 
-.w-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
-.w-item:last-child{border-bottom:none}
-.w-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.7rem;flex-shrink:0}
-.w-info{flex:1;min-width:0}
-.w-info a{display:block;color:#e2e8f0;font-size:.85rem;font-weight:600;text-decoration:none;margin-bottom:2px;transition:color .2s}
-.w-info a:hover{color:#00f0ff}
-.w-info span{color:#64748b;font-size:.7rem}
+.circuit-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #00f0ff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+    animation: pulse-dot 2s ease-in-out infinite;
+}
 
-.pop-item{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(249,115,22,0.05);border-left:3px solid #f97316;border-radius:0 10px 10px 0;margin-bottom:8px;text-decoration:none;transition:all .3s}
-.pop-item:last-child{margin-bottom:0}
-.pop-item:hover{background:rgba(249,115,22,0.1);transform:translateX(4px)}
-.pop-item>i{color:#f97316;font-size:1rem}
-.pop-item>div{flex:1}
-.pop-title{display:block;color:#e2e8f0;font-size:.82rem;font-weight:600;margin-bottom:2px}
-.pop-views{color:#64748b;font-size:.68rem}
+.circuit-dot.dot-1 { top: 20%; left: 120px; animation-delay: 0s; }
+.circuit-dot.dot-2 { top: 50%; left: 80px; animation-delay: 0.3s; }
+.circuit-dot.dot-3 { top: 80%; left: 100px; animation-delay: 0.6s; }
+.circuit-dot.dot-4 { top: 20%; right: 120px; animation-delay: 0.9s; }
+.circuit-dot.dot-5 { top: 50%; right: 80px; animation-delay: 1.2s; }
+.circuit-dot.dot-6 { top: 80%; right: 100px; animation-delay: 1.5s; }
 
-.act-body{max-height:260px;overflow-y:auto}
-.act-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03)}
-.act-item:last-child{border-bottom:none}
-.act-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.65rem;flex-shrink:0}
-.act-txt{flex:1;color:#94a3b8;font-size:.8rem}
-.act-txt b{color:#00f0ff}
-.act-txt a{color:#e2e8f0;text-decoration:none}
-.act-txt a:hover{color:#00f0ff}
-.act-time{color:#475569;font-size:.65rem;white-space:nowrap}
-.empty{color:#64748b;text-align:center;padding:16px;margin:0;font-style:italic}
+@keyframes pulse-dot {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); }
+}
 
-/* Corner star */
-.corner-star{position:fixed;bottom:70px;right:35px;font-size:1.8rem;color:#00f0ff;text-shadow:0 0 15px #00f0ff;animation:twinkle 3s ease-in-out infinite;pointer-events:none;z-index:50}
-@keyframes twinkle{0%,100%{opacity:.4;transform:scale(1) rotate(0deg)}50%{opacity:1;transform:scale(1.2) rotate(180deg)}}
+.hero-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+}
 
-/* Scrollbar */
-.act-body::-webkit-scrollbar{width:4px}
-.act-body::-webkit-scrollbar-track{background:rgba(255,255,255,0.02)}
-.act-body::-webkit-scrollbar-thumb{background:rgba(0,240,255,0.25);border-radius:2px}
+.hero-title {
+    font-family: 'Arial Black', Impact, sans-serif;
+    font-size: 4.5rem;
+    font-weight: 900;
+    letter-spacing: 12px;
+    margin: 0 0 12px;
+    background: linear-gradient(180deg, #fff 0%, #00e5ff 40%, #a855f7 70%, #00e5ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(0, 229, 255, 0.5));
+    animation: title-glow 3s ease-in-out infinite alternate;
+}
 
-/* Responsive */
-@media(max-width:1024px){.sections-row{grid-template-columns:repeat(2,1fr)}.widgets-row{grid-template-columns:1fr}}
-@media(max-width:768px){.hero-title{font-size:3.2rem;letter-spacing:10px}.hero-sub{font-size:.85rem;letter-spacing:5px}.hero-content{padding:50px 15px 45px}.circuit-svg{width:120px}.stats-row{gap:10px}.stat-pill{padding:8px 14px 8px 8px}.stat-data strong{font-size:1.2rem}.sections-row{grid-template-columns:1fr}.corner-star{display:none}}
-@media(max-width:480px){.hero-title{font-size:2.2rem;letter-spacing:6px}.stats-row{flex-direction:column;align-items:center}.stat-pill{width:100%;max-width:240px}}
+@keyframes title-glow {
+    from { filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.4)); }
+    to { filter: drop-shadow(0 0 40px rgba(0, 229, 255, 0.7)); }
+}
+
+.hero-subtitle {
+    font-size: 1rem;
+    color: #64748b;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+/* ===== STATS ROW ===== */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(10, 15, 30, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px 20px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    border-color: rgba(0, 240, 255, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.stat-icon.blue { background: rgba(0, 210, 255, 0.15); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.3); }
+.stat-icon.purple { background: rgba(168, 85, 247, 0.15); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); }
+.stat-icon.green { background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
+.stat-icon.orange { background: rgba(249, 115, 22, 0.15); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); }
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+}
+
+/* ===== CATEGORIES ROW ===== */
+.categories-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.category-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(10, 15, 30, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover {
+    border-color: rgba(0, 240, 255, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.category-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(168, 85, 247, 0.1));
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #00f0ff;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover .category-icon {
+    border-color: #00f0ff;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+.category-info {
+    flex: 1;
+}
+
+.category-info h3 {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+.category-info p {
+    color: #64748b;
+    font-size: 0.8rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.category-arrow {
+    color: #64748b;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover .category-arrow {
+    color: #00f0ff;
+    transform: translateX(4px);
+}
+
+/* ===== WIDGETS ROW ===== */
+.widgets-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.widget-card {
+    background: rgba(10, 15, 30, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.widget-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.widget-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.widget-card.cyan .widget-header { color: #00f0ff; }
+.widget-card.orange .widget-header { color: #f97316; }
+.widget-card.green .widget-header { color: #22c55e; }
+
+.widget-header i {
+    font-size: 1.1rem;
+}
+
+.widget-body {
+    padding: 12px 16px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.widget-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    margin-bottom: 4px;
+}
+
+.widget-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.item-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+
+.item-rank {
+    width: 32px;
+    height: 32px;
+    background: rgba(249, 115, 22, 0.15);
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #f97316;
+    font-weight: 700;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.item-title {
+    display: block;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.widget-item:hover .item-title {
+    color: #00f0ff;
+}
+
+.item-meta {
+    display: block;
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+.item-meta i {
+    margin-right: 4px;
+}
+
+/* ===== ACTIVITY SECTION ===== */
+.activity-section {
+    margin-bottom: 20px;
+}
+
+.activity-body {
+    max-height: 280px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+}
+
+.activity-content {
+    flex: 1;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.activity-content b {
+    color: #00f0ff;
+}
+
+.activity-content a {
+    color: #e2e8f0;
+    text-decoration: none;
+}
+
+.activity-content a:hover {
+    color: #00f0ff;
+}
+
+.activity-time {
+    color: #475569;
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-text {
+    color: #64748b;
+    text-align: center;
+    padding: 20px;
+    margin: 0;
+    font-style: italic;
+}
+
+/* ===== CORNER STARS ===== */
+.corner-star {
+    position: fixed;
+    font-size: 1.5rem;
+    color: #00f0ff;
+    text-shadow: 0 0 15px #00f0ff;
+    animation: twinkle 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 50;
+}
+
+.corner-star.top-right { top: 100px; right: 30px; }
+.corner-star.bottom-left { bottom: 80px; left: 30px; animation-delay: 1.5s; }
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.4; transform: scale(1) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+/* ===== SCROLLBAR ===== */
+.widget-body::-webkit-scrollbar { width: 4px; }
+.widget-body::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+.widget-body::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.25); border-radius: 2px; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .categories-row { grid-template-columns: 1fr; }
+    .widgets-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .hero-title { font-size: 2.8rem; letter-spacing: 8px; }
+    .hero-subtitle { font-size: 0.8rem; letter-spacing: 4px; }
+    .hero-section { padding: 40px 15px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-card { padding: 12px 14px; }
+    .stat-value { font-size: 1.4rem; }
+    .corner-star { display: none; }
+}
+
+@media (max-width: 480px) {
+    .hero-title { font-size: 2rem; letter-spacing: 5px; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .stat-icon { width: 40px; height: 40px; font-size: 1rem; }
+}
 </style>
 {% endblock %}
