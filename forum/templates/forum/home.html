@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load forum_extras %}
 
 {% block content %}
 <div class="analizus-home">
@@ -124,7 +125,7 @@
                 <div class="w-avatar" style="background:linear-gradient(135deg,{% cycle '#8B5CF6' '#06B6D4' '#EC4899' '#10B981' %},{% cycle '#6366F1' '#0891B2' '#DB2777' '#059669' %})">{{ topic.starter.username|slice:":2"|upper }}</div>
                 <div class="w-info">
                     <a href="{% url 'topic_detail' pk=topic.pk %}">{{ topic.subject|truncatechars:35 }}</a>
-                    <span>{{ topic.starter.username }}</span>
+                    <span>{{ topic.starter.username }} {{ topic.starter|get_rank_badge }}</span>
                 </div>
             </div>
             {% empty %}<p class="empty">Henüz tartışma yok</p>{% endfor %}
@@ -154,7 +155,7 @@
         {% for act in recent_activities %}
         <div class="act-item">
             <div class="act-av">{{ act.created_by.username|slice:":2"|upper }}</div>
-            <div class="act-txt"><b>{{ act.created_by.username }}</b> "<a href="{% url 'topic_detail' pk=act.topic.pk %}">{{ act.topic.subject|truncatechars:28 }}</a>" konusuna yanıt verdi</div>
+            <div class="act-txt"><b>{{ act.created_by.username }}</b> {{ act.created_by|get_rank_badge }} "<a href="{% url 'topic_detail' pk=act.topic.pk %}">{{ act.topic.subject|truncatechars:28 }}</a>" konusuna yanıt verdi</div>
             <span class="act-time">{{ act.created_at|timesince }} önce</span>
         </div>
         {% empty %}<p class="empty">Henüz aktivite yok</p>{% endfor %}
