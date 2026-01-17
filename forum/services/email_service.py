@@ -6,10 +6,18 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 from django.urls import reverse
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class EmailService:
     """E-posta gönderme işlemlerini yöneten servis"""
+
+    @staticmethod
+    def is_configured():
+        """E-posta ayarlarının yapılandırılıp yapılandırılmadığını kontrol eder"""
+        return bool(getattr(settings, 'EMAIL_HOST_PASSWORD', ''))
 
     @staticmethod
     def get_base_url():
@@ -39,6 +47,11 @@ class EmailService:
 
         subject = 'Analizus - E-posta Adresinizi Doğrulayın'
 
+        # E-posta yapılandırılmamışsa skip et
+        if not cls.is_configured():
+            logger.warning(f"E-posta yapılandırılmamış. Kullanıcı: {user.username}")
+            return False
+
         # HTML template
         html_message = render_to_string('forum/emails/verification_email.html', context)
         plain_message = strip_tags(html_message)
@@ -52,9 +65,10 @@ class EmailService:
                 html_message=html_message,
                 fail_silently=False,
             )
+            logger.info(f"Doğrulama e-postası gönderildi: {user.email}")
             return True
         except Exception as e:
-            print(f"E-posta gönderme hatası: {e}")
+            logger.error(f"E-posta gönderme hatası ({user.email}): {e}")
             return False
 
     @classmethod
@@ -76,6 +90,11 @@ class EmailService:
 
         subject = 'Analizus\'a Hoş Geldiniz!'
 
+        # E-posta yapılandırılmamışsa skip et
+        if not cls.is_configured():
+            logger.warning(f"E-posta yapılandırılmamış. Hoş geldin e-postası gönderilemedi: {user.username}")
+            return False
+
         html_message = render_to_string('forum/emails/welcome_email.html', context)
         plain_message = strip_tags(html_message)
 
@@ -88,9 +107,10 @@ class EmailService:
                 html_message=html_message,
                 fail_silently=False,
             )
+            logger.info(f"Hoş geldin e-postası gönderildi: {user.email}")
             return True
         except Exception as e:
-            print(f"E-posta gönderme hatası: {e}")
+            logger.error(f"E-posta gönderme hatası ({user.email}): {e}")
             return False
 
     @classmethod

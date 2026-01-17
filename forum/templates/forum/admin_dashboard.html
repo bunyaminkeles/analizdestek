@@ -1,0 +1,474 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - Analizus{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+        border-color: rgba(99, 102, 241, 0.5);
+        transform: translateY(-2px);
+    }
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fff;
+    }
+    .stat-label {
+        color: #94a3b8;
+        font-size: 0.875rem;
+    }
+    .stat-change {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 20px;
+    }
+    .stat-change.positive {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
+    .stat-change.neutral {
+        background: rgba(148, 163, 184, 0.2);
+        color: #94a3b8;
+    }
+    .dashboard-card {
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 16px;
+    }
+    .dashboard-card .card-header {
+        background: transparent;
+        border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+        padding: 1rem 1.25rem;
+    }
+    .dashboard-card .card-header h5 {
+        margin: 0;
+        color: #fff;
+        font-weight: 600;
+    }
+    .progress-thin {
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(99, 102, 241, 0.2);
+    }
+    .table-dashboard {
+        color: #e2e8f0;
+    }
+    .table-dashboard th {
+        border-color: rgba(99, 102, 241, 0.2);
+        color: #94a3b8;
+        font-weight: 500;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+    }
+    .table-dashboard td {
+        border-color: rgba(99, 102, 241, 0.1);
+        vertical-align: middle;
+    }
+    .user-avatar-sm {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+    .activity-item {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+    }
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="text-white fw-bold mb-1">
+                <i class="bi bi-speedometer2 me-2"></i>Admin Dashboard
+            </h1>
+            <p class="text-muted mb-0">Forum istatistikleri ve analitik verileri</p>
+        </div>
+        <div>
+            <a href="{% url 'admin:index' %}" class="btn btn-outline-info">
+                <i class="bi bi-gear me-1"></i> Django Admin
+            </a>
+        </div>
+    </div>
+
+    <!-- Ana İstatistik Kartları -->
+    <div class="row g-4 mb-4">
+        <!-- Toplam Kullanıcı -->
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Toplam Kullanıcı</p>
+                        <h3 class="stat-value mb-2">{{ total_users }}</h3>
+                        <span class="stat-change positive">+{{ week_users }} bu hafta</span>
+                    </div>
+                    <div class="stat-icon" style="background: rgba(99, 102, 241, 0.2);">
+                        <i class="bi bi-people text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toplam Konu -->
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Toplam Konu</p>
+                        <h3 class="stat-value mb-2">{{ total_topics }}</h3>
+                        <span class="stat-change positive">+{{ week_topics }} bu hafta</span>
+                    </div>
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.2);">
+                        <i class="bi bi-chat-square-text text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toplam Gönderi -->
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Toplam Gönderi</p>
+                        <h3 class="stat-value mb-2">{{ total_posts }}</h3>
+                        <span class="stat-change positive">+{{ week_posts }} bu hafta</span>
+                    </div>
+                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.2);">
+                        <i class="bi bi-chat-dots text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toplam Görüntüleme -->
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Toplam Görüntüleme</p>
+                        <h3 class="stat-value mb-2">{{ total_views|default:0 }}</h3>
+                        <span class="stat-change neutral">Tüm zamanlar</span>
+                    </div>
+                    <div class="stat-icon" style="background: rgba(236, 72, 153, 0.2);">
+                        <i class="bi bi-eye text-danger"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bugünkü Özet -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="bi bi-calendar-day me-2"></i>Bugün</h5>
+                    <span class="text-muted small">{{ today_users }} yeni kullanıcı, {{ today_topics }} konu, {{ today_posts }} gönderi</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- Aktivite Grafiği -->
+        <div class="col-lg-8">
+            <div class="dashboard-card h-100">
+                <div class="card-header">
+                    <h5><i class="bi bi-graph-up me-2"></i>Son 7 Günlük Aktivite</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="activityChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- E-posta Doğrulama Durumu -->
+        <div class="col-lg-4">
+            <div class="dashboard-card h-100">
+                <div class="card-header">
+                    <h5><i class="bi bi-envelope-check me-2"></i>E-posta Durumu</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="verificationChart" height="200"></canvas>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Doğrulanmış</span>
+                            <span class="text-success fw-bold">{{ verified_users }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Doğrulanmamış</span>
+                            <span class="text-danger fw-bold">{{ unverified_users }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- Kategori İstatistikleri -->
+        <div class="col-lg-6">
+            <div class="dashboard-card h-100">
+                <div class="card-header">
+                    <h5><i class="bi bi-folder me-2"></i>Kategori İstatistikleri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dashboard table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Kategori</th>
+                                    <th class="text-center">Konu</th>
+                                    <th class="text-center">Gönderi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cat in category_stats %}
+                                <tr>
+                                    <td>{{ cat.title }}</td>
+                                    <td class="text-center">{{ cat.topic_count }}</td>
+                                    <td class="text-center">{{ cat.post_count }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">Henüz kategori yok</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- En Aktif Kullanıcılar -->
+        <div class="col-lg-6">
+            <div class="dashboard-card h-100">
+                <div class="card-header">
+                    <h5><i class="bi bi-trophy me-2"></i>En Aktif Kullanıcılar (Son 30 Gün)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dashboard table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Kullanıcı</th>
+                                    <th class="text-center">Konu</th>
+                                    <th class="text-center">Gönderi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in active_users %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar-sm me-2">{{ user.username|slice:":1"|upper }}</div>
+                                            <a href="{% url 'profile_detail' user.username %}" class="text-info text-decoration-none">
+                                                {{ user.username }}
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">{{ user.recent_topics }}</td>
+                                    <td class="text-center">{{ user.recent_posts }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">Henüz aktivite yok</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- Son Kayıt Olan Kullanıcılar -->
+        <div class="col-lg-4">
+            <div class="dashboard-card h-100">
+                <div class="card-header">
+                    <h5><i class="bi bi-person-plus me-2"></i>Son Kayıtlar</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% for user in recent_users %}
+                    <div class="activity-item px-3">
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar-sm me-2">{{ user.username|slice:":1"|upper }}</div>
+                            <div>
+                                <a href="{% url 'profile_detail' user.username %}" class="text-info text-decoration-none fw-medium">
+                                    {{ user.username }}
+                                </a>
+                                <div class="text-muted small">{{ user.date_joined|timesince }} önce</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="p-3 text-center text-muted">Henüz kullanıcı yok</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Son Konular -->
+        <div class="col-lg-4">
+            <div class="dashboard-card h-100">
+                <div class="card-header">
+                    <h5><i class="bi bi-chat-square-text me-2"></i>Son Konular</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% for topic in recent_topics_list %}
+                    <div class="activity-item px-3">
+                        <a href="{% url 'topic_detail' topic.pk %}" class="text-light text-decoration-none">
+                            {{ topic.subject|truncatewords:8 }}
+                        </a>
+                        <div class="text-muted small">
+                            {{ topic.starter.username }} - {{ topic.created_at|timesince }} önce
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="p-3 text-center text-muted">Henüz konu yok</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Rütbe Dağılımı -->
+        <div class="col-lg-4">
+            <div class="dashboard-card h-100">
+                <div class="card-header">
+                    <h5><i class="bi bi-bar-chart me-2"></i>Rütbe Dağılımı</h5>
+                </div>
+                <div class="card-body">
+                    {% for rank in rank_distribution %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-light">{{ rank.rank|title }}</span>
+                            <span class="text-muted">{{ rank.count }}</span>
+                        </div>
+                        <div class="progress progress-thin">
+                            <div class="progress-bar bg-info" style="width: {% widthratio rank.count total_users 100 %}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Aktivite Grafiği
+const activityCtx = document.getElementById('activityChart').getContext('2d');
+new Chart(activityCtx, {
+    type: 'line',
+    data: {
+        labels: {{ chart_labels|safe }},
+        datasets: [
+            {
+                label: 'Yeni Kullanıcı',
+                data: {{ user_trend|safe }},
+                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                fill: true,
+                tension: 0.4
+            },
+            {
+                label: 'Yeni Konu',
+                data: {{ topic_trend|safe }},
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                fill: true,
+                tension: 0.4
+            },
+            {
+                label: 'Yeni Gönderi',
+                data: {{ post_trend|safe }},
+                borderColor: '#f59e0b',
+                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                fill: true,
+                tension: 0.4
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: { color: '#94a3b8' }
+            }
+        },
+        scales: {
+            x: {
+                grid: { color: 'rgba(99, 102, 241, 0.1)' },
+                ticks: { color: '#94a3b8' }
+            },
+            y: {
+                grid: { color: 'rgba(99, 102, 241, 0.1)' },
+                ticks: { color: '#94a3b8' },
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// E-posta Doğrulama Grafiği
+const verificationCtx = document.getElementById('verificationChart').getContext('2d');
+new Chart(verificationCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Doğrulanmış', 'Doğrulanmamış'],
+        datasets: [{
+            data: [{{ verified_users }}, {{ unverified_users }}],
+            backgroundColor: ['#10b981', '#ef4444'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { color: '#94a3b8' }
+            }
+        },
+        cutout: '70%'
+    }
+});
+</script>
+{% endblock %}

@@ -34,6 +34,9 @@ urlpatterns = [
     path('verification-pending/', views.verification_pending, name='verification_pending'),
     path('resend-verification/', views.resend_verification, name='resend_verification'),
 
+    # Admin Dashboard
+    path('dashboard/', views.admin_dashboard, name='admin_dashboard'),
+
     # Diğer
     path('search/', views.search_result, name='search'),
     path('hakkimizda/', views.about, name='about'),
