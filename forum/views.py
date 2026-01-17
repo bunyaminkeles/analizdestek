@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Sum
+from django.db import models
+from django.db.models import Count, Sum, Q
 from django.contrib import messages
 from django.utils import timezone
 from django.http import JsonResponse
@@ -201,7 +202,33 @@ def contact(request):
     return render(request, 'forum/contact.html')
 
 def search_result(request):
-    return render(request, 'forum/search_results.html')
+    """Arama sonuçları"""
+    query = request.GET.get('q', '').strip()
+
+    topics = []
+    users = []
+
+    if query and len(query) >= 2:
+        # Konularda ara (başlık ve içerik)
+        topics = Topic.objects.filter(
+            Q(subject__icontains=query) |
+            Q(posts__message__icontains=query)
+        ).distinct().select_related('starter', 'category').order_by('-created_at')[:20]
+
+        # Kullanıcılarda ara
+        users = User.objects.filter(
+            Q(username__icontains=query)
+        ).order_by('username')[:10]
+
+    context = {
+        'query': query,
+        'topics': topics,
+        'users': users,
+        'topics_count': len(topics),
+        'users_count': len(users),
+    }
+
+    return render(request, 'forum/search_results.html', context)
 
 def summarize_topic(request, pk):
     return redirect('topic_detail', pk=pk)
