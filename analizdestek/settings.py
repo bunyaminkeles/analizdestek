@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'forum.middleware.EmailVerificationMiddleware',  # E-posta doğrulama kontrolü
 ]
 
 ROOT_URLCONF = 'analizdestek.urls'
@@ -190,6 +191,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'  # SendGrid için sabit değer
 EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Analizus <noreply@analizdestek-ai.onrender.com>')
+
+# Site URL (e-posta doğrulama linkleri için)
+SITE_URL = os.getenv('SITE_URL', 'https://analizdestek-ai.onrender.com')
 
 # --- SESSION AYARLARI (Otomatik Logout) ---
 SESSION_COOKIE_AGE = 60 * 60 * 24  # 24 saat (saniye cinsinden)

@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from datetime import timedelta
-from .models import Section, Category, Topic, Post, Profile, PrivateMessage, PostLike, Notification
+from .models import Section, Category, Topic, Post, Profile, PrivateMessage, PostLike, Notification, EmailVerification
 from .forms import RegisterForm, NewTopicForm, PostForm
 from .email_utils import send_topic_reply_notification, send_private_message_notification
 
@@ -132,8 +132,19 @@ def register(request):
             user = form.save()
             if not hasattr(user, 'profile'):
                 Profile.objects.create(user=user)
+
+            # E-posta doğrulama token'ı oluştur ve gönder
+            from .services.email_service import EmailService
+            verification = EmailVerification.create_for_user(user)
+            email_sent = EmailService.send_verification_email(user, verification)
+
+            if email_sent:
+                messages.success(request, 'Kayıt başarılı! Lütfen e-posta adresinizi doğrulayın. Doğrulama linki gönderildi.')
+            else:
+                messages.warning(request, 'Kayıt başarılı ancak doğrulama e-postası gönderilemedi. Profil sayfasından tekrar deneyebilirsiniz.')
+
             login(request, user)
-            return redirect('home')
+            return redirect('verification_pending')
     else:
         form = RegisterForm()
     return render(request, 'forum/register.html', {'form': form})
@@ -379,3 +390,75 @@ def ai_suggest_answer(request, topic_id):
         return JsonResponse({'suggestion': result['suggestion']})
     else:
         return JsonResponse({'error': result['error']}, status=500)
+
+
+# --- E-POSTA DOĞRULAMA ---
+@login_required
+def verification_pending(request):
+    """E-posta doğrulama bekleniyor sayfası"""
+    profile = request.user.profile
+
+    if profile.email_verified:
+        messages.info(request, 'E-posta adresiniz zaten doğrulanmış.')
+        return redirect('home')
+
+    return render(request, 'forum/verification_pending.html')
+
+
+def verify_email(request, token):
+    """E-posta doğrulama linki işleme"""
+    from .services.email_service import EmailService
+
+    try:
+        verification = EmailVerification.objects.get(token=token)
+    except EmailVerification.DoesNotExist:
+        messages.error(request, 'Geçersiz doğrulama linki.')
+        return redirect('home')
+
+    if not verification.is_valid():
+        messages.error(request, 'Bu doğrulama linki süresi dolmuş veya daha önce kullanılmış.')
+        return redirect('home')
+
+    # Kullanıcıyı doğrula
+    user = verification.user
+    profile, _ = Profile.objects.get_or_create(user=user)
+    profile.email_verified = True
+    profile.save()
+
+    # Token'ı kullanılmış olarak işaretle
+    verification.is_used = True
+    verification.save()
+
+    # Hoş geldin e-postası gönder
+    EmailService.send_welcome_email(user)
+
+    messages.success(request, 'E-posta adresiniz başarıyla doğrulandı! Hoş geldiniz.')
+
+    # Kullanıcı giriş yapmamışsa giriş yap
+    if not request.user.is_authenticated:
+        login(request, user)
+
+    return redirect('home')
+
+
+@login_required
+def resend_verification(request):
+    """Doğrulama e-postasını tekrar gönder"""
+    from .services.email_service import EmailService
+
+    profile = request.user.profile
+
+    if profile.email_verified:
+        messages.info(request, 'E-posta adresiniz zaten doğrulanmış.')
+        return redirect('home')
+
+    # Yeni token oluştur ve gönder
+    verification = EmailVerification.create_for_user(request.user)
+    email_sent = EmailService.send_verification_email(request.user, verification)
+
+    if email_sent:
+        messages.success(request, 'Doğrulama e-postası tekrar gönderildi. Lütfen e-posta kutunuzu kontrol edin.')
+    else:
+        messages.error(request, 'E-posta gönderilemedi. Lütfen daha sonra tekrar deneyin.')
+
+    return redirect('verification_pending')

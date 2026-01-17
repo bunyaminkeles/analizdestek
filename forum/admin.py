@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Section, Category, Topic, Post, Profile, ContactMessage, PrivateMessage, Badge, Notification, Skill
+from .models import Section, Category, Topic, Post, Profile, ContactMessage, PrivateMessage, Badge, Notification, Skill, EmailVerification
 
 # --- GENEL AYARLAR ---
 admin.site.site_header = "Analizus Komuta Merkezi"
@@ -168,12 +168,12 @@ class BadgeAdmin(admin.ModelAdmin):
 # 8. Profil Yönetimi
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'avatar_preview', 'rank_display', 'reputation', 'account_type', 'university_info', 'stats_display')
+    list_display = ('user', 'avatar_preview', 'rank_display', 'reputation', 'account_type', 'email_status', 'university_info', 'stats_display')
     list_editable = ('account_type',)
     search_fields = ('user__username', 'title', 'university', 'department')
-    list_filter = ('account_type', 'rank', 'is_public')
+    list_filter = ('account_type', 'rank', 'is_public', 'email_verified')
     filter_horizontal = ('badges', 'skills')
-    actions = ['update_all_ranks', 'update_all_stats']
+    actions = ['update_all_ranks', 'update_all_stats', 'verify_emails']
 
     fieldsets = (
         ('Temel Bilgiler', {
@@ -195,7 +195,7 @@ class ProfileAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Tercihler', {
-            'fields': ('email_on_reply', 'email_on_private_message', 'is_public', 'show_email'),
+            'fields': ('email_on_reply', 'email_on_private_message', 'is_public', 'show_email', 'email_verified'),
             'classes': ('collapse',)
         }),
     )
@@ -240,6 +240,17 @@ class ProfileAdmin(admin.ModelAdmin):
             profile.update_stats()
         self.message_user(request, f'{queryset.count()} kullanıcının istatistikleri güncellendi.')
 
+    def email_status(self, obj):
+        if obj.email_verified:
+            return format_html('<span style="color: #28a745;">✅ Doğrulandı</span>')
+        return format_html('<span style="color: #dc3545;">❌ Doğrulanmadı</span>')
+    email_status.short_description = "E-posta"
+
+    @admin.action(description='✅ E-postaları doğrulanmış olarak işaretle')
+    def verify_emails(self, request, queryset):
+        updated = queryset.update(email_verified=True)
+        self.message_user(request, f'{updated} kullanıcının e-postası doğrulandı olarak işaretlendi.')
+
 
 # 8. Bildirim Yönetimi
 @admin.register(Notification)
@@ -272,3 +283,25 @@ class ContactMessageAdmin(admin.ModelAdmin):
     def preview_message(self, obj):
         return obj.message[:100] + "..." if len(obj.message) > 100 else obj.message
     preview_message.short_description = "Mesaj Önizleme"
+
+
+# 9. E-posta Doğrulama Yönetimi
+@admin.register(EmailVerification)
+class EmailVerificationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'token_short', 'created_at', 'expires_at', 'status')
+    list_filter = ('is_used', 'created_at')
+    search_fields = ('user__username', 'user__email')
+    readonly_fields = ('token', 'created_at')
+    date_hierarchy = 'created_at'
+
+    def token_short(self, obj):
+        return str(obj.token)[:8] + "..."
+    token_short.short_description = "Token"
+
+    def status(self, obj):
+        if obj.is_used:
+            return format_html('<span style="color: #28a745;">✅ Kullanıldı</span>')
+        if obj.is_valid():
+            return format_html('<span style="color: #ffc107;">⏳ Bekliyor</span>')
+        return format_html('<span style="color: #dc3545;">❌ Süresi Dolmuş</span>')
+    status.short_description = "Durum"

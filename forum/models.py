@@ -4,6 +4,9 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+import uuid
+from django.utils import timezone
+from datetime import timedelta
 
 class Section(models.Model):
     title = models.CharField(max_length=100)
@@ -176,6 +179,9 @@ class Profile(models.Model):
     is_public = models.BooleanField(default=True, verbose_name="Profil Herkese Açık")
     show_email = models.BooleanField(default=False, verbose_name="Email Adresini Göster")
 
+    # E-posta doğrulama durumu
+    email_verified = models.BooleanField(default=False, verbose_name="E-posta Doğrulandı")
+
     def __str__(self):
         return self.user.username
 
@@ -318,3 +324,37 @@ class Notification(models.Model):
         if self.target and hasattr(self.target, 'get_absolute_url'):
             return self.target.get_absolute_url()
         return reverse('home')
+
+
+class EmailVerification(models.Model):
+    """E-posta doğrulama token modeli"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='email_verifications')
+    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "E-posta Doğrulama"
+        verbose_name_plural = "E-posta Doğrulamaları"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.token}"
+
+    def save(self, *args, **kwargs):
+        if not self.expires_at:
+            # Token 24 saat geçerli
+            self.expires_at = timezone.now() + timedelta(hours=24)
+        super().save(*args, **kwargs)
+
+    def is_valid(self):
+        """Token'ın geçerli olup olmadığını kontrol eder"""
+        return not self.is_used and timezone.now() < self.expires_at
+
+    @classmethod
+    def create_for_user(cls, user):
+        """Kullanıcı için yeni doğrulama token'ı oluşturur"""
+        # Önceki kullanılmamış token'ları geçersiz kıl
+        cls.objects.filter(user=user, is_used=False).update(is_used=True)
+        return cls.objects.create(user=user)

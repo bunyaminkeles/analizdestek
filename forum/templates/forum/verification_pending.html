@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}E-posta Doğrulama - Analizus{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+
+        <!-- Verification Card -->
+        <div class="card border-0 shadow-lg" style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(99, 102, 241, 0.3) !important; border-radius: 16px;">
+            <div class="card-body p-5 text-center">
+
+                <!-- Icon -->
+                <div class="mb-4">
+                    <div class="verification-icon-container mx-auto mb-3" style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-envelope-check display-3" style="color: #6366f1;"></i>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <h2 class="fw-bold text-white mb-3">E-posta Doğrulaması Gerekiyor</h2>
+
+                <!-- Description -->
+                <p class="text-muted mb-4">
+                    Hesabınızı aktifleştirmek için <strong class="text-info">{{ user.email }}</strong> adresine bir doğrulama e-postası gönderdik.
+                </p>
+
+                <div class="alert border-0 rounded-3 mb-4" style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3) !important;">
+                    <i class="bi bi-info-circle me-2 text-info"></i>
+                    <span class="text-light">E-postanızdaki linke tıklayarak hesabınızı doğrulayın. Link 24 saat geçerlidir.</span>
+                </div>
+
+                <!-- Features While Waiting -->
+                <div class="text-start mb-4 p-3 rounded-3" style="background: rgba(30, 41, 59, 0.8);">
+                    <p class="text-muted mb-2 small">E-postanız doğrulanmadan:</p>
+                    <ul class="list-unstyled text-muted small mb-0">
+                        <li class="mb-1"><i class="bi bi-x-circle text-danger me-2"></i> Yeni konu açamazsınız</li>
+                        <li class="mb-1"><i class="bi bi-x-circle text-danger me-2"></i> Yorum yazamazsınız</li>
+                        <li class="mb-1"><i class="bi bi-x-circle text-danger me-2"></i> AI Asistanı kullanamazsınız</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i> Konuları okuyabilirsiniz</li>
+                    </ul>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex flex-column gap-3">
+                    <a href="{% url 'resend_verification' %}" class="btn btn-primary btn-lg rounded-pill">
+                        <i class="bi bi-arrow-repeat me-2"></i>
+                        Doğrulama E-postasını Tekrar Gönder
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary rounded-pill">
+                        <i class="bi bi-house me-2"></i>
+                        Ana Sayfaya Dön
+                    </a>
+                </div>
+
+                <!-- Help Text -->
+                <p class="text-muted small mt-4 mb-0">
+                    E-postayı alamadınız mı? Spam klasörünüzü kontrol edin veya
+                    <a href="{% url 'contact' %}" class="text-info">bizimle iletişime geçin</a>.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

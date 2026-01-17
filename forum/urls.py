@@ -29,6 +29,11 @@ urlpatterns = [
     path('ai-asistan/', views.ai_assistant, name='ai_assistant'),
     path('api/ai/suggest/<int:topic_id>/', views.ai_suggest_answer, name='ai_suggest_answer'),
 
+    # E-posta Doğrulama
+    path('verify-email/<uuid:token>/', views.verify_email, name='verify_email'),
+    path('verification-pending/', views.verification_pending, name='verification_pending'),
+    path('resend-verification/', views.resend_verification, name='resend_verification'),
+
     # Diğer
     path('search/', views.search_result, name='search'),
     path('hakkimizda/', views.about, name='about'),
