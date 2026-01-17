@@ -141,8 +141,9 @@ def register(request):
 @login_required
 def profile_edit(request):
     user = request.user
-    profile = user.profile
-    
+    # Profil yoksa oluştur
+    profile, created = Profile.objects.get_or_create(user=user)
+
     if request.method == 'POST':
         new_email = request.POST.get('email')
         if new_email:
