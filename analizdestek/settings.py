@@ -133,11 +133,11 @@ LOCALE_PATHS = [
 
 # --- ADMIN PANELİ AYARLARI (JAZZMIN) ---
 JAZZMIN_SETTINGS = {  # DÜZELTME: AZZMIN -> JAZZMIN
-    "site_title": "AnalizDestek Komuta Merkezi",
+    "site_title": "Analizus Komuta Merkezi",
     "site_header": "Vizyon 2050",
-    "site_brand": "AnalizDestek Yöneticisi",
+    "site_brand": "Analizus Yöneticisi",
     "welcome_sign": "Komuta Merkezine Hoş Geldiniz, Sayın CEO",
-    "copyright": "AnalizDestek Ltd.",
+    "copyright": "Analizus Ltd.",
     "search_model": ["auth.User", "forum.Topic"],
 
     "topmenu_links": [
@@ -187,7 +187,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'  # SendGrid için sabit değer
 EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_API_KEY', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'AnalizDestek <noreply@analizdestek-ai.onrender.com>')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Analizus <noreply@analizdestek-ai.onrender.com>')
 
 # --- SESSION AYARLARI (Otomatik Logout) ---
 SESSION_COOKIE_AGE = 60 * 60 * 24  # 24 saat (saniye cinsinden)
