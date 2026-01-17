@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from datetime import timedelta
-from .models import Section, Category, Topic, Post, Profile, PrivateMessage, PostLike, Notification, EmailVerification
+from .models import Section, Category, Topic, Post, Profile, PrivateMessage, PostLike, Notification, EmailVerification, DailyTip
 from .forms import RegisterForm, NewTopicForm, PostForm
 from .email_utils import send_topic_reply_notification, send_private_message_notification
 
@@ -38,6 +38,9 @@ def home(request):
     # Son aktiviteler (son 10 post)
     recent_activities = Post.objects.select_related('created_by', 'topic').order_by('-created_at')[:10]
 
+    # Günün İpucu
+    daily_tip = DailyTip.get_today_tip()
+
     context = {
         'sections': sections,
         # İstatistikler
@@ -49,6 +52,7 @@ def home(request):
         'recent_topics': recent_topics,
         'popular_topics': popular_topics,
         'recent_activities': recent_activities,
+        'daily_tip': daily_tip,
     }
     return render(request, 'forum/home.html', context)
 

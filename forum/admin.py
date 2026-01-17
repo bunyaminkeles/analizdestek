@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Section, Category, Topic, Post, Profile, ContactMessage, PrivateMessage, Badge, Notification, Skill, EmailVerification
+from .models import Section, Category, Topic, Post, Profile, ContactMessage, PrivateMessage, Badge, Notification, Skill, EmailVerification, DailyTip
 
 # --- GENEL AYARLAR ---
 admin.site.site_header = "Analizus Komuta Merkezi"
@@ -305,3 +305,27 @@ class EmailVerificationAdmin(admin.ModelAdmin):
             return format_html('<span style="color: #ffc107;">⏳ Bekliyor</span>')
         return format_html('<span style="color: #dc3545;">❌ Süresi Dolmuş</span>')
     status.short_description = "Durum"
+
+
+# 10. Günlük İpucu Yönetimi
+@admin.register(DailyTip)
+class DailyTipAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'publish_date', 'is_active', 'views', 'likes')
+    list_filter = ('category', 'is_active', 'publish_date')
+    search_fields = ('title', 'content')
+    date_hierarchy = 'publish_date'
+    list_editable = ('is_active',)
+    ordering = ('-publish_date',)
+
+    fieldsets = (
+        ('İçerik', {
+            'fields': ('title', 'content', 'category', 'icon')
+        }),
+        ('Yayın', {
+            'fields': ('publish_date', 'is_active')
+        }),
+        ('İstatistik', {
+            'fields': ('views', 'likes'),
+            'classes': ('collapse',)
+        }),
+    )

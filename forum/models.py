@@ -358,3 +358,44 @@ class EmailVerification(models.Model):
         # Önceki kullanılmamış token'ları geçersiz kıl
         cls.objects.filter(user=user, is_used=False).update(is_used=True)
         return cls.objects.create(user=user)
+
+
+class DailyTip(models.Model):
+    """Günlük ipucu sistemi"""
+    CATEGORY_CHOICES = [
+        ('spss', 'SPSS'),
+        ('python', 'Python'),
+        ('r', 'R'),
+        ('excel', 'Excel'),
+        ('statistics', 'İstatistik'),
+        ('methodology', 'Metodoloji'),
+        ('academic', 'Akademik Yazım'),
+    ]
+
+    title = models.CharField(max_length=200, verbose_name="Başlık")
+    content = models.TextField(verbose_name="İçerik")
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, verbose_name="Kategori")
+    icon = models.CharField(max_length=50, default="bi-lightbulb", verbose_name="İkon")
+
+    publish_date = models.DateField(verbose_name="Yayın Tarihi")
+    is_active = models.BooleanField(default=True, verbose_name="Aktif")
+
+    views = models.PositiveIntegerField(default=0, verbose_name="Görüntülenme")
+    likes = models.PositiveIntegerField(default=0, verbose_name="Beğeni")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        ordering = ['-publish_date']
+        verbose_name = "Günlük İpucu"
+        verbose_name_plural = "Günlük İpuçları"
+
+    def __str__(self):
+        return f"{self.publish_date} - {self.title}"
+
+    @classmethod
+    def get_today_tip(cls):
+        """Bugünün ipucunu döndürür"""
+        today = timezone.now().date()
+        return cls.objects.filter(publish_date=today, is_active=True).first()
