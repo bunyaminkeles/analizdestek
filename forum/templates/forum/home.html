@@ -2,6 +2,25 @@
 {% load forum_extras %}
 
 {% block content %}
+
+<!-- Schema.org Organization -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Analizus",
+    "description": "Akademik Analiz ve Veri Bilimi Topluluğu",
+    "url": "https://analizdestek-ai.onrender.com",
+    "logo": "https://analizdestek-ai.onrender.com/static/images/og-image.png",
+    "sameAs": [],
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://analizdestek-ai.onrender.com/search/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+    }
+}
+</script>
+
 <div class="analizus-home">
 
 <!-- HERO SECTION WITH STATS INSIDE -->

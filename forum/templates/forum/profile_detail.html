@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load forum_extras %}
 
+{% block title %}{{ profile_user.username }} - Analizus Profil{% endblock %}
+{% block meta_description %}{{ profile_user.username }} kullanıcısının Analizus profili. {{ profile_user.profile.title|default:"Akademik Araştırmacı" }}{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center py-5">
     <div class="col-md-6 col-lg-5">

@@ -3,7 +3,34 @@
 {% load crispy_forms_tags %}
 {% load forum_extras %}
 
+{% block title %}{{ topic.subject }} - Analizus{% endblock %}
+
+{% block meta_description %}{{ topic.posts.first.message|striptags|truncatewords:25 }}{% endblock %}
+
+{% block og_title %}{{ topic.subject }}{% endblock %}
+{% block og_description %}{{ topic.posts.first.message|striptags|truncatewords:25 }}{% endblock %}
+
 {% block content %}
+
+<!-- Schema.org Yapılandırılmış Veri -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "DiscussionForumPosting",
+    "headline": "{{ topic.subject|escapejs }}",
+    "author": {
+        "@type": "Person",
+        "name": "{{ topic.starter.username }}"
+    },
+    "datePublished": "{{ topic.created_at|date:'c' }}",
+    "interactionStatistic": {
+        "@type": "InteractionCounter",
+        "interactionType": "https://schema.org/ViewAction",
+        "userInteractionCount": {{ topic.views }}
+    },
+    "discussionUrl": "{{ request.build_absolute_uri }}"
+}
+</script>
 
 <div class="mb-4">
     <div class="d-flex justify-content-between align-items-start">
