@@ -16,6 +16,7 @@ Pillow
 
 # --- AI & ANALİZ ---
 openai
+google-generativeai
 numpy
 pandas
 # sqlparse Django ile gelir ama biz yine de ekleyelim

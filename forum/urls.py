@@ -25,6 +25,10 @@ urlpatterns = [
     path('api/notifications/<int:notification_id>/read/', views.mark_notification_read, name='mark_notification_read'),
     path('api/notifications/read-all/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
 
+    # AI Asistan
+    path('ai-asistan/', views.ai_assistant, name='ai_assistant'),
+    path('api/ai/suggest/<int:topic_id>/', views.ai_suggest_answer, name='ai_suggest_answer'),
+
     # Diğer
     path('search/', views.search_result, name='search'),
     path('hakkimizda/', views.about, name='about'),

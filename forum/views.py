@@ -280,3 +280,75 @@ def mark_all_notifications_read(request):
         return JsonResponse({'error': 'POST required'}, status=405)
     Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
     return JsonResponse({'status': 'ok'})
+
+
+# --- AI ASISTAN ---
+@login_required
+def ai_assistant(request):
+    """AI Asistan sayfası"""
+    from .services.ai_service import groq_service
+    from django.core.cache import cache
+
+    # Kullanıcının günlük kullanım limiti
+    cache_key = f"ai_usage_{request.user.id}_{timezone.now().date()}"
+    usage_count = cache.get(cache_key, 0)
+    daily_limit = 10  # Günlük 10 soru hakkı
+
+    context = {
+        'usage_count': usage_count,
+        'daily_limit': daily_limit,
+        'remaining': max(0, daily_limit - usage_count),
+        'ai_available': groq_service.is_available(),
+    }
+
+    if request.method == 'POST':
+        user_message = request.POST.get('message', '').strip()
+
+        if not user_message:
+            messages.error(request, 'Lütfen bir soru girin.')
+            return render(request, 'forum/ai_assistant.html', context)
+
+        if usage_count >= daily_limit:
+            messages.warning(request, f'Günlük {daily_limit} soru limitinizi doldurdunuz. Yarın tekrar deneyin.')
+            return render(request, 'forum/ai_assistant.html', context)
+
+        if not groq_service.is_available():
+            messages.error(request, 'AI servisi şu anda kullanılamıyor.')
+            return render(request, 'forum/ai_assistant.html', context)
+
+        # AI'dan yanıt al
+        result = groq_service.generate_response(user_message)
+
+        if result['success']:
+            # Kullanım sayısını artır (24 saat cache)
+            cache.set(cache_key, usage_count + 1, 60 * 60 * 24)
+            context['ai_response'] = result['response']
+            context['user_question'] = user_message
+            context['usage_count'] = usage_count + 1
+            context['remaining'] = max(0, daily_limit - usage_count - 1)
+        else:
+            messages.error(request, result['error'])
+
+    return render(request, 'forum/ai_assistant.html', context)
+
+
+@login_required
+def ai_suggest_answer(request, topic_id):
+    """Forum konusu için AI yanıt önerisi"""
+    from .services.ai_service import groq_service
+
+    topic = get_object_or_404(Topic, pk=topic_id)
+
+    if not groq_service.is_available():
+        return JsonResponse({'error': 'AI servisi kullanılamıyor'}, status=503)
+
+    # Konunun ilk postunu al
+    first_post = topic.posts.first()
+    content = first_post.message if first_post else topic.subject
+
+    result = groq_service.suggest_answer(topic.subject, content)
+
+    if result['success']:
+        return JsonResponse({'suggestion': result['suggestion']})
+    else:
+        return JsonResponse({'error': result['error']}, status=500)
