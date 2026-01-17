@@ -312,3 +312,9 @@ class Notification(models.Model):
         if self.target:
             return f"{self.sender.username} -> {self.recipient.username}: {self.verb} -> {self.target}"
         return f"{self.sender.username} -> {self.recipient.username}: {self.verb}"
+
+    def get_url(self):
+        """Bildirimin hedef URL'sini döndürür"""
+        if self.target and hasattr(self.target, 'get_absolute_url'):
+            return self.target.get_absolute_url()
+        return reverse('home')

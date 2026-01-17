@@ -20,6 +20,11 @@ urlpatterns = [
     path('topic/<int:pk>/summarize/', views.summarize_topic, name='summarize_topic'),
     path('post/<int:post_id>/like/', views.toggle_like, name='toggle_like'),
     
+    # Bildirim API (AJAX)
+    path('api/notifications/', views.get_notifications, name='get_notifications'),
+    path('api/notifications/<int:notification_id>/read/', views.mark_notification_read, name='mark_notification_read'),
+    path('api/notifications/read-all/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
+
     # Diğer
     path('search/', views.search_result, name='search'),
     path('hakkimizda/', views.about, name='about'),

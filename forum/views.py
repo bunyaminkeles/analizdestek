@@ -5,13 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Sum
 from django.contrib import messages
 from django.utils import timezone
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
 from datetime import timedelta
-from .models import Section, Category, Topic, Post, Profile, PrivateMessage, PostLike
+from .models import Section, Category, Topic, Post, Profile, PrivateMessage, PostLike, Notification
 from .forms import RegisterForm, NewTopicForm, PostForm
-from .email_utils import send_topic_reply_notification, send_private_message_notification  # ✅ YENİ
-# views.py dosyasının en üstüne ekleyin:
-from django.db.models import Sum
-from .models import Section, Category, Topic, Post, Profile, User
+from .email_utils import send_topic_reply_notification, send_private_message_notification
 
 # --- ANA SAYFA ---
 def home(request):
@@ -228,3 +227,55 @@ def toggle_like(request, post_id):
         messages.info(request, "Beğeniniz kaldırıldı.")
 
     return redirect('topic_detail', pk=post.topic.pk)
+
+
+# --- BİLDİRİM API (AJAX) ---
+@login_required
+@require_GET
+def get_notifications(request):
+    """Kullanıcının okunmamış bildirimlerini JSON olarak döndür"""
+    notifications = Notification.objects.filter(
+        recipient=request.user,
+        is_read=False
+    ).order_by('-created_at')[:10]
+
+    data = []
+    for notif in notifications:
+        data.append({
+            'id': notif.id,
+            'message': notif.verb,
+            'url': notif.get_url(),
+            'created_at': notif.created_at.strftime('%d.%m.%Y %H:%M'),
+            'sender': notif.sender.username if notif.sender else None,
+        })
+
+    # Toplam okunmamış bildirim sayısı
+    unread_count = Notification.objects.filter(
+        recipient=request.user,
+        is_read=False
+    ).count()
+
+    return JsonResponse({
+        'notifications': data,
+        'unread_count': unread_count
+    })
+
+
+@login_required
+def mark_notification_read(request, notification_id):
+    """Bildirimi okundu olarak işaretle"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    notification = get_object_or_404(Notification, pk=notification_id, recipient=request.user)
+    notification.is_read = True
+    notification.save()
+    return JsonResponse({'status': 'ok'})
+
+
+@login_required
+def mark_all_notifications_read(request):
+    """Tüm bildirimleri okundu olarak işaretle"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
+    return JsonResponse({'status': 'ok'})
