@@ -19,7 +19,11 @@ DEBUG = 'RENDER' not in os.environ
 ALLOWED_HOSTS = ['*']
 
 # CSRF Güvenliği
-CSRF_TRUSTED_ORIGINS = ['https://analizdestek-ai.onrender.com']
+CSRF_TRUSTED_ORIGINS = [
+    'https://analizus.com',
+    'https://www.analizus.com',
+    'https://analizdestek-ai.onrender.com',
+]
 
 # --- UYGULAMA TANIMLARI ---
 INSTALLED_APPS = [
@@ -190,7 +194,7 @@ SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Analizus <noreply@analizdestek-ai.onrender.com>')
 
 # Site URL (e-posta doğrulama linkleri için)
-SITE_URL = os.getenv('SITE_URL', 'https://analizdestek-ai.onrender.com')
+SITE_URL = os.getenv('SITE_URL', 'https://analizus.com')
 
 # --- SESSION AYARLARI (Otomatik Logout) ---
 SESSION_COOKIE_AGE = 60 * 60 * 24  # 24 saat (saniye cinsinden)
