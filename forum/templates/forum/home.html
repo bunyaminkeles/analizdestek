@@ -141,26 +141,18 @@
     {% endfor %}
 </div>
 
-<!-- GÜNÜN İPUCU -->
+<!-- GÜNÜN İPUCU - Floating Card -->
 {% if daily_tip %}
-<div class="daily-tip-card mb-4">
-    <div class="tip-header">
-        <div class="tip-badge">
-            <i class="bi bi-lightbulb-fill"></i>
-            <span>Günün İpucu</span>
-        </div>
-        <span class="tip-category">{{ daily_tip.get_category_display }}</span>
+<div class="daily-tip-floating" id="dailyTip">
+    <div class="tip-mini-header">
+        <span><i class="bi bi-lightbulb-fill"></i> Günün İpucu</span>
+        <button class="tip-close" onclick="document.getElementById('dailyTip').classList.add('hidden')">&times;</button>
     </div>
-    <div class="tip-content">
-        <h4 class="tip-title">{{ daily_tip.title }}</h4>
-        <div class="tip-text">{{ daily_tip.content|linebreaks }}</div>
-    </div>
-    <div class="tip-footer">
-        <div class="tip-stats">
-            <span><i class="bi bi-eye"></i> {{ daily_tip.views }}</span>
-            <span><i class="bi bi-heart"></i> {{ daily_tip.likes }}</span>
-        </div>
-        <span class="tip-date">{{ daily_tip.publish_date|date:"d M Y" }}</span>
+    <div class="tip-mini-category">{{ daily_tip.get_category_display }}</div>
+    <h5 class="tip-mini-title">{{ daily_tip.title }}</h5>
+    <div class="tip-mini-content">{{ daily_tip.content|truncatewords:20|linebreaks }}</div>
+    <div class="tip-mini-footer">
+        <span class="tip-date">{{ daily_tip.publish_date|date:"d M" }}</span>
     </div>
 </div>
 {% endif %}
@@ -571,17 +563,31 @@
 
 .item-meta i { margin-right: 3px; }
 
-/* ===== GÜNÜN İPUCU ===== */
-.daily-tip-card {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+/* ===== GÜNÜN İPUCU - FLOATING ===== */
+.daily-tip-floating {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    width: 280px;
+    background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid rgba(16, 185, 129, 0.4);
     border-radius: 16px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
+    padding: 16px;
+    z-index: 1000;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(16, 185, 129, 0.2);
+    animation: tipSlideIn 0.5s ease-out;
 }
 
-.daily-tip-card::before {
+.daily-tip-floating.hidden {
+    display: none;
+}
+
+@keyframes tipSlideIn {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.daily-tip-floating::before {
     content: '';
     position: absolute;
     top: 0;
@@ -589,92 +595,88 @@
     right: 0;
     height: 3px;
     background: linear-gradient(90deg, #10b981, #06b6d4);
+    border-radius: 16px 16px 0 0;
 }
 
-.tip-header {
+.tip-mini-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-}
-
-.tip-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #10b981, #06b6d4);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #fff;
-}
-
-.tip-badge i {
-    font-size: 1rem;
-}
-
-.tip-category {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    color: #94a3b8;
-}
-
-.tip-content {
-    margin-bottom: 15px;
-}
-
-.tip-title {
-    color: #e2e8f0;
-    font-size: 1.1rem;
-    font-weight: 600;
     margin-bottom: 10px;
 }
 
-.tip-text {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    line-height: 1.6;
-}
-
-.tip-text p {
-    margin-bottom: 8px;
-}
-
-.tip-text code {
-    background: rgba(0, 240, 255, 0.1);
-    color: #00f0ff;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: monospace;
-}
-
-.tip-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.tip-stats {
-    display: flex;
-    gap: 15px;
-}
-
-.tip-stats span {
-    color: #64748b;
+.tip-mini-header span {
+    color: #10b981;
     font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    font-weight: 600;
+}
+
+.tip-mini-header i {
+    margin-right: 6px;
+}
+
+.tip-close {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.tip-close:hover {
+    color: #ef4444;
+}
+
+.tip-mini-category {
+    display: inline-block;
+    background: rgba(6, 182, 212, 0.2);
+    color: #06b6d4;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    margin-bottom: 10px;
+}
+
+.tip-mini-title {
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.tip-mini-content {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.tip-mini-content p {
+    margin-bottom: 5px;
+}
+
+.tip-mini-footer {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .tip-date {
     color: #64748b;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+}
+
+/* Mobilde gizle veya küçült */
+@media (max-width: 1200px) {
+    .daily-tip-floating {
+        position: relative;
+        top: auto;
+        right: auto;
+        width: 100%;
+        margin-bottom: 20px;
+    }
 }
 
 /* ===== ACTIVITY ===== */
