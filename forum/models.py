@@ -399,3 +399,62 @@ class DailyTip(models.Model):
         """Bugünün ipucunu döndürür"""
         today = timezone.now().date()
         return cls.objects.filter(publish_date=today, is_active=True).first()
+
+
+class QuizQuestion(models.Model):
+    """İstatistik Arena quiz soruları"""
+    CATEGORY_CHOICES = [
+        ('spss', 'SPSS'),
+        ('python', 'Python'),
+        ('r', 'R'),
+        ('statistics', 'İstatistik'),
+        ('methodology', 'Metodoloji'),
+    ]
+    DIFFICULTY_CHOICES = [
+        ('easy', 'Kolay'),
+        ('medium', 'Orta'),
+        ('hard', 'Zor'),
+    ]
+
+    question = models.TextField(verbose_name="Soru")
+    option_a = models.CharField(max_length=255, verbose_name="A Şıkkı")
+    option_b = models.CharField(max_length=255, verbose_name="B Şıkkı")
+    option_c = models.CharField(max_length=255, verbose_name="C Şıkkı")
+    option_d = models.CharField(max_length=255, verbose_name="D Şıkkı")
+    correct_answer = models.CharField(max_length=1, choices=[('A','A'),('B','B'),('C','C'),('D','D')], verbose_name="Doğru Cevap")
+
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, verbose_name="Kategori")
+    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES, default='medium', verbose_name="Zorluk")
+    explanation = models.TextField(blank=True, verbose_name="Açıklama")
+
+    is_active = models.BooleanField(default=True, verbose_name="Aktif")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Quiz Sorusu"
+        verbose_name_plural = "Quiz Soruları"
+
+    def __str__(self):
+        return self.question[:50]
+
+    @classmethod
+    def get_random_question(cls):
+        """Rastgele aktif bir soru döndürür"""
+        return cls.objects.filter(is_active=True).order_by('?').first()
+
+
+class QuizScore(models.Model):
+    """Kullanıcı quiz puanları"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='quiz_scores')
+    total_points = models.PositiveIntegerField(default=0, verbose_name="Toplam Puan")
+    correct_answers = models.PositiveIntegerField(default=0, verbose_name="Doğru Cevap")
+    total_answers = models.PositiveIntegerField(default=0, verbose_name="Toplam Cevap")
+    streak = models.PositiveIntegerField(default=0, verbose_name="Seri")
+    last_played = models.DateTimeField(null=True, blank=True, verbose_name="Son Oynanma")
+
+    class Meta:
+        verbose_name = "Quiz Puanı"
+        verbose_name_plural = "Quiz Puanları"
+
+    def __str__(self):
+        return f"{self.user.username} - {self.total_points} puan"
