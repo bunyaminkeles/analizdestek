@@ -184,11 +184,13 @@ class NotificationManager {
 // Sayfa yüklendiğinde bildirim yöneticisini başlat
 document.addEventListener('DOMContentLoaded', function() {
     // Sadece giriş yapmış kullanıcılar için çalıştır
+    // Dropdown menüdeki userDropdown veya logout form'u varsa kullanıcı giriş yapmış demektir
     const userLoggedIn = document.querySelector('[data-user-authenticated="true"]') ||
-                         document.querySelector('.nav-link[href*="logout"]') ||
-                         document.querySelector('a[href*="profile/edit"]');
+                         document.querySelector('form[action*="logout"]') ||
+                         document.querySelector('#userDropdown');
 
     if (userLoggedIn) {
         window.notificationManager = new NotificationManager();
+        console.log("--- DEBUG: Kullanıcı giriş yapmış, bildirim sistemi aktif ---");
     }
 });
