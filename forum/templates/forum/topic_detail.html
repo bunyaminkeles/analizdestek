@@ -39,9 +39,31 @@
             <h1 class="fw-bold text-white display-6">{{ topic.subject }}</h1>
         </div>
     </div>
-    <div class="text-muted small">
-        <i class="bi bi-clock"></i> {{ topic.created_at|date:"d M Y, H:i" }} | 
-        <i class="bi bi-eye"></i> {{ topic.views }} Görüntülenme
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <div class="text-muted small">
+            <i class="bi bi-clock"></i> {{ topic.created_at|date:"d M Y, H:i" }} |
+            <i class="bi bi-eye"></i> {{ topic.views }} Görüntülenme
+        </div>
+        <!-- Sosyal Medya Paylaşım Butonları -->
+        <div class="share-buttons mt-2 mt-md-0">
+            <span class="text-muted small me-2">Paylaş:</span>
+            <a href="https://twitter.com/intent/tweet?text={{ topic.subject|urlencode }}&url={{ request.build_absolute_uri|urlencode }}"
+               target="_blank" class="btn btn-sm btn-outline-info me-1" title="Twitter'da Paylaş">
+                <i class="bi bi-twitter-x"></i>
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri|urlencode }}"
+               target="_blank" class="btn btn-sm btn-outline-primary me-1" title="LinkedIn'de Paylaş">
+                <i class="bi bi-linkedin"></i>
+            </a>
+            <a href="https://wa.me/?text={{ topic.subject|urlencode }}%20{{ request.build_absolute_uri|urlencode }}"
+               target="_blank" class="btn btn-sm btn-outline-success me-1" title="WhatsApp'ta Paylaş">
+                <i class="bi bi-whatsapp"></i>
+            </a>
+            <button onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}'); this.innerHTML='<i class=\'bi bi-check\'></i>'; setTimeout(() => this.innerHTML='<i class=\'bi bi-link-45deg\'></i>', 2000);"
+                    class="btn btn-sm btn-outline-secondary" title="Linki Kopyala">
+                <i class="bi bi-link-45deg"></i>
+            </button>
+        </div>
     </div>
 </div>
 
