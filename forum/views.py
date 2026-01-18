@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from datetime import timedelta
-from .models import Section, Category, Topic, Post, Profile, PrivateMessage, PostLike, Notification, EmailVerification, DailyTip, QuizQuestion, QuizScore
+from .models import Section, Category, Topic, Post, Profile, PrivateMessage, PostLike, Notification, EmailVerification, DailyTip, QuizQuestion, QuizScore, SuccessStory
 from .forms import RegisterForm, NewTopicForm, PostForm
 from .email_utils import send_topic_reply_notification, send_private_message_notification
 
@@ -44,6 +44,11 @@ def home(request):
     # Quiz Sorusu
     quiz_question = QuizQuestion.get_random_question()
 
+    # Haftanın Başarı Hikayesi
+    featured_story = SuccessStory.objects.filter(is_featured=True).first()
+    if not featured_story:
+        featured_story = SuccessStory.objects.order_by('?').first()
+
     context = {
         'sections': sections,
         # İstatistikler
@@ -57,6 +62,7 @@ def home(request):
         'recent_activities': recent_activities,
         'daily_tip': daily_tip,
         'quiz_question': quiz_question,
+        'featured_story': featured_story,
     }
     return render(request, 'forum/home.html', context)
 
