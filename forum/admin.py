@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Section, Category, Topic, Post, Profile, ContactMessage, PrivateMessage, Badge, Notification, Skill, EmailVerification, DailyTip
+from .models import Section, Category, Topic, Post, Profile, ContactMessage, PrivateMessage, Badge, Notification, Skill, EmailVerification, DailyTip, QuizQuestion, QuizScore
 
 # --- GENEL AYARLAR ---
 admin.site.site_header = "Analizus Komuta Merkezi"
@@ -329,3 +329,41 @@ class DailyTipAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+
+# 11. Quiz Soruları Yönetimi
+@admin.register(QuizQuestion)
+class QuizQuestionAdmin(admin.ModelAdmin):
+    list_display = ('question_short', 'category', 'difficulty', 'correct_answer', 'is_active')
+    list_filter = ('category', 'difficulty', 'is_active')
+    search_fields = ('question', 'option_a', 'option_b', 'option_c', 'option_d')
+    list_editable = ('is_active',)
+
+    def question_short(self, obj):
+        return obj.question[:60] + "..." if len(obj.question) > 60 else obj.question
+    question_short.short_description = "Soru"
+
+    fieldsets = (
+        ('Soru', {
+            'fields': ('question', 'category', 'difficulty')
+        }),
+        ('Şıklar', {
+            'fields': ('option_a', 'option_b', 'option_c', 'option_d', 'correct_answer')
+        }),
+        ('Açıklama', {
+            'fields': ('explanation',),
+            'classes': ('collapse',)
+        }),
+        ('Durum', {
+            'fields': ('is_active',)
+        }),
+    )
+
+
+# 12. Quiz Puanları Yönetimi
+@admin.register(QuizScore)
+class QuizScoreAdmin(admin.ModelAdmin):
+    list_display = ('user', 'total_points', 'correct_answers', 'total_answers', 'streak', 'last_played')
+    list_filter = ('last_played',)
+    search_fields = ('user__username',)
+    ordering = ('-total_points',)
