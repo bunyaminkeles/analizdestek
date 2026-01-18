@@ -458,3 +458,21 @@ class QuizScore(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.total_points} puan"
+
+class SuccessStory(models.Model):
+    """Kullanıcı başarı hikayeleri (Before/After)"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='stories')
+    quote = models.TextField(verbose_name="Hikaye Alıntısı")
+    achievements = models.JSONField(default=list, verbose_name="Başarı Maddeleri") 
+    resources = models.JSONField(default=list, verbose_name="Kullanılan Kaynaklar")
+    likes_count = models.IntegerField(default=0)
+    comments_count = models.IntegerField(default=0)
+    is_featured = models.BooleanField(default=False, verbose_name="Haftanın Hikayesi")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Başarı Hikayesi"
+        verbose_name_plural = "Başarı Hikayeleri"
+
+    def __str__(self):
+        return f"{self.user.username} - Başarı Hikayesi"
