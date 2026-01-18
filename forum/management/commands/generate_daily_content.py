@@ -79,12 +79,12 @@ class Command(BaseCommand):
             self.stdout.write(f"🎲 Rastgele Seçilen Kategori: {topic_title}")
 
         # 1. GÜNÜN İPUCUNU ÜRET
-        self.generate_daily_tip(topic_title, admin_user)
+        self.generate_daily_tip(topic_title, topic_slug, admin_user)
 
         # 2. QUIZ SORUSU ÜRET
         self.generate_quiz_question(topic_title, topic_slug)
 
-    def generate_daily_tip(self, topic_title, user):
+    def generate_daily_tip(self, topic_title, topic_slug, user):
         self.stdout.write("💡 Günün ipucu üretiliyor...")
         
         prompt = f"""
@@ -106,7 +106,8 @@ class Command(BaseCommand):
 
             # Veritabanına kaydet
             DailyTip.objects.create(
-                category=topic_title,
+                title=f"{topic_title} Hakkında İpucu",
+                category=topic_slug,
                 content=content,
                 created_by=user,
                 publish_date=timezone.now().date(),
