@@ -44,4 +44,7 @@ urlpatterns = [
     
     # Section Detail
     path('section/<int:pk>/', views.section_detail, name='section_detail'),
+
+    # Başarı Hikayeleri
+    path('success-stories/', views.success_stories, name='success_stories'),
 ]

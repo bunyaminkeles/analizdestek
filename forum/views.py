@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django import forms
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -65,6 +66,50 @@ def home(request):
         'featured_story': featured_story,
     }
     return render(request, 'forum/home.html', context)
+
+# --- BAŞARI HİKAYELERİ ---
+class SuccessStoryForm(forms.ModelForm):
+    achievements_text = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control bg-dark text-light border-secondary', 'placeholder': 'Örnek:\n- Tezi 3 ayda bitirdim\n- Analiz korkumu yendim'}), 
+        help_text="Her satıra bir başarı maddesi yazınız.", 
+        required=False, 
+        label="Başarılar (Her satıra bir tane)"
+    )
+    resources_text = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2, 'class': 'form-control bg-dark text-light border-secondary', 'placeholder': 'Örnek:\n- Analizus Forum\n- YouTube SPSS Serisi'}), 
+        help_text="Kullandığınız kaynakları alt alta yazınız.", 
+        required=False, 
+        label="Kaynaklar"
+    )
+
+    class Meta:
+        model = SuccessStory
+        fields = ['quote']
+        widgets = {
+            'quote': forms.Textarea(attrs={'rows': 3, 'class': 'form-control bg-dark text-light border-secondary', 'placeholder': 'Hikayenizi kısaca anlatın...'}),
+        }
+        labels = {'quote': 'Hikayeniz'}
+
+def success_stories(request):
+    stories = SuccessStory.objects.all().order_by('-is_featured', '-created_at')
+    form = None
+
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = SuccessStoryForm(request.POST)
+            if form.is_valid():
+                story = form.save(commit=False)
+                story.user = request.user
+                # Text alanlarını listeye çevir
+                story.achievements = [line.strip() for line in form.cleaned_data['achievements_text'].split('\n') if line.strip()]
+                story.resources = [line.strip() for line in form.cleaned_data['resources_text'].split('\n') if line.strip()]
+                story.save()
+                messages.success(request, 'Harika! Başarı hikayeniz paylaşıldı.')
+                return redirect('success_stories')
+        else:
+            form = SuccessStoryForm()
+
+    return render(request, 'forum/success_stories.html', {'stories': stories, 'form': form})
 
 # --- BÖLÜM DETAY ---
 def section_detail(request, pk):
