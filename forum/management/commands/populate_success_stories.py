@@ -18,6 +18,9 @@ class Command(BaseCommand):
             return
 
         self.stdout.write("✨ Başarı hikayeleri yükleniyor...")
+        
+        # Mükerrer kayıtları önlemek için eski hikayeleri temizle
+        SuccessStory.objects.all().delete()
 
         # 1. HİKAYE: Ayşe K. (Prompt'taki Örnek)
         user_ayse, _ = User.objects.get_or_create(username="Ayse_K")
